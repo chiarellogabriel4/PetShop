@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PetCare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --purple: #35149b;
+        --purple-dark: #241062;
+        --orange: #ff6600;
+        --orange-soft: #fff0e6;
+        --white: #ffffff;
+        --gray-light: #f5f5f5;
+        --gray-mid: #e7e7e7;
+        --gray-dark: #333333;
+        --success: #2fbf71;
+        --shadow: 0 18px 40px rgba(53, 20, 155, 0.12);
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        overflow-x: hidden;
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(180deg, #fbfbff 0%, #f9f6ff 35%, #ffffff 100%);
+        color: var(--gray-dark);
+      }
+      img { max-width: 100%; display: block; }
+      a { color: inherit; text-decoration: none; }
+      button, input, select, textarea { font: inherit; }
+      .container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+      .topbar { background: var(--purple); color: rgba(255,255,255,.85); padding: 10px 0; font-size: .8rem; }
+      .topbar-inner, .header-inner, .section-head, .footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+      .topbar-inner { flex-wrap: wrap; }
+      .topbar-links { display: flex; gap: 18px; flex-wrap: wrap; }
+      .site-header { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.9); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(53,20,155,.08); }
+      .header-inner { min-height: 82px; }
+      .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; }
+      .brand-mark {
+        width: auto;
+        height: auto;
+        border-radius: 0;
+        background: transparent;
+        color: var(--purple);
+        display: grid;
+        place-items: center;
+        box-shadow: none;
+        font-size: 1.5rem;
+        line-height: 1;
+      }
+      .brand-mark svg {
+        width: 38px;
+        height: 38px;
+        display: block;
+      }
+      .nav { display: flex; align-items: center; gap: 26px; font-size: .96rem; }
+      .nav a { color: var(--gray-dark); font-weight: 500; }
+      .header-tools { display: flex; align-items: center; gap: 14px; }
+      .header-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0.7rem 1.15rem;
+        border-radius: 999px;
+        background: rgba(53,20,155,.08);
+        border: 1px solid rgba(53,20,155,.12);
+        color: var(--purple);
+        font-weight: 800;
+        text-decoration: none;
+        transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+      }
+      .header-link:hover {
+        transform: translateY(-1px);
+        background: rgba(53,20,155,.12);
+        box-shadow: 0 10px 20px rgba(53,20,155,.08);
+      }
+      .search-box { width: min(220px, 100%); display: flex; align-items: center; gap: 10px; background: var(--gray-light); border: 1px solid rgba(51,51,51,.06); border-radius: 999px; padding: 10px 14px; }
+      .search-box input { border: 0; background: transparent; width: 100%; outline: none; }
+      .btn { border: 0; border-radius: 14px; padding: .9rem 1.3rem; min-height: 46px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: transform .2s ease; }
+      .btn:hover { transform: translateY(-1px); }
+      .btn-primary { background: linear-gradient(135deg, var(--orange), #ff8b3d); color: var(--white); box-shadow: 0 12px 22px rgba(255,102,0,.28); }
+      .btn-soft { background: var(--gray-light); color: var(--purple); border: 1px solid rgba(53,20,155,.08); }
+      .menu-toggle { display: none; }
+      .quick-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
+      .quick-action-btn {
+        position: relative;
+        border: 0;
+        border-radius: 14px;
+        padding: 0.85rem 1.15rem;
+        background: rgba(255,255,255,.8);
+        color: var(--purple);
+        font-weight: 700;
+        border: 1px solid rgba(53,20,155,.1);
+        box-shadow: 0 10px 22px rgba(53,20,155,.08);
+        cursor: pointer;
+        transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
+        overflow: hidden;
+      }
+      .quick-action-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, rgba(255,255,255,0), rgba(53,20,155,.08), rgba(255,255,255,0));
+        transform: translateX(-110%);
+        transition: transform .55s ease;
+      }
+      .quick-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 30px rgba(53,20,155,.14);
+      }
+      .quick-action-btn:hover::before {
+        transform: translateX(110%);
+      }
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px) scale(.98);
+        transition: opacity .7s ease, transform .7s cubic-bezier(.2, .9, .2, 1);
+      }
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      .hero { padding: 72px 0 40px; }
+      .hero-inner { display: grid; grid-template-columns: 1.05fr 1fr; gap: 42px; align-items: center; }
+      .eyebrow { display: inline-flex; padding: 7px 14px; border-radius: 999px; background: rgba(53,20,155,.08); color: var(--purple); font-size: .8rem; font-weight: 700; }
+      h1 { font-size: clamp(2.5rem, 5vw, 4.4rem); line-height: .96; letter-spacing: -0.06em; margin: 22px 0 20px; }
+      .hero p { font-size: 1.08rem; line-height: 1.7; color: rgba(51,51,51,.8); }
+      .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
+      .cta-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 1.4rem;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--orange), #ff8b3d);
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 700;
+        box-shadow: 0 12px 22px rgba(255,102,0,.28);
+      }
+      .account-access {
+        padding-top: 0;
+      }
+      .account-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+      }
+      .account-card {
+        background: rgba(255,255,255,.96);
+        border: 1px solid rgba(53,20,155,.08);
+        border-radius: 24px;
+        box-shadow: 0 12px 24px rgba(30,30,30,.08);
+        padding: 28px;
+      }
+      .account-card h3 {
+        margin: 14px 0 10px;
+        font-size: clamp(1.4rem, 2vw, 1.9rem);
+        letter-spacing: -.04em;
+      }
+      .account-card p {
+        margin: 0 0 20px;
+        color: rgba(51,51,51,.72);
+        line-height: 1.7;
+      }
+      .account-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 22px;
+        display: grid;
+        gap: 10px;
+      }
+      .account-list li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(51,51,51,.7);
+      }
+      .account-list li::before {
+        content: '✓';
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: rgba(47,191,113,.12);
+        color: var(--success);
+        font-weight: 700;
+      }
+      .hero-points { list-style: none; padding: 0; margin: 28px 0 0; display: flex; flex-wrap: wrap; gap: 18px; }
+      .hero-points li { background: rgba(255,255,255,.8); border: 1px solid rgba(53,20,155,.08); border-radius: 14px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 12px 24px rgba(30,30,30,.08); }
+      .point-badge { width: 26px; height: 26px; border-radius: 8px; background: var(--orange-soft); color: var(--orange); display: grid; place-items: center; font-weight: 900; }
+      .hero-visual { position: relative; min-height: 560px; }
+      .hero-image-wrap { position: absolute; inset: 0 0 0 26px; border-radius: 40px; overflow: hidden; box-shadow: var(--shadow); }
+      .hero-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+      .floating-card {
+        position: absolute;
+        left: 16px;
+        bottom: 18px;
+        background: rgba(255,255,255,.78);
+        border: 1px solid rgba(53,20,155,.08);
+        border-radius: 18px;
+        padding: 14px 16px;
+        box-shadow: 0 10px 22px rgba(30,30,30,.08);
+        max-width: 210px;
+        backdrop-filter: blur(6px);
+      }
+      .floating-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+      .floating-card h3 { margin: 0; font-size: .92rem; letter-spacing: -.03em; }
+      .mini-tag { background: rgba(47,191,113,.12); color: var(--success); border-radius: 999px; padding: 4px 7px; font-size: .62rem; font-weight: 700; }
+      .rating { color: #f4a300; font-weight: 700; display: flex; gap: 6px; align-items: center; font-size: .8rem; }
+      .floating-card p {
+        margin: 10px 0 0;
+        font-size: .78rem;
+        line-height: 1.45;
+        color: rgba(51,51,51,.72);
+      }
+      section { padding: 90px 0; }
+      .section-head { align-items: end; margin-bottom: 30px; }
+      .section-head h2 { margin: 10px 0 0; font-size: clamp(2rem, 3vw, 2.8rem); line-height: 1.08; letter-spacing: -.05em; }
+      .subtext { color: rgba(51,51,51,.7); line-height: 1.7; max-width: 520px; }
+      .services-grid, .shop-grid, .testimonials-grid, .blog-grid { display: grid; gap: 24px; }
+      .services-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .service-card { background: rgba(255,255,255,.92); border: 1px solid rgba(53,20,155,.08); border-radius: 22px; padding: 26px 22px; box-shadow: 0 12px 24px rgba(30,30,30,.08); }
+      .service-icon { width: 62px; height: 62px; border-radius: 18px; display: grid; place-items: center; background: linear-gradient(135deg, rgba(53,20,155,.1), rgba(255,102,0,.12)); color: var(--purple); font-size: 1.7rem; margin-bottom: 18px; }
+      .service-card h3 { margin: 0 0 10px; }
+      .service-card p { margin: 0 0 18px; color: rgba(51,51,51,.75); line-height: 1.6; }
+      .pill { display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(53,20,155,.08); background: rgba(53,20,155,.03); color: var(--purple); font-size: .84rem; font-weight: 700; }
+      .grooming { background: linear-gradient(180deg, rgba(53,20,155,.03), rgba(255,102,0,.02)); }
+      .grooming-grid, .about-grid, .booking-grid, .contact-grid, .dashboard-grid, .footer-grid { display: grid; gap: 28px; }
+      .grooming-grid { grid-template-columns: 1.05fr 1.2fr; }
+      .grooming-panel, .grooming-steps, .booking-card, .contact-card, .dashboard-card { background: rgba(255,255,255,.96); border: 1px solid rgba(53,20,155,.08); box-shadow: 0 12px 24px rgba(30,30,30,.08); border-radius: 24px; }
+      .grooming-image { min-height: 470px; overflow: hidden; border-radius: 24px; }
+      .grooming-image img { width: 100%; height: 100%; object-fit: cover; }
+      .grooming-steps { padding: 30px; }
+      .step-list { display: grid; gap: 18px; }
+      .step-item { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; border-radius: 18px; background: var(--gray-light); padding: 16px; }
+      .step-number { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--purple); color: var(--white); font-weight: 800; }
+      .step-item h4 { margin: 0 0 4px; }
+      .step-item p { margin: 0; color: rgba(51,51,51,.7); line-height: 1.5; }
+      .step-price { font-weight: 800; color: var(--orange); }
+      .about-grid { grid-template-columns: 1.05fr 1.1fr; align-items: center; }
+      .about-photo { position: relative; min-height: 500px; border-radius: 28px; overflow: hidden; box-shadow: var(--shadow); }
+      .about-photo img { width: 100%; height: 100%; object-fit: cover; }
+      .stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; margin-top: 30px; }
+      .stat { border-radius: 20px; border: 1px solid rgba(53,20,155,.08); background: linear-gradient(180deg, #fff, #fbf7ff); box-shadow: 0 12px 24px rgba(30,30,30,.08); padding: 24px 18px; }
+      .stat strong { display: block; font-size: 1.6rem; letter-spacing: -.05em; }
+      .stat span { color: rgba(51,51,51,.7); }
+      .booking-grid { grid-template-columns: 1.25fr .75fr; align-items: stretch; }
+      .booking-card { padding: 30px; }
+      .booking-form { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+      .field { display: flex; flex-direction: column; gap: 8px; }
+      .field.full { grid-column: 1 / -1; }
+      label { font-weight: 600; font-size: .94rem; }
+      input, select, textarea { width: 100%; border: 1px solid rgba(51,51,51,.1); border-radius: 14px; padding: .9rem 1rem; background: #fafafa; outline: none; }
+      input:focus, select:focus, textarea:focus { border-color: rgba(53,20,155,.4); box-shadow: 0 0 0 4px rgba(53,20,155,.08); }
+      textarea { resize: vertical; min-height: 110px; }
+      .booking-summary { padding: 26px; background: linear-gradient(180deg, #2c146d, #3b1a8c); color: var(--white); border-radius: 24px; box-shadow: var(--shadow); }
+      .summary-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+      .summary-list li { display: flex; align-items: center; justify-content: space-between; gap: 18px; border-bottom: 1px solid rgba(255,255,255,.12); padding-bottom: 14px; }
+      .summary-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+      .summary-list span { opacity: .8; }
+      .shop-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+      .product-card { background: rgba(255,255,255,.96); border: 1px solid rgba(53,20,155,.08); border-radius: 22px; overflow: hidden; box-shadow: 0 12px 24px rgba(30,30,30,.08); }
+      .product-image { position: relative; height: 240px; background: linear-gradient(180deg, #f8f4ff, #f3f5fb); }
+      .product-image img { width: 100%; height: 100%; object-fit: cover; }
+      .product-badge { position: absolute; top: 14px; left: 14px; background: rgba(255,255,255,.95); color: var(--purple); border-radius: 999px; padding: 5px 9px; font-size: .66rem; font-weight: 800; }
+      .product-body { padding: 18px; }
+      .product-body h3 { margin: 0 0 8px; font-size: 1.12rem; }
+      .product-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; }
+      .price { font-size: 1.3rem; font-weight: 800; letter-spacing: -.05em; }
+      .testimonials-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .testimonial-card { background: rgba(255,255,255,.96); border-radius: 22px; border: 1px solid rgba(53,20,155,.08); box-shadow: 0 12px 24px rgba(30,30,30,.08); padding: 24px; }
+      .testimonial-head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+      .avatar { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; }
+      .stars { color: #ffb000; letter-spacing: .15em; margin-bottom: 14px; }
+      .testimonial-card p { line-height: 1.7; color: rgba(51,51,51,.76); }
+      .gallery-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; }
+      .gallery-item { position: relative; overflow: hidden; border-radius: 24px; box-shadow: 0 12px 24px rgba(30,30,30,.08); min-height: 260px; }
+      .gallery-item.tall { grid-row: span 2; min-height: 540px; }
+      .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+      .gallery-item::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.18)); }
+      .blog-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .article-card { background: rgba(255,255,255,.96); border: 1px solid rgba(53,20,155,.08); border-radius: 24px; overflow: hidden; box-shadow: 0 12px 24px rgba(30,30,30,.08); }
+      .article-image { height: 220px; }
+      .article-image img { width: 100%; height: 100%; object-fit: cover; }
+      .article-body { padding: 22px; }
+      .article-meta { display: flex; justify-content: space-between; color: rgba(51,51,51,.65); font-size: .84rem; margin-bottom: 10px; }
+      .article-card h3 { margin: 0 0 10px; font-size: 1.15rem; }
+      .article-card p { margin: 0 0 16px; line-height: 1.7; color: rgba(51,51,51,.72); }
+      .contact-grid { grid-template-columns: .9fr 1.1fr; }
+      .contact-card { padding: 28px; }
+      .contact-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
+      .contact-list li { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 16px; background: var(--gray-light); }
+      .contact-icon { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: rgba(53,20,155,.08); color: var(--purple); font-weight: 700; }
+      .contact-list strong { display: block; margin-bottom: 4px; }
+      .contact-form { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+      .contact-form .full { grid-column: 1 / -1; }
+      .dashboard-shell { background: linear-gradient(180deg, rgba(53,20,155,.02), rgba(255,102,0,.02)); }
+      .dashboard-grid { grid-template-columns: 1.3fr .7fr; }
+      .dashboard-card { padding: 26px; }
+      .overview { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; }
+      .overview-item { background: linear-gradient(180deg, #ffffff, #f7f4ff); border: 1px solid rgba(53,20,155,.08); border-radius: 18px; padding: 18px; }
+      .overview-item small { display: block; color: rgba(51,51,51,.62); margin-bottom: 8px; }
+      .overview-item strong { font-size: 1.55rem; letter-spacing: -.05em; }
+      .appointments-list { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 14px; }
+      .appointments-list li { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; padding: 16px; border-radius: 16px; background: var(--gray-light); }
+      .appointment-date { width: 52px; height: 52px; border-radius: 14px; background: rgba(53,20,155,.1); color: var(--purple); display: grid; place-items: center; font-weight: 800; text-align: center; line-height: 1.2; }
+      .appointment-date small { font-size: .64rem; }
+      .status-badge { padding: 7px 10px; border-radius: 999px; font-size: .76rem; font-weight: 700; }
+      .status-badge.confirmed { background: rgba(47,191,113,.12); color: var(--success); }
+      .status-badge.pending { background: rgba(255,102,0,.12); color: var(--orange); }
+      .loyalty-box { background: linear-gradient(135deg, var(--purple), #4a22b5); color: var(--white); border-radius: 18px; padding: 22px; box-shadow: var(--shadow); }
+      .reward-progress { height: 10px; background: rgba(255,255,255,.2); border-radius: 999px; overflow: hidden; margin: 18px 0 10px; }
+      .reward-progress span { display: block; width: 78%; height: 100%; background: linear-gradient(90deg, var(--orange), #ff8c52); border-radius: inherit; }
+      .mini-list { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 10px; }
+      .mini-list li { display: flex; align-items: center; justify-content: space-between; border-radius: 12px; background: rgba(53,20,155,.03); padding: 10px 12px; }
+      footer { background: #1a1235; color: rgba(255,255,255,.8); padding: 66px 0 28px; }
+      .footer-grid { grid-template-columns: 1.2fr .8fr .8fr 1.2fr; }
+      .footer-brand { display: flex; align-items: center; gap: 12px; color: var(--white); font-weight: 800; margin-bottom: 14px; }
+      .footer-logo { width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(135deg, var(--orange), #ff8c52); display: grid; place-items: center; color: var(--white); font-weight: 900; }
+      .footer-grid h4 { margin: 0 0 16px; color: var(--white); }
+      .footer-links, .socials { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+      .socials { grid-template-columns: repeat(4, minmax(0,1fr)); }
+      .socials li { background: rgba(255,255,255,.06); border-radius: 10px; height: 42px; display: grid; place-items: center; }
+      .whatsapp-float { position: fixed; right: 22px; bottom: 22px; width: 62px; height: 62px; border-radius: 50%; border: 0; background: linear-gradient(135deg, #25d366, #1fad5c); color: var(--white); font-size: 1.5rem; box-shadow: 0 20px 32px rgba(37,211,102,.35); z-index: 60; cursor: pointer; }
+      .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(12px); background: rgba(31,31,31,.95); color: var(--white); border-radius: 999px; padding: 12px 18px; opacity: 0; pointer-events: none; transition: all .25s ease; z-index: 120; }
+      .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+      .chat-widget { position: fixed; right: 96px; bottom: 22px; width: 300px; background: rgba(255,255,255,.96); border: 1px solid rgba(53,20,155,.08); border-radius: 22px; box-shadow: var(--shadow); overflow: hidden; transform: translateY(20px); opacity: 0; visibility: hidden; transition: all .25s ease; z-index: 70; }
+      .chat-widget.open { opacity: 1; visibility: visible; transform: translateY(0); }
+      .chat-header { background: linear-gradient(135deg, var(--purple), #5330c4); color: var(--white); padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; }
+      .chat-body { padding: 18px; }
+      .chat-message { background: var(--gray-light); border-radius: 14px; padding: 12px 14px; line-height: 1.6; }
+      .chat-actions { display: flex; gap: 10px; margin-top: 16px; }
+      .chat-actions button { flex: 1; border: 0; border-radius: 10px; background: var(--orange-soft); color: var(--orange); padding: 10px; font-weight: 700; cursor: pointer; }
+      .client-panel { position: fixed; top: 0; right: -100%; width: min(430px, calc(100% - 24px)); height: 100vh; background: rgba(255,255,255,.98); box-shadow: -20px 0 48px rgba(21,21,21,.14); transition: right .3s ease; z-index: 100; display: flex; flex-direction: column; }
+      .client-panel.open { right: 0; }
+      .client-panel-header { padding: 22px 22px 12px; border-bottom: 1px solid rgba(51,51,51,.08); display: flex; justify-content: space-between; align-items: center; }
+      .client-panel-body { padding: 22px; overflow-y: auto; }
+      .panel-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
+      .panel-mini { border-radius: 16px; padding: 15px; background: var(--gray-light); }
+      .panel-mini small { color: rgba(51,51,51,.62); }
+      .panel-mini strong { display: block; margin-top: 5px; font-size: 1.2rem; }
+      .panel-box { border: 1px solid rgba(53,20,155,.08); border-radius: 18px; padding: 16px; background: linear-gradient(180deg, #ffffff, #faf6ff); }
+      .panel-box h4 { margin: 0 0 12px; }
+      .panel-box ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+      .panel-box li { display: flex; justify-content: space-between; border-radius: 12px; background: rgba(53,20,155,.03); padding: 10px 12px; }
+      .close-panel { width: 36px; height: 36px; border-radius: 10px; border: 1px solid rgba(51,51,51,.08); background: var(--gray-light); cursor: pointer; }
+      @media (max-width: 1100px) {
+        .nav { display: none; }
+        .menu-toggle { display: inline-grid; place-items: center; }
+        .hero-inner, .about-grid, .booking-grid, .contact-grid, .dashboard-grid, .footer-grid { grid-template-columns: 1fr; }
+        .services-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+        .shop-grid, .testimonials-grid, .blog-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+        .gallery-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      }
+      @media (max-width: 760px) {
+        .header-inner, .section-head, .hero-actions, .topbar-inner, .footer-bottom { flex-direction: column; align-items: flex-start; }
+        .services-grid, .shop-grid, .testimonials-grid, .blog-grid, .gallery-grid, .stats, .booking-form, .contact-form, .overview { grid-template-columns: 1fr; }
+        .header-tools { width: 100%; justify-content: space-between; }
+        .search-box { width: 100%; }
+        .hero { padding-top: 42px; }
+        .hero-image-wrap { position: relative; inset: unset; height: 440px; }
+        .floating-card { position: static; margin-top: 18px; max-width: none; }
+        .hero-visual { min-height: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="container topbar-inner">
+        <div class="topbar-links">
+          <span>📍 Rua das Flores, 128 - Vila Pet</span>
+          <span>☎ (11) 4000-2024</span>
+          <span>✉ atendimento@petcare.com.br</span>
+        </div>
+        <div class="topbar-links">
+          <a href="#dashboard">Área do cliente</a>
+          <a href="#contato">Atendimento</a>
+        </div>
+      </div>
+    </div>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="#top" class="brand">
+          <span>PetCare</span>
+        </a>
+        <nav class="nav" aria-label="Menu principal">
+          <a href="#top">Início</a>
+          <a href="#servicos">Serviços</a>
+          <a href="#loja">Loja</a>
+          <a href="#agendamentos">Agendamentos</a>
+          <a href="#sobre">Sobre Nós</a>
+          <a href="#contato">Contato</a>
+        </nav>
+        <div class="header-tools">
+          <label class="search-box" aria-label="Buscar no site">
+            <span>🔎</span>
+            <input id="searchInput" type="text" placeholder="Buscar" />
+          </label>
+          <a class="header-link" href="login.html">Entrar</a>
+          <a class="btn btn-soft" href="criar-conta.html">Criar conta</a>
+          <a class="btn btn-soft" href="dashboard-cliente.html" id="openDashboardBtn">Área do cliente</a>
+          <button class="btn btn-primary" id="ctaMainBtn">Agendar Agora</button>
+          <button class="btn menu-toggle" aria-label="Abrir menu">☰</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="container hero-inner">
+          <div>
+            <span class="eyebrow">Care profissional para pets de todas as idades</span>
+            <h1>O melhor cuidado para seu melhor amigo</h1>
+            <p>
+              Na PetCare, você encontra banho e tosa, consultas, vacinação, hospedagem,
+              creche e atenção especial para cada momento do seu pet. Tudo pensado para
+              oferecer saúde, conforto e alegria em cada visita.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#agendamentos">Agendar Consulta</a>
+              <a class="btn btn-soft" href="#servicos">Conhecer Serviços</a>
+            </div>
+            <div class="quick-actions">
+              <a class="quick-action-btn" href="dashboard-cliente.html" id="quickDashboardBtn" type="button">Dashboard</a>
+              <button class="quick-action-btn" id="quickAppointmentsBtn" type="button">Agendamentos</button>
+              <a class="quick-action-btn" href="banho-e-tosa.html" id="quickGroomingBtn" type="button">Banho e Tosa</a>
+              <button class="quick-action-btn" id="quickStockBtn" type="button">Estoque</button>
+            </div>
+            <ul class="hero-points">
+              <li><span class="point-badge">✓</span> O melhor atendimento</li>
+              <li><span class="point-badge">✓</span> Equipe experiente</li>
+              <li><span class="point-badge">✓</span> Ambiente seguro</li>
+            </ul>
+          </div>
+          <div class="hero-visual">
+            <div class="hero-image-wrap">
+              <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=1200&q=80" alt="Cachorro e gato felizes" />
+            </div>
+            <div class="floating-card">
+              <div class="floating-card-head">
+                <h3>Atendimento Premium</h3>
+                <span class="mini-tag">Disponível</span>
+              </div>
+              <div class="rating">★★★★★ <span>4.9/5</span></div>
+              <p style="margin: 12px 0 0; color: rgba(51,51,51,.72); line-height: 1.6;">Banho, tosa e acompanhamento veterinário sob a atenção de especialistas.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="account-access" id="acesso">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Acesso rápido</span>
+              <h2>Entre ou cadastre-se de forma simples</h2>
+            </div>
+            <p class="subtext">Uma experiência clara para qualquer usuário, com direção objetiva para entrar na conta ou criar uma nova jornada no PetCare.</p>
+          </div>
+
+          <div class="account-grid">
+            <div class="account-card">
+              <span class="eyebrow">Já é cliente</span>
+              <h3>Entrar na minha conta</h3>
+              <p>Veja agendamentos, histórico, promoções, fidelidade e tudo o que você precisa para acompanhar o cuidado do seu pet.</p>
+              <ul class="account-list">
+                <li>Meus agendamentos</li>
+                <li>Histórico de serviços</li>
+                <li>Benefícios e pontos</li>
+              </ul>
+              <a class="btn btn-primary" href="login.html">Entrar agora</a>
+            </div>
+
+            <div class="account-card">
+              <span class="eyebrow">Novo por aqui</span>
+              <h3>Criar uma conta</h3>
+              <p>Cadastre-se de forma rápida e comece a aproveitar a melhor experiência de atendimento, organização e cuidado do PetCare.</p>
+              <ul class="account-list">
+                <li>Cadastro em poucos passos</li>
+                <li>Perfil do pet e tutor</li>
+                <li>Primeiros benefícios</li>
+              </ul>
+              <a class="btn btn-soft" href="criar-conta.html">Criar conta</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="servicos">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Nossos serviços</span>
+              <h2>Atendimento completo para o seu pet</h2>
+            </div>
+            <p class="subtext">Soluções para saúde, higiene, bem-estar e conforto, com cuidado humano e tecnologia para chegar ao melhor resultado.</p>
+          </div>
+          <div class="services-grid">
+            <article class="service-card" data-service="Banho e Tosa">
+              <div class="service-icon">🛁</div>
+              <h3>Banho e Tosa</h3>
+              <p>Cuidados com higiene, hidratação e acabamento para manter seu pet lindo e confortável.</p>
+              <span class="pill">A partir de R$ 69</span>
+            </article>
+            <article class="service-card" data-service="Consulta Veterinária">
+              <div class="service-icon">🩺</div>
+              <h3>Consulta Veterinária</h3>
+              <p>Exames, avaliações e acompanhamento de rotina com atendimento humano e preciso.</p>
+              <span class="pill">A partir de R$ 89</span>
+            </article>
+            <article class="service-card" data-service="Vacinação">
+              <div class="service-icon">💉</div>
+              <h3>Vacinação</h3>
+              <p>Calendário completo para proteção preventiva e acompanhamento especializado.</p>
+              <span class="pill">A partir de R$ 120</span>
+            </article>
+            <article class="service-card" data-service="Hospedagem">
+              <div class="service-icon">🏠</div>
+              <h3>Hospedagem</h3>
+              <p>Ambiente seguro, tranquilo e monitorado para a estadia do seu pet em viagens.</p>
+              <span class="pill">A partir de R$ 49/dia</span>
+            </article>
+            <article class="service-card" data-service="Creche Pet">
+              <div class="service-icon">🦴</div>
+              <h3>Creche Pet</h3>
+              <p>Socialização, brincadeiras e atenção constante durante o dia com supervisão.</p>
+              <span class="pill">A partir de R$ 59/dia</span>
+            </article>
+            <article class="service-card" data-service="Emergência 24h">
+              <div class="service-icon">🚑</div>
+              <h3>Emergência 24h</h3>
+              <p>Suporte rápido para situações urgentes com equipe preparada e tecnologia.</p>
+              <span class="pill">Atendimento imediato</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="grooming" id="banho-e-tosa">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Banho e Tosa</span>
+              <h2>Sua rotina de cuidado com elegância</h2>
+            </div>
+            <p class="subtext">Serviços pensados para pets de pequeno e grande porte, combinando técnica, conforto e acabamento premium.</p>
+          </div>
+          <div class="grooming-grid">
+            <div class="grooming-panel">
+              <div class="grooming-image">
+                <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=1200&q=80" alt="Pet em banho e tosa" />
+              </div>
+            </div>
+            <div class="grooming-steps">
+              <div class="step-list">
+                <div class="step-item">
+                  <div class="step-number">1</div>
+                  <div>
+                    <h4>Banho suave</h4>
+                    <p>Produtos específicos para pele e pelos, com hidratação e conforto total.</p>
+                  </div>
+                  <div class="step-price">R$ 69</div>
+                </div>
+                <div class="step-item">
+                  <div class="step-number">2</div>
+                  <div>
+                    <h4>Tosa higiênica</h4>
+                    <p>Modelagem precisa para higiene, conforto e visual cuidado do seu pet.</p>
+                  </div>
+                  <div class="step-price">R$ 85</div>
+                </div>
+                <div class="step-item">
+                  <div class="step-number">3</div>
+                  <div>
+                    <h4>Hidratação e finalização</h4>
+                    <p>Finalização com produtos que deixam o pelo macio, brilhante e saudável.</p>
+                  </div>
+                  <div class="step-price">R$ 35</div>
+                </div>
+                <div class="step-item">
+                  <div class="step-number">4</div>
+                  <div>
+                    <h4>Pacotes mensais</h4>
+                    <p>Para quem quer manter o pet sempre limpo, com atendimento regular e descontos exclusivos.</p>
+                  </div>
+                  <div class="step-price">R$ 149</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="sobre">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Sobre a PetCare</span>
+              <h2>Um espaço pensado para pets e tutores</h2>
+            </div>
+            <p class="subtext">Somos uma equipe apaixonada por animais, com uma abordagem moderna, cuidadosa e profissional para cada etapa da vida pet.</p>
+          </div>
+          <div class="about-grid">
+            <div class="about-photo">
+              <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=80" alt="Equipe da PetCare" />
+            </div>
+            <div>
+              <p class="subtext" style="max-width: none;">A PetCare nasceu para unir tecnologia, acolhimento e excelência em serviços pet. Nosso time é formado por especialistas em banho e tosa, saúde e bem-estar animal, oferecendo um ambiente seguro, moderno e que respeita as necessidades de cada animal.</p>
+              <div class="stats">
+                <div class="stat"><strong>5.000+</strong><span>clientes atendidos</span></div>
+                <div class="stat"><strong>10 anos</strong><span>de experiência</span></div>
+                <div class="stat"><strong>98%</strong><span>satisfação</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="agendamentos">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Agendamento online</span>
+              <h2>Reserve o atendimento ideal para o seu pet</h2>
+            </div>
+            <p class="subtext">Organize seu horário em poucos passos e mantenha o histórico do seu pet sempre em dia.</p>
+          </div>
+          <div class="booking-grid">
+            <div class="booking-card">
+              <form class="booking-form" id="bookingForm">
+                <div class="field">
+                  <label for="service">Serviço</label>
+                  <select id="service" name="service" required>
+                    <option value="">Selecione</option>
+                    <option>Banho e Tosa</option>
+                    <option>Consulta Veterinária</option>
+                    <option>Vacinação</option>
+                    <option>Hospedagem</option>
+                    <option>Creche Pet</option>
+                    <option>Emergência 24h</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="petName">Nome do pet</label>
+                  <input id="petName" name="petName" type="text" placeholder="Ex: Thor" required />
+                </div>
+                <div class="field">
+                  <label for="date">Data</label>
+                  <input id="date" name="date" type="date" required />
+                </div>
+                <div class="field">
+                  <label for="time">Horário</label>
+                  <select id="time" name="time" required>
+                    <option value="">Selecione</option>
+                    <option>08:00</option>
+                    <option>09:30</option>
+                    <option>11:00</option>
+                    <option>13:30</option>
+                    <option>15:00</option>
+                    <option>17:30</option>
+                  </select>
+                </div>
+                <div class="field full">
+                  <label for="petType">Tipo do pet</label>
+                  <input id="petType" name="petType" type="text" placeholder="Cachorro, gato, outro" required />
+                </div>
+                <div class="field full">
+                  <label for="notes">Observações</label>
+                  <textarea id="notes" name="notes" placeholder="Nos conte alguma necessidade específica do seu pet..."></textarea>
+                </div>
+                <div class="field full" style="margin-top: 8px;">
+                  <button class="btn btn-primary" type="submit">Confirmar agendamento</button>
+                </div>
+              </form>
+            </div>
+            <aside class="booking-summary">
+              <h3>Resumo do serviço</h3>
+              <ul class="summary-list">
+                <li><span>Serviço</span><strong id="summaryService">-</strong></li>
+                <li><span>Data</span><strong id="summaryDate">-</strong></li>
+                <li><span>Horário</span><strong id="summaryTime">-</strong></li>
+                <li><span>Pacote</span><strong>Premium</strong></li>
+                <li><span>Valor</span><strong id="summaryPrice">R$ 0,00</strong></li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="loja">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Loja Pet</span>
+              <h2>Produtos escolhidos para o dia a dia</h2>
+            </div>
+            <p class="subtext">Rações, brinquedos, medicamentos e acessórios com qualidade e valor para sua rotina.</p>
+          </div>
+          <div class="shop-grid">
+            <article class="product-card" data-name="Ração Premium" data-category="Rações" data-price="129" data-image="https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=900&q=80" data-badge="Ração" data-description="Formulação completa para saúde, energia e sabor irresistível.">
+              <div class="product-image"><span class="product-badge">Ração</span><img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=900&q=80" alt="Ração premium" /></div>
+              <div class="product-body">
+                <h3>Ração Premium</h3>
+                <p>Formulação completa para saúde, energia e sabor irresistível.</p>
+                <div class="product-meta"><span class="price">R$ 129</span><button class="btn btn-primary add-to-cart" type="button">Comprar</button></div>
+              </div>
+            </article>
+            <article class="product-card" data-name="Brinquedo Interativo" data-category="Brinquedos" data-price="49" data-image="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=900&q=80" data-badge="Brinquedo" data-description="Durável, divertido e ideal para estimular a mente e o corpo.">
+              <div class="product-image"><span class="product-badge">Brinquedo</span><img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=900&q=80" alt="Brinquedo pet" /></div>
+              <div class="product-body">
+                <h3>Brinquedo Interativo</h3>
+                <p>Durável, divertido e ideal para estimular a mente e o corpo.</p>
+                <div class="product-meta"><span class="price">R$ 49</span><button class="btn btn-primary add-to-cart" type="button">Comprar</button></div>
+              </div>
+            </article>
+            <article class="product-card" data-name="Suplemento Vital" data-category="Remédios" data-price="87" data-image="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=80" data-badge="Saúde" data-description="Auxilia na saúde imunológica e no bem-estar geral do pet.">
+              <div class="product-image"><span class="product-badge">Saúde</span><img src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=80" alt="Medicamentos pet" /></div>
+              <div class="product-body">
+                <h3>Suplemento Vital</h3>
+                <p>Auxilia na saúde imunológica e no bem-estar geral do pet.</p>
+                <div class="product-meta"><span class="price">R$ 87</span><button class="btn btn-primary add-to-cart" type="button">Comprar</button></div>
+              </div>
+            </article>
+            <article class="product-card" data-name="Coleira Premium" data-category="Coleiras" data-price="59" data-image="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=900&q=80" data-badge="Acessório" data-description="Conforto e estilo com material resistente e fácil de limpar.">
+              <div class="product-image"><span class="product-badge">Acessório</span><img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=900&q=80" alt="Coleira pet" /></div>
+              <div class="product-body">
+                <h3>Coleira Premium</h3>
+                <p>Conforto e estilo com material resistente e fácil de limpar.</p>
+                <div class="product-meta"><span class="price">R$ 59</span><button class="btn btn-primary add-to-cart" type="button">Comprar</button></div>
+              </div>
+            </article>
+          </div>
+          <div class="catalog-footer" style="margin-top: 28px;">
+            <a class="btn btn-soft" href="loja.html">Ver mais</a>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Depoimentos</span>
+              <h2>Quem confia em nós recomenda</h2>
+            </div>
+            <p class="subtext">Histórias reais de tutores que encontraram carinho, qualidade e confiança na PetCare.</p>
+          </div>
+          <div class="testimonials-grid">
+            <article class="testimonial-card">
+              <div class="testimonial-head">
+                <img class="avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" alt="Cliente 1" />
+                <div><strong>Marina S.</strong><br /><small>Cliente PetCare</small></div>
+              </div>
+              <div class="stars">★★★★★</div>
+              <p>“O atendimento foi impecável. O banho e tosa deixaram meu cachorro com o pelo maravilhoso e o ambiente foi super acolhedor.”</p>
+            </article>
+            <article class="testimonial-card">
+              <div class="testimonial-head">
+                <img class="avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" alt="Cliente 2" />
+                <div><strong>Felipe R.</strong><br /><small>Cliente PetCare</small></div>
+              </div>
+              <div class="stars">★★★★★</div>
+              <p>“A PetCare tem uma estrutura incrível e o time é muito atento. Meu gato ficou em segurança durante a hospedagem e voltou tranquilo.”</p>
+            </article>
+            <article class="testimonial-card">
+              <div class="testimonial-head">
+                <img class="avatar" src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=200&q=80" alt="Cliente 3" />
+                <div><strong>Laura M.</strong><br /><small>Cliente PetCare</small></div>
+              </div>
+              <div class="stars">★★★★★</div>
+              <p>“Desde a consulta até o acompanhamento no app, tudo foi muito claro e organizado. Confiança total para o cuidado do meu pet.”</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Galeria</span>
+              <h2>Momentos especiais dos nossos pets</h2>
+            </div>
+            <p class="subtext">Cada foto representa a conexão, o cuidado e a dedicação que recebemos todos os dias.</p>
+          </div>
+          <div class="gallery-grid">
+            <div class="gallery-item tall"><img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=900&q=80" alt="Pet grande" /></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?auto=format&fit=crop&w=900&q=80" alt="Pet 2" /></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=900&q=80" alt="Pet 3" /></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=900&q=80" alt="Pet 4" /></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=900&q=80" alt="Pet 5" /></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1511044568932-338cba0ad803?auto=format&fit=crop&w=900&q=80" alt="Pet 6" /></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Blog</span>
+              <h2>Dicas úteis para o seu pet</h2>
+            </div>
+            <p class="subtext">Conteúdos práticos para cuidar melhor da saúde, alimentação e bem-estar do seu melhor amigo.</p>
+          </div>
+          <div class="blog-grid">
+            <article class="article-card">
+              <div class="article-image"><img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=900&q=80" alt="Dicas saúde" /></div>
+              <div class="article-body">
+                <div class="article-meta"><span>Saúde</span><span>18 Jan</span></div>
+                <h3>Como identificar sinais de estresse em pets</h3>
+                <p>Conheça os principais comportamentos que podem indicar desconforto e como agir com atenção.</p>
+                <a class="pill" href="#">Leia mais</a>
+              </div>
+            </article>
+            <article class="article-card">
+              <div class="article-image"><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=900&q=80" alt="Alimentação" /></div>
+              <div class="article-body">
+                <div class="article-meta"><span>Alimentação</span><span>8 Fev</span></div>
+                <h3>5 dicas para montar uma dieta equilibrada</h3>
+                <p>Veja como escolher alimentos, porções e suplementos para o dia a dia do seu pet com mais qualidade.</p>
+                <a class="pill" href="#">Leia mais</a>
+              </div>
+            </article>
+            <article class="article-card">
+              <div class="article-image"><img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=900&q=80" alt="Bem-estar" /></div>
+              <div class="article-body">
+                <div class="article-meta"><span>Bem-estar</span><span>12 Mar</span></div>
+                <h3>Como manter seu pet ativo e feliz em casa</h3>
+                <p>Descubra ideias simples para estimular brincadeiras, rotina e momentos de relaxamento no lar.</p>
+                <a class="pill" href="#">Leia mais</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="contato">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Contato</span>
+              <h2>Fale com a PetCare</h2>
+            </div>
+            <p class="subtext">Estamos prontos para atender com rapidez, carinho e eficiência para qualquer necessidade do seu pet.</p>
+          </div>
+          <div class="contact-grid">
+            <div class="contact-card">
+              <ul class="contact-list">
+                <li><div class="contact-icon">☎</div><div><strong>Telefone</strong><span>(11) 4000-2024</span></div></li>
+                <li><div class="contact-icon">💬</div><div><strong>WhatsApp</strong><span>(11) 99123-4567</span></div></li>
+                <li><div class="contact-icon">✉</div><div><strong>Email</strong><span>atendimento@petcare.com.br</span></div></li>
+                <li><div class="contact-icon">📍</div><div><strong>Endereço</strong><span>Rua das Flores, 128 - Vila Pet, São Paulo/SP</span></div></li>
+              </ul>
+            </div>
+            <div class="contact-card">
+              <form class="contact-form">
+                <div class="field"><label for="contactName">Nome</label><input id="contactName" type="text" placeholder="Seu nome" /></div>
+                <div class="field"><label for="contactEmail">Email</label><input id="contactEmail" type="email" placeholder="Seu email" /></div>
+                <div class="field full"><label for="contactSubject">Assunto</label><input id="contactSubject" type="text" placeholder="Como podemos ajudar?" /></div>
+                <div class="field full"><label for="contactMessage">Mensagem</label><textarea id="contactMessage" placeholder="Escreva sua mensagem..."></textarea></div>
+                <div class="field full" style="margin-top: 8px;"><button class="btn btn-primary" type="button">Enviar mensagem</button></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-shell" id="dashboard">
+        <div class="container">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Dashboard</span>
+              <h2>Visão geral do seu espaço PetCare</h2>
+            </div>
+            <p class="subtext">Acompanhe agendamentos, benefícios e relacionamento com seu pet em um painel organizado.</p>
+          </div>
+          <div class="dashboard-grid">
+            <div class="dashboard-card">
+              <div class="overview">
+                <div class="overview-item"><small>Próximo agendamento</small><strong>12/09</strong></div>
+                <div class="overview-item"><small>Pets cadastrados</small><strong>03</strong></div>
+                <div class="overview-item"><small>Cupons ativos</small><strong>02</strong></div>
+                <div class="overview-item"><small>Pontos</small><strong>580</strong></div>
+              </div>
+              <ul class="appointments-list" id="appointmentsList">
+                <li>
+                  <div class="appointment-date">12 <small>SET</small></div>
+                  <div>
+                    <h4 style="margin:0 0 4px;">Banho e Tosa - Thor</h4>
+                    <p style="margin:0; color: rgba(51,51,51,.7);">08:30 — Atendimento Premium</p>
+                  </div>
+                  <span class="status-badge confirmed">Confirmado</span>
+                </li>
+                <li>
+                  <div class="appointment-date">15 <small>SET</small></div>
+                  <div>
+                    <h4 style="margin:0 0 4px;">Consulta Veterinária - Luna</h4>
+                    <p style="margin:0; color: rgba(51,51,51,.7);">11:00 — Revisão de rotina</p>
+                  </div>
+                  <span class="status-badge pending">Pendente</span>
+                </li>
+              </ul>
+            </div>
+            <div class="dashboard-card">
+              <div class="loyalty-box">
+                <h3 style="margin: 0 0 10px;">Programa de fidelidade</h3>
+                <p style="margin:0; color: rgba(255,255,255,.8);">Você está a 78% da próxima recompensa.</p>
+                <div class="reward-progress"><span></span></div>
+                <div style="display:flex; justify-content:space-between; font-size:.85rem; opacity:.8;">
+                  <span>420 pts</span><span>580 pts</span>
+                </div>
+              </div>
+              <ul class="mini-list">
+                <li><span>Cupons</span><strong>2 ativos</strong></li>
+                <li><span>Promoções</span><strong>3 novas</strong></li>
+                <li><span>Chat online</span><strong>Disponível</strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <div class="footer-brand">
+              <span class="footer-logo">P</span>
+              <span>PetCare</span>
+            </div>
+            <p style="line-height:1.8; max-width:360px; margin:0;">O cuidado profissional que seu pet merece, com conforto, saúde e carinho em cada detalhe.</p>
+          </div>
+          <div>
+            <h4>Links rápidos</h4>
+            <ul class="footer-links">
+              <li><a href="#servicos">Serviços</a></li>
+              <li><a href="#loja">Loja</a></li>
+              <li><a href="#agendamentos">Agendamentos</a></li>
+              <li><a href="#sobre">Sobre</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Informações</h4>
+            <ul class="footer-links">
+              <li><a href="#contato">Contato</a></li>
+              <li><a href="#dashboard">Área do cliente</a></li>
+              <li><a href="#">Promoções</a></li>
+              <li><a href="#">Política de privacidade</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Redes sociais</h4>
+            <ul class="socials">
+              <li>IG</li>
+              <li>FB</li>
+              <li>YT</li>
+              <li>WA</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>© <span id="currentYear"></span> PetCare. Todos os direitos reservados.</span>
+          <span>Feito para pets e tutores que valorizam qualidade.</span>
+        </div>
+      </div>
+    </footer>
+
+    <button class="whatsapp-float" aria-label="WhatsApp">💬</button>
+
+    <div class="chat-widget" id="chatWidget">
+      <div class="chat-header">
+        <strong>Atendimento PetCare</strong>
+        <button class="close-panel" id="closeChatBtn" aria-label="Fechar chat">✕</button>
+      </div>
+      <div class="chat-body">
+        <div class="chat-message">Olá! Posso ajudar com banho e tosa, consulta, hospedagem ou loja pet. Como posso te ajudar hoje?</div>
+        <div class="chat-actions">
+          <button type="button">Banho e Tosa</button>
+          <button type="button">Agendar</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="client-panel" id="clientPanel">
+      <div class="client-panel-header">
+        <h3 style="margin:0;">Painel do cliente</h3>
+        <button class="close-panel" id="closePanelBtn" aria-label="Fechar painel">✕</button>
+      </div>
+      <div class="client-panel-body">
+        <div class="panel-grid">
+          <div class="panel-mini"><small>Agendamentos</small><strong>04</strong></div>
+          <div class="panel-mini"><small>Cupons</small><strong>02</strong></div>
+          <div class="panel-mini"><small>Pontos</small><strong>580</strong></div>
+          <div class="panel-mini"><small>Pets</small><strong>03</strong></div>
+        </div>
+        <div class="panel-box">
+          <h4>Últimos serviços</h4>
+          <ul>
+            <li><span>Banho e Tosa</span><strong>Thor</strong></li>
+            <li><span>Consulta</span><strong>Luna</strong></li>
+            <li><span>Creche</span><strong>Max</strong></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <div class="toast" id="toast">Agendamento confirmado com sucesso!</div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

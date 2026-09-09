@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PetCare | Criar conta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --purple: #35149b;
+        --purple-dark: #241062;
+        --orange: #ff6600;
+        --white: #ffffff;
+        --gray-light: #f5f5f5;
+        --gray-mid: #e7e7e7;
+        --gray-dark: #333333;
+        --success: #2fbf71;
+        --shadow: 0 18px 40px rgba(53, 20, 155, 0.12);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f6f1ff 0%, #ffffff 55%, #fff3ea 100%);
+        color: var(--gray-dark);
+      }
+      a { color: inherit; text-decoration: none; }
+      button, input, select { font: inherit; }
+      img { max-width: 100%; display: block; }
+      .container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+
+      .topbar {
+        background: var(--purple);
+        color: rgba(255,255,255,.85);
+        padding: 10px 0;
+        font-size: .8rem;
+      }
+      .topbar-inner, .header-inner, .footer-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+      .topbar-inner { flex-wrap: wrap; }
+      .topbar-links { display: flex; gap: 18px; flex-wrap: wrap; }
+
+      .site-header {
+        background: rgba(255,255,255,.85);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid rgba(53,20,155,.08);
+      }
+      .header-inner { min-height: 82px; }
+      .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; }
+      .brand-mark {
+        width: auto;
+        height: auto;
+        border-radius: 0;
+        background: transparent;
+        color: var(--purple);
+        display: grid;
+        place-items: center;
+        box-shadow: none;
+        font-size: 1.5rem;
+        line-height: 1;
+      }
+      .brand-mark svg {
+        width: 38px;
+        height: 38px;
+        display: block;
+      }
+      .nav { display: flex; align-items: center; gap: 26px; font-size: .96rem; }
+      .nav a { color: var(--gray-dark); font-weight: 500; }
+      .header-tools { display: flex; align-items: center; gap: 14px; }
+      .btn {
+        border: 0;
+        border-radius: 14px;
+        padding: .9rem 1.3rem;
+        min-height: 46px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform .2s ease, box-shadow .2s ease;
+      }
+      .btn:hover { transform: translateY(-1px); }
+      .btn-primary {
+        background: linear-gradient(135deg, var(--orange), #ff8b3d);
+        color: var(--white);
+        box-shadow: 0 12px 22px rgba(255,102,0,.28);
+      }
+      .btn-soft {
+        background: var(--gray-light);
+        color: var(--purple);
+        border: 1px solid rgba(53,20,155,.08);
+      }
+
+      .auth-shell {
+        padding: 54px 0 80px;
+      }
+      .auth-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.1fr;
+        gap: 28px;
+        align-items: stretch;
+      }
+      .auth-hero,
+      .auth-card {
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+      .auth-hero {
+        position: relative;
+        background: linear-gradient(160deg, #1f113f 0%, #321286 45%, #5a2df0 100%);
+        color: var(--white);
+        padding: 42px;
+      }
+      .auth-hero::before,
+      .auth-hero::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255,255,255,.08);
+      }
+      .auth-hero::before {
+        width: 240px;
+        height: 240px;
+        top: -60px;
+        right: -20px;
+      }
+      .auth-hero::after {
+        width: 210px;
+        height: 210px;
+        bottom: -50px;
+        left: -30px;
+      }
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.2);
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: .8rem;
+        font-weight: 700;
+        width: fit-content;
+      }
+      h1 {
+        margin: 24px 0 18px;
+        font-size: clamp(2rem, 3vw, 3.2rem);
+        line-height: 1.05;
+        letter-spacing: -.06em;
+      }
+      .hero-text {
+        margin: 0;
+        max-width: 500px;
+        color: rgba(255,255,255,.84);
+        line-height: 1.7;
+      }
+      .check-list {
+        list-style: none;
+        padding: 0;
+        margin: 32px 0 0;
+        display: grid;
+        gap: 16px;
+      }
+      .check-list li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 16px;
+        padding: 14px 16px;
+      }
+      .check-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: grid;
+        place-items: center;
+        background: rgba(255,255,255,.12);
+        font-weight: 900;
+      }
+      .check-list strong { display: block; margin-bottom: 3px; }
+      .check-list span { color: rgba(255,255,255,.74); }
+
+      .auth-card {
+        background: rgba(255,255,255,.96);
+        border: 1px solid rgba(53,20,155,.08);
+        padding: 34px;
+      }
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .card-title h2 {
+        margin: 0;
+        font-size: clamp(1.6rem, 2vw, 2.1rem);
+        letter-spacing: -.04em;
+      }
+      .card-title p {
+        margin: 8px 0 0;
+        color: rgba(51,51,51,.7);
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(53,20,155,.08);
+        color: var(--purple);
+        font-size: .76rem;
+        font-weight: 700;
+      }
+      .form-grid { display: grid; gap: 18px; }
+      .form-row { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+      .field { display: grid; gap: 8px; }
+      label {
+        font-weight: 600;
+        font-size: .94rem;
+      }
+      input, select {
+        width: 100%;
+        border: 1px solid rgba(51,51,51,.12);
+        border-radius: 14px;
+        background: #fafafa;
+        padding: .9rem 1rem;
+        outline: none;
+      }
+      input:focus, select:focus {
+        border-color: rgba(53,20,155,.45);
+        box-shadow: 0 0 0 4px rgba(53,20,155,.08);
+      }
+      .submit-btn {
+        width: 100%;
+        border: 0;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--orange), #ff8b3d);
+        color: var(--white);
+        font-weight: 700;
+        padding: 1rem 1.25rem;
+        cursor: pointer;
+        box-shadow: 0 14px 24px rgba(255,102,0,.24);
+      }
+      .terms {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        color: rgba(51,51,51,.72);
+        font-size: .9rem;
+        line-height: 1.6;
+      }
+      .terms input { width: auto; margin-top: 4px; }
+      .card-footer {
+        margin-top: 24px;
+        text-align: center;
+        color: rgba(51,51,51,.72);
+      }
+      .card-footer a {
+        color: var(--purple);
+        font-weight: 700;
+      }
+
+      footer {
+        background: #1a1235;
+        color: rgba(255,255,255,.8);
+        padding: 28px 0;
+      }
+      .footer-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+
+      @media (max-width: 980px) {
+        .auth-grid { grid-template-columns: 1fr; }
+      }
+
+      @media (max-width: 760px) {
+        .nav { display: none; }
+        .topbar-inner, .header-inner, .footer-bottom { flex-direction: column; align-items: flex-start; }
+        .header-tools { width: 100%; justify-content: space-between; }
+        .auth-card { padding: 24px; }
+        .form-row { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="container topbar-inner">
+        <div class="topbar-links">
+          <span>📍 Rua das Flores, 128 - Vila Pet</span>
+          <span>☎ (11) 4000-2024</span>
+          <span>✉ atendimento@petcare.com.br</span>
+        </div>
+        <div class="topbar-links">
+          <a href="index.html#contato">Atendimento</a>
+          <a href="banho-e-tosa.html">Banho e Tosa</a>
+        </div>
+      </div>
+    </div>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="index.html" class="brand">
+          <span>PetCare</span>
+        </a>
+        <nav class="nav" aria-label="Menu principal">
+          <a href="index.html">Início</a>
+          <a href="index.html#servicos">Serviços</a>
+          <a href="index.html#loja">Loja</a>
+          <a href="banho-e-tosa.html">Banho e Tosa</a>
+          <a href="index.html#contato">Contato</a>
+        </nav>
+        <div class="header-tools">
+          <a class="btn btn-soft" href="login.html">Entrar</a>
+          <a class="btn btn-primary" href="criar-conta.html">Criar conta</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="auth-shell">
+      <div class="container auth-grid">
+        <section class="auth-hero">
+          <div class="hero-inner">
+            <div>
+              <span class="hero-badge">PetCare • Nova conta</span>
+              <h1>Crie sua conta e aproveite tudo que o PetCare tem a oferecer.</h1>
+              <p class="hero-text">Cadastre-se para acessar seu painel, agendar serviços, acompanhar pets, receber recomendações personalizadas e aproveitar benefícios exclusivos.</p>
+            </div>
+
+            <ul class="check-list">
+              <li>
+                <span class="check-icon">✓</span>
+                <div>
+                  <strong>Cadastro rápido</strong>
+                  <span>Em poucos passos você já começa a usar a plataforma.</span>
+                </div>
+              </li>
+              <li>
+                <span class="check-icon">★</span>
+                <div>
+                  <strong>Benefícios para clientes</strong>
+                  <span>Acompanhe pontos, agendamentos e promoções em um só lugar.</span>
+                </div>
+              </li>
+              <li>
+                <span class="check-icon">⚡</span>
+                <div>
+                  <strong>Experiência profissional</strong>
+                  <span>Interface moderna e intuitiva, pensada para facilitar o uso.</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="auth-card">
+          <div class="card-head">
+            <div class="card-title">
+              <h2>Criar conta</h2>
+              <p>Preencha os dados abaixo para começar.</p>
+            </div>
+            <span class="chip">Grátis</span>
+          </div>
+
+          <form class="form-grid" id="createAccountForm">
+            <div class="form-row">
+              <div class="field">
+                <label for="nome">Nome</label>
+                <input id="nome" type="text" placeholder="Seu nome completo" />
+              </div>
+              <div class="field">
+                <label for="sobrenome">Sobrenome</label>
+                <input id="sobrenome" type="text" placeholder="Seu sobrenome" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="registerEmail">E-mail</label>
+              <input id="registerEmail" type="email" placeholder="seuemail@petcare.com.br" />
+            </div>
+
+            <div class="field">
+              <label for="tipo">Tipo de conta</label>
+              <select id="tipo">
+                <option>Cliente</option>
+                <option>Pet tutor</option>
+                <option>Parceiro</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="senha">Senha</label>
+                <input id="senha" type="password" placeholder="Crie uma senha" />
+              </div>
+              <div class="field">
+                <label for="confirmarSenha">Confirmar senha</label>
+                <input id="confirmarSenha" type="password" placeholder="Repita a senha" />
+              </div>
+            </div>
+
+            <label class="terms">
+              <input id="termsCheckbox" type="checkbox" />
+              <span>Li e concordo com os <a class="link-inline" href="#">termos de uso</a> e a <a class="link-inline" href="#">política de privacidade</a>.</span>
+            </label>
+
+            <button class="submit-btn" type="submit">Criar conta</button>
+          </form>
+
+          <div class="card-footer">
+            Já tem uma conta? <a href="login.html">Faça login</a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container footer-bottom">
+        <span>© 2026 PetCare. Todos os direitos reservados.</span>
+        <span>Feito para pets e tutores que valorizam qualidade.</span>
+      </div>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>
