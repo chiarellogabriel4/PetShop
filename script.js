@@ -141,7 +141,116 @@ function getCurrentUser() {
 }
 
 function saveCurrentUser(user) {
-  localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+  const normalizedUser = {
+    ...user,
+    name: user.name || user.email || 'Usuário',
+    avatar: user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.email || 'Usuário')}&background=35149b&color=fff&size=128`
+  };
+
+  localStorage.setItem(SESSION_KEY, JSON.stringify(normalizedUser));
+  renderUserProfileChip();
+}
+
+function injectUserProfileStyles() {
+  if (document.getElementById('petcare-user-profile-styles')) {
+    return;
+  }
+
+  const style = document.createElement('style');
+  style.id = 'petcare-user-profile-styles';
+  style.textContent = `
+    .user-profile-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      padding: 0;
+      border-radius: 50%;
+      background: rgba(53, 20, 155, 0.08);
+      border: 1px solid rgba(53, 20, 155, 0.12);
+      color: var(--purple);
+      font-weight: 700;
+      transition: transform .2s ease, box-shadow .2s ease;
+      box-shadow: 0 8px 18px rgba(53, 20, 155, 0.05);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .user-profile-chip--guest {
+      background: #f3f3f3;
+      border-color: rgba(51, 51, 51, 0.08);
+      color: var(--gray-dark);
+      box-shadow: none;
+    }
+    .user-profile-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(53, 20, 155, 0.18);
+      background: #fff;
+      display: block;
+      min-width: 52px;
+      min-height: 52px;
+    }
+    .user-profile-avatar--guest {
+      padding: 8px;
+      background: rgba(53, 20, 155, 0.06);
+      border-color: rgba(51, 51, 51, 0.08);
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function renderUserProfileChip() {
+  injectUserProfileStyles();
+
+  const headerTools = document.querySelector('.header-tools');
+  if (!headerTools) {
+    return;
+  }
+
+  let chip = document.getElementById('userProfileChip');
+
+  if (!chip) {
+    chip = document.createElement('div');
+    chip.id = 'userProfileChip';
+    headerTools.appendChild(chip);
+  }
+
+  const currentUser = getCurrentUser();
+
+  if (!currentUser || !currentUser.name) {
+    chip.className = 'user-profile-chip user-profile-chip--guest';
+    chip.innerHTML = `
+      <svg class="user-profile-avatar user-profile-avatar--guest" viewBox="0 0 64 64" aria-label="Usuário" role="img" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="32" fill="currentColor" opacity="0.08"/>
+        <circle cx="32" cy="24" r="10" fill="currentColor" opacity="0.75"/>
+        <path d="M18 49c4-7 12-10 14-10s10 3 14 10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity="0.85"/>
+      </svg>
+    `;
+    return;
+  }
+
+  chip.className = 'user-profile-chip';
+
+  const safeName = currentUser.name.replace(/[<>]/g, '');
+
+  if (currentUser.avatar) {
+    chip.innerHTML = `
+      <img class="user-profile-avatar" src="${currentUser.avatar}" alt="${safeName}" />
+    `;
+    return;
+  }
+
+  chip.innerHTML = `
+    <svg class="user-profile-avatar user-profile-avatar--guest" viewBox="0 0 64 64" aria-label="Usuário" role="img" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="32" cy="32" r="32" fill="currentColor" opacity="0.08"/>
+      <circle cx="32" cy="24" r="10" fill="currentColor" opacity="0.75"/>
+      <path d="M18 49c4-7 12-10 14-10s10 3 14 10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity="0.85"/>
+    </svg>
+  `;
 }
 
 function getCartItems() {
@@ -342,7 +451,8 @@ function handleSocialAuth(event) {
       id: existingSocialUser.id,
       name: existingSocialUser.name,
       email: existingSocialUser.email,
-      provider: existingSocialUser.provider
+      provider: existingSocialUser.provider,
+      avatar: existingSocialUser.avatar || ''
     });
 
     showToast(`Bem-vindo de volta com ${provider}!`);
@@ -353,7 +463,8 @@ function handleSocialAuth(event) {
       surname: '',
       email: `${provider.toLowerCase()}-${Date.now()}@petcare.com.br`,
       password: `social-${provider.toLowerCase()}-${Date.now()}`,
-      provider
+      provider,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(`Usuário ${provider}`)}&background=35149b&color=fff&size=128`
     };
 
     users.push(newUser);
@@ -362,7 +473,8 @@ function handleSocialAuth(event) {
       id: newUser.id,
       name: newUser.name,
       email: newUser.email,
-      provider: newUser.provider
+      provider: newUser.provider,
+      avatar: newUser.avatar || ''
     });
 
     showToast(`Conta criada com ${provider} com sucesso!`);
@@ -495,7 +607,8 @@ function handleLogin(event) {
   saveCurrentUser({
     id: user.id,
     name: user.name,
-    email: user.email
+    email: user.email,
+    avatar: user.avatar || ''
   });
 
   showToast('Login realizado com sucesso!');
@@ -557,7 +670,8 @@ function handleCreateAccount(event) {
     name,
     surname,
     email,
-    password
+    password,
+    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=35149b&color=fff&size=128`
   };
 
   users.push(user);
@@ -565,7 +679,8 @@ function handleCreateAccount(event) {
   saveCurrentUser({
     id: user.id,
     name: user.name,
-    email: user.email
+    email: user.email,
+    avatar: user.avatar || ''
   });
 
   showToast('Conta criada com sucesso!');
@@ -793,3 +908,4 @@ registerDashboardGreeting();
 updateSummary();
 setupCartInteractions();
 renderCart();
+renderUserProfileChip();

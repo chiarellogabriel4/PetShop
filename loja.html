@@ -77,9 +77,33 @@
         height: 38px;
         display: block;
       }
-      .nav { display: flex; align-items: center; gap: 26px; font-size: .96rem; }
-      .nav a { color: var(--gray-dark); font-weight: 500; }
-      .header-tools { display: flex; align-items: center; gap: 14px; }
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: .92rem;
+        padding: 6px 8px;
+        border-radius: 999px;
+        background: rgba(53,20,155,.02);
+        border: 1px solid rgba(53,20,155,.06);
+      }
+      .nav a {
+        color: var(--gray-dark);
+        font-weight: 600;
+        padding: 8px 12px;
+        border-radius: 999px;
+        transition: background .2s ease, color .2s ease, transform .2s ease;
+      }
+      .nav a:hover {
+        background: rgba(53,20,155,.08);
+        color: var(--purple);
+        transform: translateY(-1px);
+      }
+      .header-tools {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
       .btn {
         border: 0;
