@@ -33,6 +33,7 @@ const quickGroomingBtn = document.getElementById('quickGroomingBtn');
 const quickStockBtn = document.getElementById('quickStockBtn');
 const loginForm = document.getElementById('loginForm');
 const createAccountForm = document.getElementById('createAccountForm');
+const socialButtons = document.querySelectorAll('.social-btn');
 const dashboardWelcome = document.getElementById('dashboardWelcome');
 const cartToggle = document.getElementById('cartToggle');
 const cartOverlay = document.getElementById('cartOverlay');
@@ -323,6 +324,53 @@ function showToast(message) {
   }
 
   window.alert(message);
+}
+
+function handleSocialAuth(event) {
+  const button = event.currentTarget;
+  const provider = button.dataset.provider || button.textContent.trim();
+
+  if (!provider) {
+    return;
+  }
+
+  const users = getUsers();
+  const existingSocialUser = users.find(user => user.provider === provider);
+
+  if (existingSocialUser) {
+    saveCurrentUser({
+      id: existingSocialUser.id,
+      name: existingSocialUser.name,
+      email: existingSocialUser.email,
+      provider: existingSocialUser.provider
+    });
+
+    showToast(`Bem-vindo de volta com ${provider}!`);
+  } else {
+    const newUser = {
+      id: Date.now(),
+      name: `Usuário ${provider}`,
+      surname: '',
+      email: `${provider.toLowerCase()}-${Date.now()}@petcare.com.br`,
+      password: `social-${provider.toLowerCase()}-${Date.now()}`,
+      provider
+    };
+
+    users.push(newUser);
+    saveUsers(users);
+    saveCurrentUser({
+      id: newUser.id,
+      name: newUser.name,
+      email: newUser.email,
+      provider: newUser.provider
+    });
+
+    showToast(`Conta criada com ${provider} com sucesso!`);
+  }
+
+  setTimeout(() => {
+    window.location.href = 'dashboard-cliente.html';
+  }, 300);
 }
 
 function renderCatalogProducts(filter = 'todos') {
@@ -732,6 +780,12 @@ if (loginForm) {
 
 if (createAccountForm) {
   createAccountForm.addEventListener('submit', handleCreateAccount);
+}
+
+if (socialButtons.length) {
+  socialButtons.forEach(button => {
+    button.addEventListener('click', handleSocialAuth);
+  });
 }
 
 setupCatalogFilters();
