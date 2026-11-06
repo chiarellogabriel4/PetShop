@@ -336,7 +336,7 @@ function renderCart() {
   cartEmpty.style.display = 'none';
   cartItemsList.innerHTML = items.map((item, index) => `
     <li class="cart-item">
-      <img src="${item.image}" alt="${item.name}" />
+      <img src="${item.image}" alt="${item.name}" loading="lazy" decoding="async" />
       <div>
         <h4>${item.name}</h4>
         <p>${item.category}</p>
@@ -500,7 +500,7 @@ function renderCatalogProducts(filter = 'todos') {
     <article class="product-card" style="animation-delay:${index * 60}ms;">
       <div class="product-image">
         <span class="product-badge">${product.badge}</span>
-        <img src="${product.image}" alt="${product.name}" />
+        <img src="${product.image}" alt="${product.name}" loading="lazy" decoding="async" />
       </div>
       <div class="product-body">
         <h3>${product.name}</h3>
