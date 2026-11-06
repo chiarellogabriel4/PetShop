@@ -359,10 +359,37 @@
 
       @media (max-width: 760px) {
         .nav { display: none; }
-        .topbar-inner, .header-inner, .footer-bottom { flex-direction: column; align-items: flex-start; }
-        .header-tools { width: 100%; justify-content: space-between; }
-        .auth-card { padding: 24px; }
+        .topbar-inner { justify-content: center; }
+        .topbar-inner > .topbar-links:first-child { display: none; }
+        .header-inner { flex-direction: column; align-items: flex-start; padding-block: 12px; }
+        .header-tools { width: 100%; justify-content: flex-start; }
+        .header-tools .btn-primary { display: none; }
+        .footer-bottom { flex-direction: column; align-items: flex-start; }
+        .auth-shell { padding: 24px 0 48px; }
+        .auth-grid { gap: 18px; }
+        .auth-grid > * { min-width: 0; }
+        .auth-card { order: -1; padding: 24px; border-radius: 24px; }
+        .auth-hero { padding: 28px 24px; border-radius: 24px; }
+        .hero-inner { gap: 24px; }
+        .check-list { margin-top: 24px; gap: 12px; }
+        .check-list li { padding: 12px; }
+        input, select { min-height: 48px; font-size: 16px; }
+        .terms input { min-height: 18px; width: 18px; flex: 0 0 18px; }
+        .submit-btn, .social-btn { min-height: 48px; }
         .form-row { grid-template-columns: 1fr; }
+      }
+
+      @media (max-width: 420px) {
+        .container { width: calc(100% - 24px); }
+        .auth-shell { padding-top: 16px; }
+        .auth-card { padding: 20px 16px; }
+        .card-head { align-items: flex-start; gap: 10px; }
+        .card-title p { font-size: .92rem; }
+        .chip { flex-shrink: 0; }
+        .form-grid { gap: 16px; }
+        .form-row { gap: 16px; }
+        .auth-hero { padding: 24px 20px; }
+        h1 { font-size: clamp(1.8rem, 8vw, 2.2rem); }
       }
     </style>
     <link rel="stylesheet" href="visual.css" />
