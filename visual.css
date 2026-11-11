@@ -117,6 +117,133 @@ body {
 .booking-page-section .booking-summary {
   position: sticky;
   top: 110px;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.booking-page-section .booking-summary::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(230px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(177, 231, 255, 0.34), rgba(139, 111, 255, 0.18) 42%, transparent 78%);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 280ms ease;
+}
+
+.booking-page-section .booking-summary.is-pointer-active::before {
+  opacity: 1;
+}
+
+.booking-summary-shapes {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.booking-summary-shapes span {
+  position: absolute;
+  display: block;
+  pointer-events: auto;
+}
+
+.booking-summary-orb {
+  top: -82px;
+  right: -72px;
+  width: 210px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.025) 68%, transparent 72%);
+  animation: booking-orb-drift 14s ease-in-out infinite alternate;
+}
+
+.booking-summary-ring {
+  top: 34px;
+  right: 24px;
+  width: 132px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  box-shadow: 0 0 0 12px rgba(255, 255, 255, 0.025), inset 0 0 0 10px rgba(255, 255, 255, 0.025);
+  animation: booking-ring-drift 11s ease-in-out infinite alternate;
+}
+
+.booking-summary-diamond {
+  right: 38px;
+  bottom: 34px;
+  width: 34px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  animation: booking-diamond-float 8s ease-in-out infinite;
+}
+
+@media (hover: hover) {
+  .booking-summary-shapes span {
+    transition: border-color 220ms ease, background 220ms ease, box-shadow 220ms ease, filter 220ms ease;
+  }
+
+  .booking-summary-orb:hover {
+    border-color: rgba(255, 255, 255, 0.72);
+    background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.38), rgba(160, 220, 255, 0.12) 68%, transparent 72%);
+    filter: drop-shadow(0 0 16px rgba(170, 220, 255, 0.68));
+  }
+
+  .booking-summary-ring:hover {
+    border-color: rgba(255, 255, 255, 0.74);
+    box-shadow: 0 0 18px rgba(170, 220, 255, 0.48), 0 0 0 12px rgba(255, 255, 255, 0.08), inset 0 0 0 10px rgba(255, 255, 255, 0.08);
+  }
+
+  .booking-summary-diamond:hover {
+    border-color: rgba(255, 255, 255, 0.9);
+    background: rgba(190, 230, 255, 0.3);
+    box-shadow: 0 0 22px rgba(170, 220, 255, 0.72);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .booking-summary-shapes span {
+    transition: none;
+  }
+}
+
+.booking-summary > :not(.booking-summary-shapes) {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes booking-orb-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(0.96);
+  }
+  to {
+    transform: translate3d(-12px, 10px, 0) scale(1.04);
+  }
+}
+
+@keyframes booking-ring-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-9px, 13px, 0);
+  }
+}
+
+@keyframes booking-diamond-float {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(45deg);
+  }
+  50% {
+    transform: translate3d(-7px, -10px, 0) rotate(58deg);
+  }
 }
 
 .booking-note {

@@ -13,6 +13,7 @@ const summaryService = document.getElementById('summaryService');
 const summaryDate = document.getElementById('summaryDate');
 const summaryTime = document.getElementById('summaryTime');
 const summaryPrice = document.getElementById('summaryPrice');
+const bookingSummary = document.querySelector('.booking-summary');
 const toast = document.getElementById('toast');
 const serviceCards = document.querySelectorAll('.service-card');
 const addToCartButtons = document.querySelectorAll('.add-to-cart');
@@ -727,6 +728,21 @@ if (dateInput) {
 
 if (timeSelect) {
   timeSelect.addEventListener('change', updateSummary);
+}
+
+if (bookingSummary) {
+  bookingSummary.addEventListener('pointermove', event => {
+    if (event.pointerType === 'touch') return;
+
+    const bounds = bookingSummary.getBoundingClientRect();
+    bookingSummary.style.setProperty('--pointer-x', `${event.clientX - bounds.left}px`);
+    bookingSummary.style.setProperty('--pointer-y', `${event.clientY - bounds.top}px`);
+    bookingSummary.classList.add('is-pointer-active');
+  });
+
+  bookingSummary.addEventListener('pointerleave', () => {
+    bookingSummary.classList.remove('is-pointer-active');
+  });
 }
 
 if (bookingForm) {
