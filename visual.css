@@ -15,6 +15,175 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  transition:
+    opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@keyframes hero-copy-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes hero-image-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.hero .hero-inner > div:first-child > * {
+  animation: hero-copy-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero .hero-inner > div:first-child > *:nth-child(2) {
+  animation-delay: 70ms;
+}
+
+.hero .hero-inner > div:first-child > *:nth-child(3) {
+  animation-delay: 140ms;
+}
+
+.hero .hero-inner > div:first-child > *:nth-child(4) {
+  animation-delay: 210ms;
+}
+
+.hero .hero-visual {
+  animation: hero-image-enter 900ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
+}
+
+.shopping-help {
+  margin: 0 0 20px;
+  color: rgba(51, 51, 51, 0.72);
+}
+
+.booking-page-intro {
+  padding: clamp(44px, 6vw, 72px) 0 16px;
+  text-align: center;
+}
+
+.booking-page-intro .container {
+  max-width: 760px;
+}
+
+.booking-page-intro h1 {
+  margin: 18px 0 12px;
+  font-size: clamp(2.2rem, 4vw, 3.8rem);
+  line-height: 1.04;
+}
+
+.booking-page-intro p {
+  max-width: 600px;
+  margin: 0 auto;
+  color: rgba(51, 51, 51, 0.72);
+}
+
+.booking-page-section {
+  padding: 20px 0 72px;
+}
+
+.booking-page-section .container {
+  width: min(1040px, calc(100% - 32px));
+}
+
+.booking-page-section .booking-grid {
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+  align-items: start;
+}
+
+.booking-page-section .booking-form button {
+  width: 100%;
+}
+
+.booking-page-section .booking-summary {
+  position: sticky;
+  top: 110px;
+}
+
+.booking-note {
+  margin: 20px 0 0;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.88rem;
+}
+
+#loja .shop-grid {
+  align-items: stretch;
+}
+
+#loja .product-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+#loja .product-body {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+#loja .product-meta {
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+#loja .product-meta .price {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+#loja .product-meta .btn {
+  min-width: 0;
+  min-height: 58px;
+  flex: 1 1 0;
+  padding: 0.7rem 0.55rem;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 120;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: rgba(31, 31, 31, 0.95);
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(12px);
+  transition: all 0.25s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 .topbar {
   background: linear-gradient(110deg, var(--purple-dark), var(--purple));
 }
@@ -58,6 +227,35 @@ body {
 
 .header-tools {
   gap: 9px;
+}
+
+.home-header .user-profile-chip {
+  display: none;
+}
+
+.home-header .header-account-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(56, 32, 143, 0.1);
+  border-radius: 999px;
+  background: rgba(56, 32, 143, 0.035);
+}
+
+.home-header .header-account-links .header-link,
+.home-header .header-account-links .btn-soft {
+  min-height: 40px;
+  padding-inline: 0.85rem;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.home-header .header-account-links .header-link:hover,
+.home-header .header-account-links .btn-soft:hover {
+  background: rgba(56, 32, 143, 0.08);
+  box-shadow: none;
 }
 
 .search-box {
@@ -135,13 +333,28 @@ body {
 }
 
 :is(.service-card, .product-card, .account-card, .auth-card, .dashboard-card, .contact-card, .booking-card, .stat-card, .testimonial-card, .grooming-panel, .grooming-steps) {
-  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+  transition:
+    opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 650ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
 :is(.service-card, .product-card, .account-card, .auth-card, .dashboard-card, .contact-card, .booking-card, .stat-card, .testimonial-card, .grooming-panel, .grooming-steps):hover {
   transform: translateY(-3px);
   box-shadow: 0 18px 34px rgba(48, 29, 112, 0.12);
   border-color: rgba(56, 32, 143, 0.16);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  :is(.hero-image-wrap, .grooming-image, .about-photo, .product-image) img {
+    transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  :is(.hero-image-wrap, .grooming-image, .about-photo, .product-card):hover img {
+    transform: scale(1.035);
+  }
 }
 
 :is(input, select, textarea):focus {
@@ -165,7 +378,7 @@ main[id] {
   }
 }
 
-@media (max-width: 1100px) and (min-width: 761px) {
+@media (min-width: 761px) {
   .header-inner {
     flex-wrap: wrap;
     justify-content: space-between;
@@ -181,6 +394,48 @@ main[id] {
 
   .header-tools .btn-primary {
     flex: 0 0 auto;
+  }
+
+  .home-header .header-inner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "brand nav"
+      "tools tools";
+    column-gap: clamp(16px, 3vw, 32px);
+    row-gap: 8px;
+    padding-block: 12px;
+  }
+
+  .home-header .header-inner > .brand {
+    grid-area: brand;
+  }
+
+  .home-header .header-inner > .nav {
+    grid-area: nav;
+    justify-self: end;
+  }
+
+  .home-header .header-inner > .header-tools {
+    grid-area: tools;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 0;
+    gap: 10px;
+  }
+
+  .home-header .header-tools .search-box {
+    flex: 0 1 clamp(130px, 18vw, 200px);
+    width: clamp(130px, 18vw, 200px);
+    margin-right: auto;
+  }
+
+  .home-header .header-tools .header-account-links {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 }
 
@@ -249,6 +504,17 @@ main[id] {
   .header-tools .btn {
     min-height: 44px;
     padding: 0.7rem 0.85rem;
+  }
+
+  .header-tools #ctaMainBtn {
+    flex: 0 0 100%;
+    white-space: nowrap;
+  }
+
+  .home-header .header-account-links {
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    max-width: 100%;
   }
 
   .menu-toggle {
@@ -336,7 +602,6 @@ main[id] {
     padding: 12px 14px;
   }
 
-  .feature-strip,
   .footer-grid {
     grid-template-columns: 1fr;
     gap: 14px;
@@ -409,6 +674,22 @@ main[id] {
 
   .booking-form .field {
     min-width: 0;
+  }
+
+  .booking-page-intro {
+    padding: 36px 0 8px;
+  }
+
+  .booking-page-section {
+    padding: 24px 0 56px;
+  }
+
+  .booking-page-section .booking-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-page-section .booking-summary {
+    position: static;
   }
 
   .stats {
@@ -584,6 +865,56 @@ main[id] {
   }
 }
 
+@media (min-width: 1101px) {
+  .home-header .header-inner {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    grid-template-areas: "brand nav tools";
+    column-gap: clamp(10px, 1.5vw, 20px);
+    row-gap: 0;
+  }
+
+  .home-header .header-inner > .nav {
+    justify-self: start;
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .home-header .nav a {
+    padding-inline: 9px;
+    font-size: 0.85rem;
+  }
+
+  .home-header .header-tools {
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .home-header .header-tools .search-box {
+    flex-basis: 150px;
+    width: 150px;
+    margin-right: 0;
+  }
+
+  .home-header .header-account-links {
+    gap: 2px;
+    padding: 3px;
+  }
+
+  .home-header .header-account-links .header-link,
+  .home-header .header-account-links .btn-soft {
+    min-height: 38px;
+    padding-inline: 0.62rem;
+    font-size: 0.82rem;
+  }
+
+  .home-header .header-tools #ctaMainBtn {
+    min-height: 42px;
+    padding-inline: 0.8rem;
+    font-size: 0.86rem;
+    white-space: nowrap;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -592,5 +923,11 @@ main[id] {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .reveal,
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
   }
 }

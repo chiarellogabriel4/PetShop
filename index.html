@@ -17,18 +17,15 @@
   <div class="topbar">
     <div class="container topbar-inner">
       <div class="topbar-links">
-        <span>📍 Rua das Flores, 128 - Vila Pet</span>
-        <span>☎ (11) 4000-2024</span>
-        <span>✉ atendimento@petcare.com.br</span>
+        <span>Agendamentos: (11) 4000-2024</span>
       </div>
       <div class="topbar-links">
-        <a href="#dashboard">Área do cliente</a>
         <a href="#contato">Atendimento</a>
       </div>
     </div>
   </div>
 
-  <header class="site-header">
+  <header class="site-header home-header">
     <div class="container header-inner">
       <a href="#top" class="brand">
         <span>helpPatas petshop</span>
@@ -37,8 +34,6 @@
         <a href="#top">Início</a>
         <a href="#servicos">Serviços</a>
         <a href="#loja">Loja</a>
-        <a href="#agendamentos">Agendamentos</a>
-        <a href="#sobre">Sobre Nós</a>
         <a href="#contato">Contato</a>
       </nav>
       <div class="header-tools">
@@ -46,10 +41,12 @@
           <span>🔎</span>
           <input id="searchInput" type="text" placeholder="Buscar" />
         </label>
-        <a class="header-link" href="login.html">Entrar</a>
-        <a class="btn btn-soft" href="criar-conta.html">Criar conta</a>
-        <a class="btn btn-soft" href="dashboard-cliente.html" id="openDashboardBtn">Área do cliente</a>
-        <button class="btn btn-primary" id="ctaMainBtn">Agendar Agora</button>
+        <div class="header-account-links" role="group" aria-label="Acesso à conta">
+          <a class="header-link" href="login.html">Entrar</a>
+          <a class="btn btn-soft" href="criar-conta.html">Criar conta</a>
+          <a class="btn btn-soft" href="dashboard-cliente.html">Minha conta</a>
+        </div>
+        <a class="btn btn-primary" id="ctaMainBtn" href="agendamento.html">Agendar atendimento</a>
         <button class="btn menu-toggle" aria-label="Abrir menu">☰</button>
       </div>
     </div>
@@ -59,42 +56,18 @@
     <section class="hero">
       <div class="container hero-inner">
         <div>
-          <span class="eyebrow">Cuidado profissional para pets de todas as idades</span>
-          <h1>O melhor cuidado para seu melhor amigo</h1>
-          <p>
-            Na helpPatas petshop, você encontra banho e tosa, consultas, vacinação, hospedagem,
-            creche e atenção especial para cada momento do seu pet. Tudo pensado para
-            oferecer saúde, conforto e alegria em cada visita.
-          </p>
+          <span class="eyebrow">Cuidado para cães e gatos</span>
+          <h1>Seu pet bem cuidado, em um só lugar</h1>
+          <p>Agende banho, consulta, vacina ou hospedagem. Escolha o serviço e o melhor horário.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#agendamentos">Agendar Consulta</a>
-            <a class="btn btn-soft" href="#servicos">Conhecer Serviços</a>
+            <a class="btn btn-primary" href="agendamento.html">Agendar um serviço</a>
+            <a class="btn btn-soft" href="#servicos">Ver serviços</a>
           </div>
-          <div class="quick-actions">
-            <a class="quick-action-btn" href="dashboard-cliente.html" id="quickDashboardBtn" type="button">Dashboard</a>
-            <button class="quick-action-btn" id="quickAppointmentsBtn" type="button">Agendamentos</button>
-            <a class="quick-action-btn" href="banho-e-tosa.html" id="quickGroomingBtn" type="button">Banho e Tosa</a>
-            <button class="quick-action-btn" id="quickStockBtn" type="button">Estoque</button>
-          </div>
-          <ul class="hero-points">
-            <li><span class="point-badge">✓</span> O melhor atendimento</li>
-            <li><span class="point-badge">✓</span> Equipe experiente</li>
-            <li><span class="point-badge">✓</span> Ambiente seguro</li>
-          </ul>
         </div>
         <div class="hero-visual">
           <div class="hero-image-wrap">
             <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=1200&q=80"
               alt="Cachorro e gato felizes" loading="eager" fetchpriority="high" decoding="async" />
-          </div>
-          <div class="floating-card">
-            <div class="floating-card-head">
-              <h3>Atendimento Premium</h3>
-              <span class="mini-tag">Disponível</span>
-            </div>
-            <div class="rating">★★★★★ <span>4.9/5</span></div>
-            <p style="margin: 12px 0 0; color: rgba(51,51,51,.72); line-height: 1.6;">Banho, tosa e acompanhamento
-              veterinário sob a atenção de especialistas.</p>
           </div>
         </div>
       </div>
@@ -105,36 +78,23 @@
         <div class="section-head">
           <div>
             <span class="eyebrow">Acesso rápido</span>
-            <h2>Entre ou cadastre-se de forma simples</h2>
+            <h2>Acesse sua conta ou faça seu cadastro</h2>
           </div>
-          <p class="subtext">Uma experiência clara para qualquer usuário, com direção objetiva para entrar na conta ou
-            criar uma nova jornada no helpPatas petshop.</p>
+          <p class="subtext">Acompanhe seus horários ou crie uma conta para começar.</p>
         </div>
 
         <div class="account-grid">
           <div class="account-card">
-            <span class="eyebrow">Já é cliente</span>
+            <span class="eyebrow">Já tem cadastro?</span>
             <h3>Entrar na minha conta</h3>
-            <p>Veja agendamentos, histórico, promoções, fidelidade e tudo o que você precisa para acompanhar o cuidado
-              do seu pet.</p>
-            <ul class="account-list">
-              <li>Meus agendamentos</li>
-              <li>Histórico de serviços</li>
-              <li>Benefícios e pontos</li>
-            </ul>
+            <p>Consulte seus agendamentos e os cuidados do seu pet.</p>
             <a class="btn btn-primary" href="login.html">Entrar agora</a>
           </div>
 
           <div class="account-card">
-            <span class="eyebrow">Novo por aqui</span>
+            <span class="eyebrow">Primeira vez aqui?</span>
             <h3>Criar uma conta</h3>
-            <p>Cadastre-se de forma rápida e comece a aproveitar a melhor experiência de atendimento, organização e
-              cuidado do helpPatas petshop.</p>
-            <ul class="account-list">
-              <li>Cadastro em poucos passos</li>
-              <li>Perfil do pet e tutor</li>
-              <li>Primeiros benefícios</li>
-            </ul>
+            <p>Informe seus dados e os do seu pet para começar.</p>
             <a class="btn btn-soft" href="criar-conta.html">Criar conta</a>
           </div>
         </div>
@@ -146,46 +106,45 @@
         <div class="section-head">
           <div>
             <span class="eyebrow">Nossos serviços</span>
-            <h2>Atendimento completo para o seu pet</h2>
+            <h2>Escolha o que seu pet precisa</h2>
           </div>
-          <p class="subtext">Soluções para saúde, higiene, bem-estar e conforto, com cuidado humano e tecnologia para
-            chegar ao melhor resultado.</p>
+          <p class="subtext">Veja os serviços e preços iniciais.</p>
         </div>
         <div class="services-grid">
           <article class="service-card" data-service="Banho e Tosa">
             <div class="service-icon">🛁</div>
             <h3>Banho e Tosa</h3>
-            <p>Cuidados com higiene, hidratação e acabamento para manter seu pet lindo e confortável.</p>
+            <p>Banho e corte de pelos.</p>
             <span class="pill">A partir de R$ 69</span>
           </article>
           <article class="service-card" data-service="Consulta Veterinária">
             <div class="service-icon">🩺</div>
             <h3>Consulta Veterinária</h3>
-            <p>Exames, avaliações e acompanhamento de rotina com atendimento humano e preciso.</p>
+            <p>Avaliação da saúde do seu pet.</p>
             <span class="pill">A partir de R$ 89</span>
           </article>
           <article class="service-card" data-service="Vacinação">
             <div class="service-icon">💉</div>
             <h3>Vacinação</h3>
-            <p>Calendário completo para proteção preventiva e acompanhamento especializado.</p>
+            <p>Vacinas para manter a proteção em dia.</p>
             <span class="pill">A partir de R$ 120</span>
           </article>
           <article class="service-card" data-service="Hospedagem">
             <div class="service-icon">🏠</div>
             <h3>Hospedagem</h3>
-            <p>Ambiente seguro, tranquilo e monitorado para a estadia do seu pet em viagens.</p>
+            <p>Um lugar para seu pet ficar durante sua viagem.</p>
             <span class="pill">A partir de R$ 49/dia</span>
           </article>
           <article class="service-card" data-service="Creche Pet">
             <div class="service-icon">🦴</div>
             <h3>Creche Pet</h3>
-            <p>Socialização, brincadeiras e atenção constante durante o dia com supervisão.</p>
+            <p>Cuidados e brincadeiras durante o dia.</p>
             <span class="pill">A partir de R$ 59/dia</span>
           </article>
           <article class="service-card" data-service="Emergência 24h">
             <div class="service-icon">🚑</div>
             <h3>Emergência 24h</h3>
-            <p>Suporte rápido para situações urgentes com equipe preparada e tecnologia.</p>
+            <p>Atendimento para situações urgentes.</p>
             <span class="pill">Atendimento imediato</span>
           </article>
         </div>
@@ -197,10 +156,9 @@
         <div class="section-head">
           <div>
             <span class="eyebrow">Banho e Tosa</span>
-            <h2>Sua rotina de cuidado com elegância</h2>
+            <h2>Opções de banho e tosa</h2>
           </div>
-          <p class="subtext">Serviços pensados para pets de pequeno e grande porte, combinando técnica, conforto e
-            acabamento premium.</p>
+          <p class="subtext">Consulte as opções e escolha a que combina com seu pet.</p>
         </div>
         <div class="grooming-grid">
           <div class="grooming-panel">
@@ -215,7 +173,7 @@
                 <div class="step-number">1</div>
                 <div>
                   <h4>Banho suave</h4>
-                  <p>Produtos específicos para pele e pelos, com hidratação e conforto total.</p>
+                  <p>Limpeza e cuidado com os pelos.</p>
                 </div>
                 <div class="step-price">R$ 69</div>
               </div>
@@ -223,7 +181,7 @@
                 <div class="step-number">2</div>
                 <div>
                   <h4>Tosa higiênica</h4>
-                  <p>Modelagem precisa para higiene, conforto e visual cuidado do seu pet.</p>
+                  <p>Ajuda a manter a higiene em dia.</p>
                 </div>
                 <div class="step-price">R$ 85</div>
               </div>
@@ -231,7 +189,7 @@
                 <div class="step-number">3</div>
                 <div>
                   <h4>Hidratação e finalização</h4>
-                  <p>Finalização com produtos que deixam o pelo macio, brilhante e saudável.</p>
+                  <p>Para deixar os pelos mais macios.</p>
                 </div>
                 <div class="step-price">R$ 35</div>
               </div>
@@ -239,11 +197,12 @@
                 <div class="step-number">4</div>
                 <div>
                   <h4>Pacotes mensais</h4>
-                  <p>Para quem quer manter o pet sempre limpo, com atendimento regular e descontos exclusivos.</p>
+                  <p>Mais visitas por um preço especial.</p>
                 </div>
                 <div class="step-price">R$ 149</div>
               </div>
             </div>
+            <a class="btn btn-soft" href="banho-e-tosa.html">Ver detalhes do banho e tosa</a>
           </div>
         </div>
       </div>
@@ -254,10 +213,9 @@
         <div class="section-head">
           <div>
             <span class="eyebrow">Sobre a helpPatas petshop</span>
-            <h2>Um espaço pensado para pets e tutores</h2>
+            <h2>Cuidado atencioso para cada pet</h2>
           </div>
-          <p class="subtext">Somos uma equipe apaixonada por animais, com uma abordagem moderna, cuidadosa e
-            profissional para cada etapa da vida pet.</p>
+          <p class="subtext">Conheça a equipe e venha nos visitar.</p>
         </div>
         <div class="about-grid">
           <div class="about-photo">
@@ -265,87 +223,8 @@
               alt="Equipe da helpPatas petshop" loading="lazy" decoding="async" />
           </div>
           <div>
-            <p class="subtext" style="max-width: none;">A helpPatas petshop nasceu para unir tecnologia, acolhimento e excelência
-              em serviços pet. Nosso time é formado por especialistas em banho e tosa, saúde e bem-estar animal,
-              oferecendo um ambiente seguro, moderno e que respeita as necessidades de cada animal.</p>
-            <div class="stats">
-              <div class="stat"><strong>5.000+</strong><span>clientes atendidos</span></div>
-              <div class="stat"><strong>10 anos</strong><span>de experiência</span></div>
-              <div class="stat"><strong>98%</strong><span>satisfação</span></div>
-            </div>
+            <p class="subtext" style="max-width: none;">Oferecemos banho, consultas e outros cuidados para cães e gatos.</p>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="agendamentos">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">Agendamento online</span>
-            <h2>Reserve o atendimento ideal para o seu pet</h2>
-          </div>
-          <p class="subtext">Organize seu horário em poucos passos e mantenha o histórico do seu pet sempre em dia.</p>
-        </div>
-        <div class="booking-grid">
-          <div class="booking-card">
-            <form class="booking-form" id="bookingForm">
-              <div class="field">
-                <label for="service">Serviço</label>
-                <select id="service" name="service" required>
-                  <option value="">Selecione</option>
-                  <option>Banho e Tosa</option>
-                  <option>Consulta Veterinária</option>
-                  <option>Vacinação</option>
-                  <option>Hospedagem</option>
-                  <option>Creche Pet</option>
-                  <option>Emergência 24h</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="petName">Nome do pet</label>
-                <input id="petName" name="petName" type="text" placeholder="Ex: Thor" required />
-              </div>
-              <div class="field">
-                <label for="date">Data</label>
-                <input id="date" name="date" type="date" required />
-              </div>
-              <div class="field">
-                <label for="time">Horário</label>
-                <select id="time" name="time" required>
-                  <option value="">Selecione</option>
-                  <option>08:00</option>
-                  <option>09:30</option>
-                  <option>11:00</option>
-                  <option>13:30</option>
-                  <option>15:00</option>
-                  <option>17:30</option>
-                </select>
-              </div>
-              <div class="field full">
-                <label for="petType">Tipo do pet</label>
-                <input id="petType" name="petType" type="text" placeholder="Cachorro, gato, outro" required />
-              </div>
-              <div class="field full">
-                <label for="notes">Observações</label>
-                <textarea id="notes" name="notes"
-                  placeholder="Nos conte alguma necessidade específica do seu pet..."></textarea>
-              </div>
-              <div class="field full" style="margin-top: 8px;">
-                <button class="btn btn-primary" type="submit">Confirmar agendamento</button>
-              </div>
-            </form>
-          </div>
-          <aside class="booking-summary">
-            <h3>Resumo do serviço</h3>
-            <ul class="summary-list">
-              <li><span>Serviço</span><strong id="summaryService">-</strong></li>
-              <li><span>Data</span><strong id="summaryDate">-</strong></li>
-              <li><span>Horário</span><strong id="summaryTime">-</strong></li>
-              <li><span>Pacote</span><strong>Premium</strong></li>
-              <li><span>Valor</span><strong id="summaryPrice">R$ 0,00</strong></li>
-            </ul>
-          </aside>
         </div>
       </div>
     </section>
@@ -355,61 +234,61 @@
         <div class="section-head">
           <div>
             <span class="eyebrow">Loja Pet</span>
-            <h2>Produtos escolhidos para o dia a dia</h2>
+            <h2>Produtos para seu pet</h2>
           </div>
-          <p class="subtext">Rações, brinquedos, medicamentos e acessórios com qualidade e valor para sua rotina.</p>
+          <p class="subtext">Ração, brinquedos e acessórios para o dia a dia.</p>
         </div>
         <div class="shop-grid">
-          <article class="product-card" data-name="Ração Premium" data-category="Rações" data-price="129"
+          <article class="product-card" data-name="Ração" data-category="Rações" data-price="129"
             data-image="https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=900&q=80"
-            data-badge="Ração" data-description="Formulação completa para saúde, energia e sabor irresistível.">
+            data-badge="Ração" data-description="Alimento completo para o dia a dia do seu pet.">
             <div class="product-image"><span class="product-badge">Ração</span><img
                 src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=900&q=80"
-                alt="Ração premium" loading="lazy" decoding="async" /></div>
+                alt="Ração para pets" loading="lazy" decoding="async" /></div>
             <div class="product-body">
-              <h3>Ração Premium</h3>
-              <p>Formulação completa para saúde, energia e sabor irresistível.</p>
+              <h3>Ração</h3>
+              <p>Alimento completo para o dia a dia do seu pet.</p>
               <div class="product-meta"><span class="price">R$ 129</span><button class="btn btn-primary add-to-cart"
-                  type="button">Comprar</button></div>
+                  type="button">Adicionar ao carrinho</button></div>
             </div>
           </article>
           <article class="product-card" data-name="Brinquedo Interativo" data-category="Brinquedos" data-price="49"
             data-image="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=900&q=80"
-            data-badge="Brinquedo" data-description="Durável, divertido e ideal para estimular a mente e o corpo.">
+            data-badge="Brinquedo" data-description="Para brincar e gastar energia.">
             <div class="product-image"><span class="product-badge">Brinquedo</span><img
                 src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=900&q=80"
                 alt="Brinquedo pet" loading="lazy" decoding="async" /></div>
             <div class="product-body">
               <h3>Brinquedo Interativo</h3>
-              <p>Durável, divertido e ideal para estimular a mente e o corpo.</p>
+              <p>Para brincar e gastar energia.</p>
               <div class="product-meta"><span class="price">R$ 49</span><button class="btn btn-primary add-to-cart"
-                  type="button">Comprar</button></div>
+                  type="button">Adicionar ao carrinho</button></div>
             </div>
           </article>
-          <article class="product-card" data-name="Suplemento Vital" data-category="Remédios" data-price="87"
+          <article class="product-card" data-name="Suplemento Vital" data-category="Suplementos" data-price="87"
             data-image="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=80"
-            data-badge="Saúde" data-description="Auxilia na saúde imunológica e no bem-estar geral do pet.">
+            data-badge="Saúde" data-description="Suplemento alimentar. Consulte um veterinário antes de usar.">
             <div class="product-image"><span class="product-badge">Saúde</span><img
                 src="https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=80"
-                alt="Medicamentos pet" loading="lazy" decoding="async" /></div>
+                alt="Suplemento alimentar para pets" loading="lazy" decoding="async" /></div>
             <div class="product-body">
               <h3>Suplemento Vital</h3>
-              <p>Auxilia na saúde imunológica e no bem-estar geral do pet.</p>
+              <p>Suplemento alimentar. Consulte um veterinário antes de usar.</p>
               <div class="product-meta"><span class="price">R$ 87</span><button class="btn btn-primary add-to-cart"
-                  type="button">Comprar</button></div>
+                  type="button">Adicionar ao carrinho</button></div>
             </div>
           </article>
           <article class="product-card" data-name="Coleira Premium" data-category="Coleiras" data-price="59"
             data-image="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=900&q=80"
-            data-badge="Acessório" data-description="Conforto e estilo com material resistente e fácil de limpar.">
+            data-badge="Acessório" data-description="Resistente e confortável para passeios.">
             <div class="product-image"><span class="product-badge">Acessório</span><img
                 src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=900&q=80"
                 alt="Coleira pet" loading="lazy" decoding="async" /></div>
             <div class="product-body">
               <h3>Coleira Premium</h3>
-              <p>Conforto e estilo com material resistente e fácil de limpar.</p>
+              <p>Resistente e confortável para passeios.</p>
               <div class="product-meta"><span class="price">R$ 59</span><button class="btn btn-primary add-to-cart"
-                  type="button">Comprar</button></div>
+                  type="button">Adicionar ao carrinho</button></div>
             </div>
           </article>
         </div>
@@ -424,9 +303,9 @@
         <div class="section-head">
           <div>
             <span class="eyebrow">Depoimentos</span>
-            <h2>Quem confia em nós recomenda</h2>
+            <h2>O que nossos clientes dizem</h2>
           </div>
-          <p class="subtext">Histórias reais de tutores que encontraram carinho, qualidade e confiança na helpPatas petshop.</p>
+          <p class="subtext">Opiniões de quem já nos visitou.</p>
         </div>
         <div class="testimonials-grid">
           <article class="testimonial-card">
@@ -437,8 +316,7 @@
               <div><strong>Marina S.</strong><br /><small>Cliente helpPatas petshop</small></div>
             </div>
             <div class="stars">★★★★★</div>
-            <p>“O atendimento foi impecável. O banho e tosa deixaram meu cachorro com o pelo maravilhoso e o ambiente
-              foi super acolhedor.”</p>
+            <p>“Meu cachorro voltou limpo e tranquilo.”</p>
           </article>
           <article class="testimonial-card">
             <div class="testimonial-head">
@@ -448,8 +326,7 @@
               <div><strong>Felipe R.</strong><br /><small>Cliente helpPatas petshop</small></div>
             </div>
             <div class="stars">★★★★★</div>
-            <p>“A helpPatas petshop tem uma estrutura incrível e o time é muito atento. Meu gato ficou em segurança durante a
-              hospedagem e voltou tranquilo.”</p>
+            <p>“Meu gato foi bem cuidado durante a hospedagem.”</p>
           </article>
           <article class="testimonial-card">
             <div class="testimonial-head">
@@ -459,8 +336,7 @@
               <div><strong>Laura M.</strong><br /><small>Cliente helpPatas petshop</small></div>
             </div>
             <div class="stars">★★★★★</div>
-            <p>“Desde a consulta até o acompanhamento no app, tudo foi muito claro e organizado. Confiança total para o
-              cuidado do meu pet.”</p>
+            <p>“Consegui marcar a consulta sem complicação.”</p>
           </article>
         </div>
       </div>
@@ -471,9 +347,8 @@
         <div class="section-head">
           <div>
             <span class="eyebrow">Galeria</span>
-            <h2>Momentos especiais dos nossos pets</h2>
+            <h2>Fotos dos nossos pets</h2>
           </div>
-          <p class="subtext">Cada foto representa a conexão, o cuidado e a dedicação que recebemos todos os dias.</p>
         </div>
         <div class="gallery-grid">
           <div class="gallery-item tall"><img
@@ -498,63 +373,14 @@
       </div>
     </section>
 
-    <section>
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">Blog</span>
-            <h2>Dicas úteis para o seu pet</h2>
-          </div>
-          <p class="subtext">Conteúdos práticos para cuidar melhor da saúde, alimentação e bem-estar do seu melhor
-            amigo.</p>
-        </div>
-        <div class="blog-grid">
-          <article class="article-card">
-            <div class="article-image"><img
-                src="https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=900&q=80"
-                alt="Dicas saúde" loading="lazy" decoding="async" /></div>
-            <div class="article-body">
-              <div class="article-meta"><span>Saúde</span><span>18 Jan</span></div>
-              <h3>Como identificar sinais de estresse em pets</h3>
-              <p>Conheça os principais comportamentos que podem indicar desconforto e como agir com atenção.</p>
-              <a class="pill" href="#">Leia mais</a>
-            </div>
-          </article>
-          <article class="article-card">
-            <div class="article-image"><img
-                src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=900&q=80"
-                alt="Alimentação" loading="lazy" decoding="async" /></div>
-            <div class="article-body">
-              <div class="article-meta"><span>Alimentação</span><span>8 Fev</span></div>
-              <h3>5 dicas para montar uma dieta equilibrada</h3>
-              <p>Veja como escolher alimentos, porções e suplementos para o dia a dia do seu pet com mais qualidade.</p>
-              <a class="pill" href="#">Leia mais</a>
-            </div>
-          </article>
-          <article class="article-card">
-            <div class="article-image"><img
-                src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=900&q=80"
-                alt="Bem-estar" loading="lazy" decoding="async" /></div>
-            <div class="article-body">
-              <div class="article-meta"><span>Bem-estar</span><span>12 Mar</span></div>
-              <h3>Como manter seu pet ativo e feliz em casa</h3>
-              <p>Descubra ideias simples para estimular brincadeiras, rotina e momentos de relaxamento no lar.</p>
-              <a class="pill" href="#">Leia mais</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
     <section id="contato">
       <div class="container">
         <div class="section-head">
           <div>
             <span class="eyebrow">Contato</span>
-            <h2>Fale com a helpPatas petshop</h2>
+            <h2>Fale com a gente</h2>
           </div>
-          <p class="subtext">Estamos prontos para atender com rapidez, carinho e eficiência para qualquer necessidade do
-            seu pet.</p>
+          <p class="subtext">Tire suas dúvidas por telefone, WhatsApp ou e-mail.</p>
         </div>
         <div class="contact-grid">
           <div class="contact-card">
@@ -569,7 +395,7 @@
               </li>
               <li>
                 <div class="contact-icon">✉</div>
-                <div><strong>Email</strong><span>atendimento@petcare.com.br</span></div>
+                <div><strong>E-mail</strong><span>atendimento@petcare.com.br</span></div>
               </li>
               <li>
                 <div class="contact-icon">📍</div>
@@ -578,78 +404,17 @@
             </ul>
           </div>
           <div class="contact-card">
-            <form class="contact-form">
-              <div class="field"><label for="contactName">Nome</label><input id="contactName" type="text"
-                  placeholder="Seu nome" /></div>
-              <div class="field"><label for="contactEmail">Email</label><input id="contactEmail" type="email"
-                  placeholder="Seu email" /></div>
-              <div class="field full"><label for="contactSubject">Assunto</label><input id="contactSubject" type="text"
-                  placeholder="Como podemos ajudar?" /></div>
-              <div class="field full"><label for="contactMessage">Mensagem</label><textarea id="contactMessage"
-                  placeholder="Escreva sua mensagem..."></textarea></div>
-              <div class="field full" style="margin-top: 8px;"><button class="btn btn-primary" type="button">Enviar
-                  mensagem</button></div>
-            </form>
+            <h3>Prefere falar diretamente?</h3>
+            <p>Escolha uma opção para entrar em contato.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="tel:+551140002024">Ligar</a>
+              <a class="btn btn-soft" href="https://wa.me/5511991234567" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="dashboard-shell" id="dashboard">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="eyebrow">Dashboard</span>
-            <h2>Visão geral do seu espaço helpPatas petshop</h2>
-          </div>
-          <p class="subtext">Acompanhe agendamentos, benefícios e relacionamento com seu pet em um painel organizado.
-          </p>
-        </div>
-        <div class="dashboard-grid">
-          <div class="dashboard-card">
-            <div class="overview">
-              <div class="overview-item"><small>Próximo agendamento</small><strong>12/09</strong></div>
-              <div class="overview-item"><small>Pets cadastrados</small><strong>03</strong></div>
-              <div class="overview-item"><small>Cupons ativos</small><strong>02</strong></div>
-              <div class="overview-item"><small>Pontos</small><strong>580</strong></div>
-            </div>
-            <ul class="appointments-list" id="appointmentsList">
-              <li>
-                <div class="appointment-date">12 <small>SET</small></div>
-                <div>
-                  <h4 style="margin:0 0 4px;">Banho e Tosa - Thor</h4>
-                  <p style="margin:0; color: rgba(51,51,51,.7);">08:30 — Atendimento Premium</p>
-                </div>
-                <span class="status-badge confirmed">Confirmado</span>
-              </li>
-              <li>
-                <div class="appointment-date">15 <small>SET</small></div>
-                <div>
-                  <h4 style="margin:0 0 4px;">Consulta Veterinária - Luna</h4>
-                  <p style="margin:0; color: rgba(51,51,51,.7);">11:00 — Revisão de rotina</p>
-                </div>
-                <span class="status-badge pending">Pendente</span>
-              </li>
-            </ul>
-          </div>
-          <div class="dashboard-card">
-            <div class="loyalty-box">
-              <h3 style="margin: 0 0 10px;">Programa de fidelidade</h3>
-              <p style="margin:0; color: rgba(255,255,255,.8);">Você está a 78% da próxima recompensa.</p>
-              <div class="reward-progress"><span></span></div>
-              <div style="display:flex; justify-content:space-between; font-size:.85rem; opacity:.8;">
-                <span>420 pts</span><span>580 pts</span>
-              </div>
-            </div>
-            <ul class="mini-list">
-              <li><span>Cupons</span><strong>2 ativos</strong></li>
-              <li><span>Promoções</span><strong>3 novas</strong></li>
-              <li><span>Chat online</span><strong>Disponível</strong></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer>
@@ -660,15 +425,14 @@
             <span class="footer-logo">P</span>
             <span>helpPatas petshop</span>
           </div>
-          <p style="line-height:1.8; max-width:360px; margin:0;">O cuidado profissional que seu pet merece, com
-            conforto, saúde e carinho em cada detalhe.</p>
+          <p style="line-height:1.8; max-width:360px; margin:0;">Cuidados para seu pet com atenção e carinho.</p>
         </div>
         <div>
           <h4>Links rápidos</h4>
           <ul class="footer-links">
             <li><a href="#servicos">Serviços</a></li>
             <li><a href="#loja">Loja</a></li>
-            <li><a href="#agendamentos">Agendamentos</a></li>
+            <li><a href="agendamento.html">Agendar serviço</a></li>
             <li><a href="#sobre">Sobre</a></li>
           </ul>
         </div>
@@ -676,9 +440,7 @@
           <h4>Informações</h4>
           <ul class="footer-links">
             <li><a href="#contato">Contato</a></li>
-            <li><a href="#dashboard">Área do cliente</a></li>
-            <li><a href="#">Promoções</a></li>
-            <li><a href="#">Política de privacidade</a></li>
+            <li><a href="dashboard-cliente.html">Minha conta</a></li>
           </ul>
         </div>
         <div>
@@ -693,7 +455,7 @@
       </div>
       <div class="footer-bottom">
         <span>© <span id="currentYear"></span> helpPatas petshop. Todos os direitos reservados.</span>
-        <span>Feito para pets e tutores que valorizam qualidade.</span>
+        <span>Cuidado para pets e suas famílias.</span>
       </div>
     </div>
   </footer>
@@ -715,30 +477,7 @@
     </div>
   </div>
 
-  <aside class="client-panel" id="clientPanel">
-    <div class="client-panel-header">
-      <h3 style="margin:0;">Painel do cliente</h3>
-      <button class="close-panel" id="closePanelBtn" aria-label="Fechar painel">✕</button>
-    </div>
-    <div class="client-panel-body">
-      <div class="panel-grid">
-        <div class="panel-mini"><small>Agendamentos</small><strong>04</strong></div>
-        <div class="panel-mini"><small>Cupons</small><strong>02</strong></div>
-        <div class="panel-mini"><small>Pontos</small><strong>580</strong></div>
-        <div class="panel-mini"><small>Pets</small><strong>03</strong></div>
-      </div>
-      <div class="panel-box">
-        <h4>Últimos serviços</h4>
-        <ul>
-          <li><span>Banho e Tosa</span><strong>Thor</strong></li>
-          <li><span>Consulta</span><strong>Luna</strong></li>
-          <li><span>Creche</span><strong>Max</strong></li>
-        </ul>
-      </div>
-    </div>
-  </aside>
-
-  <div class="toast" id="toast">Agendamento confirmado com sucesso!</div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="script.js"></script>
 </body>

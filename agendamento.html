@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agendar serviço | helpPatas petshop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="visual.css" />
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div class="topbar-links">
+        <span>Agendamentos: (11) 4000-2024</span>
+      </div>
+      <div class="topbar-links">
+        <a href="index.html#contato">Atendimento</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header home-header">
+    <div class="container header-inner">
+      <a href="index.html#top" class="brand">
+        <span>helpPatas petshop</span>
+      </a>
+      <nav class="nav" aria-label="Menu principal">
+        <a href="index.html#top">Início</a>
+        <a href="index.html#servicos">Serviços</a>
+        <a href="loja.html">Loja</a>
+        <a href="index.html#contato">Contato</a>
+      </nav>
+      <div class="header-tools">
+        <div class="header-account-links" role="group" aria-label="Acesso à conta">
+          <a class="header-link" href="login.html">Entrar</a>
+          <a class="btn btn-soft" href="criar-conta.html">Criar conta</a>
+          <a class="btn btn-soft" href="dashboard-cliente.html">Minha conta</a>
+        </div>
+        <a class="btn btn-primary" id="ctaMainBtn" href="#agendamentos">Agendar</a>
+        <button class="btn menu-toggle" aria-label="Abrir menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="booking-page-intro">
+      <div class="container">
+        <span class="eyebrow">Agendamento online</span>
+        <h1>Um cuidado a mais para seu pet</h1>
+        <p>Escolha o serviço, o dia e o horário. A estimativa aparece no resumo ao lado.</p>
+      </div>
+    </section>
+
+    <section class="booking-page-section" id="agendamentos">
+      <div class="container">
+        <div class="booking-grid">
+          <div class="booking-card">
+            <form class="booking-form" id="bookingForm">
+              <div class="field">
+                <label for="service">Serviço</label>
+                <select id="service" name="service" required>
+                  <option value="">Selecione</option>
+                  <option>Banho e Tosa</option>
+                  <option>Consulta Veterinária</option>
+                  <option>Vacinação</option>
+                  <option>Hospedagem</option>
+                  <option>Creche Pet</option>
+                  <option>Emergência 24h</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="petName">Nome do pet</label>
+                <input id="petName" name="petName" type="text" placeholder="Ex: Thor" required />
+              </div>
+              <div class="field">
+                <label for="date">Data</label>
+                <input id="date" name="date" type="date" required />
+              </div>
+              <div class="field">
+                <label for="time">Horário</label>
+                <select id="time" name="time" required>
+                  <option value="">Selecione</option>
+                  <option>08:00</option>
+                  <option>09:30</option>
+                  <option>11:00</option>
+                  <option>13:30</option>
+                  <option>15:00</option>
+                  <option>17:30</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="petType">Tipo do pet</label>
+                <input id="petType" name="petType" type="text" placeholder="Cachorro, gato, outro" required />
+              </div>
+              <div class="field full">
+                <label for="notes">Observações (opcional)</label>
+                <textarea id="notes" name="notes"
+                  placeholder="Conte alguma necessidade específica do seu pet."></textarea>
+              </div>
+              <div class="field full">
+                <button class="btn btn-primary" type="submit">Confirmar agendamento</button>
+              </div>
+            </form>
+          </div>
+
+          <aside class="booking-summary">
+            <h2>Resumo do agendamento</h2>
+            <ul class="summary-list">
+              <li><span>Serviço</span><strong id="summaryService">-</strong></li>
+              <li><span>Data</span><strong id="summaryDate">-</strong></li>
+              <li><span>Horário</span><strong id="summaryTime">-</strong></li>
+              <li><span>Valor estimado</span><strong id="summaryPrice">R$ 0,00</strong></li>
+            </ul>
+            <p class="booking-note">O valor final pode variar conforme o atendimento.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-bottom">
+      <span>© <span id="currentYear"></span> helpPatas petshop. Todos os direitos reservados.</span>
+      <a href="index.html#top">Voltar para o início</a>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+
+</html>

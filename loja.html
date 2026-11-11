@@ -198,19 +198,6 @@
       .floating-highlight strong { display: block; margin-bottom: 4px; }
       .floating-highlight small { color: rgba(51,51,51,.68); }
 
-      .feature-strip {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0,1fr));
-        gap: 20px;
-        margin-top: 24px;
-      }
-      .feature-box {
-        background: rgba(255,255,255,.96);
-        border: 1px solid rgba(53,20,155,.08);
-        border-radius: 22px;
-        box-shadow: 0 12px 24px rgba(30,30,30,.08);
-        padding: 22px;
-      }
       .cart-toggle {
         position: fixed;
         right: 24px;
@@ -365,17 +352,6 @@
         grid-template-columns: 1fr;
         gap: 10px;
       }
-      .feature-box strong {
-        display: block;
-        font-size: 1.3rem;
-        letter-spacing: -.04em;
-        margin-bottom: 8px;
-      }
-      .feature-box span {
-        color: rgba(51,51,51,.68);
-        line-height: 1.6;
-      }
-
       .catalog-shell {
         margin-top: 46px;
         background: rgba(255,255,255,.94);
@@ -492,11 +468,6 @@
         padding: .7rem 1rem;
       }
 
-      .catalog-footer {
-        margin-top: 26px;
-        text-align: center;
-      }
-
       @keyframes fadeUp {
         from {
           opacity: 0;
@@ -517,7 +488,6 @@
         .nav { display: none; }
         .topbar-inner, .header-inner, .footer-bottom { flex-direction: column; align-items: flex-start; }
         .product-grid { grid-template-columns: 1fr; }
-        .feature-strip { grid-template-columns: 1fr; }
       }
     </style>
     <link rel="stylesheet" href="visual.css" />
@@ -526,13 +496,11 @@
     <div class="topbar">
       <div class="container topbar-inner">
         <div class="topbar-links">
-          <span>📍 Rua das Flores, 128 - Vila Pet</span>
-          <span>☎ (11) 4000-2024</span>
-          <span>✉ atendimento@petcare.com.br</span>
+          <span>Precisa de ajuda? (11) 4000-2024</span>
         </div>
         <div class="topbar-links">
           <a href="index.html#contato">Atendimento</a>
-          <a href="dashboard-cliente.html">Área do cliente</a>
+          <a href="dashboard-cliente.html">Minha conta</a>
         </div>
       </div>
     </div>
@@ -546,7 +514,7 @@
           <a href="index.html">Início</a>
           <a href="index.html#servicos">Serviços</a>
           <a href="banho-e-tosa.html">Banho e Tosa</a>
-          <a href="dashboard-cliente.html">Dashboard</a>
+          <a href="#catalogo">Produtos</a>
           <a href="index.html#contato">Contato</a>
         </nav>
         <div class="header-tools">
@@ -570,7 +538,7 @@
       </div>
       <div class="cart-body">
         <div class="cart-empty" id="cartEmpty">
-          Seu carrinho está vazio. Adicione alguns produtos para continuar.
+          Seu carrinho está vazio. Adicione um produto para começar.
         </div>
         <ul class="cart-items" id="cartItems"></ul>
       </div>
@@ -590,42 +558,26 @@
         <section class="page-hero">
           <div class="page-hero-inner">
             <div>
-              <span class="eyebrow">Loja helpPatas petshop</span>
-              <h1>Produtos premium para o cuidado diário do seu pet.</h1>
-              <p class="hero-text">Explore uma seleção curada com rações, camas, casinhas, potes, coleiras, acessórios e remédios essenciais para manter seu pet saudável, confortável e feliz.</p>
+              <span class="eyebrow">Loja</span>
+              <h1>Tudo para o dia a dia do seu pet</h1>
+              <p class="hero-text">Encontre ração, camas, brinquedos e acessórios para cães e gatos.</p>
               <div class="hero-actions">
-                <a class="btn btn-primary" href="#catalogo">Comprar agora</a>
-                <a class="btn btn-soft" href="index.html#loja">Voltar para a home</a>
+                <a class="btn btn-primary" href="#catalogo">Ver produtos</a>
               </div>
             </div>
             <div class="hero-visual">
               <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=1200&q=80" alt="Pet com itens da loja" loading="eager" fetchpriority="high" decoding="async" />
               <div class="floating-highlight">
-                <strong>Entrega rápida</strong>
-                <small>Produtos selecionados com qualidade e confiança.</small>
+                <strong>Compre em poucos passos</strong>
+                <small>Escolha um produto e adicione ao carrinho.</small>
               </div>
             </div>
           </div>
         </section>
 
-        <div class="feature-strip">
-          <div class="feature-box">
-            <strong>Curadoria premium</strong>
-            <span>Produtos escolhidos para combinar qualidade, segurança e conforto no dia a dia.</span>
-          </div>
-          <div class="feature-box">
-            <strong>Fácil localização</strong>
-            <span>Explore por categoria e encontre rapidamente o que seu pet precisa.</span>
-          </div>
-          <div class="feature-box">
-            <strong>Atendimento confiável</strong>
-            <span>Uma experiência moderna, clara e intuitiva para comprar com praticidade.</span>
-          </div>
-        </div>
-
         <section class="catalog-shell" id="catalogo">
           <div class="catalog-head">
-            <h2>Catálogo completo</h2>
+            <h2>Escolha uma categoria</h2>
             <div class="filter-bar" aria-label="Filtros de produtos">
               <button class="filter-btn active" type="button" data-filter="todos">Todos</button>
               <button class="filter-btn" type="button" data-filter="Rações">Rações</button>
@@ -633,17 +585,14 @@
               <button class="filter-btn" type="button" data-filter="Casinhas">Casinhas</button>
               <button class="filter-btn" type="button" data-filter="Potes de Ração">Potes de Ração</button>
               <button class="filter-btn" type="button" data-filter="Coleiras">Coleiras</button>
-              <button class="filter-btn" type="button" data-filter="Remédios">Remédios</button>
+              <button class="filter-btn" type="button" data-filter="Suplementos">Suplementos</button>
               <button class="filter-btn" type="button" data-filter="Brinquedos">Brinquedos</button>
               <button class="filter-btn" type="button" data-filter="Higiene">Higiene</button>
             </div>
           </div>
 
+          <p class="shopping-help">Clique em “Adicionar ao carrinho” para guardar um produto e ver o total.</p>
           <div class="product-grid" id="productGrid"></div>
-
-          <div class="catalog-footer">
-            <a class="btn btn-soft" href="index.html">Voltar para a página inicial</a>
-          </div>
         </section>
       </div>
     </main>
@@ -651,10 +600,11 @@
     <footer>
       <div class="container footer-bottom">
         <span>© 2026 helpPatas petshop. Todos os direitos reservados.</span>
-        <span>Feito para pets e tutores que valorizam qualidade.</span>
+        <span>Cuidados e produtos para seu pet.</span>
       </div>
     </footer>
 
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="script.js"></script>
   </body>
 </html>

@@ -14,23 +14,14 @@ const summaryDate = document.getElementById('summaryDate');
 const summaryTime = document.getElementById('summaryTime');
 const summaryPrice = document.getElementById('summaryPrice');
 const toast = document.getElementById('toast');
-const appointmentsList = document.getElementById('appointmentsList');
 const serviceCards = document.querySelectorAll('.service-card');
 const addToCartButtons = document.querySelectorAll('.add-to-cart');
-const openDashboardBtn = document.getElementById('openDashboardBtn');
-const clientPanel = document.getElementById('clientPanel');
-const closePanelBtn = document.getElementById('closePanelBtn');
 const searchInput = document.getElementById('searchInput');
 const menuToggle = document.querySelector('.menu-toggle');
 const nav = document.querySelector('.nav');
 const whatsappFloat = document.querySelector('.whatsapp-float');
 const chatWidget = document.getElementById('chatWidget');
 const closeChatBtn = document.getElementById('closeChatBtn');
-const ctaMainBtn = document.getElementById('ctaMainBtn');
-const quickDashboardBtn = document.getElementById('quickDashboardBtn');
-const quickAppointmentsBtn = document.getElementById('quickAppointmentsBtn');
-const quickGroomingBtn = document.getElementById('quickGroomingBtn');
-const quickStockBtn = document.getElementById('quickStockBtn');
 const loginForm = document.getElementById('loginForm');
 const createAccountForm = document.getElementById('createAccountForm');
 const socialButtons = document.querySelectorAll('.social-btn');
@@ -55,20 +46,20 @@ const priceMap = {
 
 const catalogProducts = [
   {
-    name: 'Ração Premium',
+    name: 'Ração',
     category: 'Rações',
     badge: 'Ração',
     price: 129,
     image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=900&q=80',
-    description: 'Formulação completa para saúde, energia e sabor irresistível.'
+    description: 'Alimento completo para o dia a dia do seu pet.'
   },
   {
-    name: 'Camada Comfort',
+    name: 'Cama Comfort',
     category: 'Camas',
     badge: 'Cama',
     price: 149,
     image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=900&q=80',
-    description: 'Macio, respirável e pensado para descanso prolongado do pet.'
+    description: 'Confortável para o descanso do seu pet.'
   },
   {
     name: 'Casinha Deluxe',
@@ -76,7 +67,7 @@ const catalogProducts = [
     badge: 'Casinha',
     price: 249,
     image: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=900&q=80',
-    description: 'Estrutura elegante e resistente para maior conforto e segurança.'
+    description: 'Um espaço protegido para seu pet descansar.'
   },
   {
     name: 'Pote de Ração Pro',
@@ -84,7 +75,7 @@ const catalogProducts = [
     badge: 'Acessório',
     price: 59,
     image: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=900&q=80',
-    description: 'Capacidade ideal, design prático e manutenção fácil no dia a dia.'
+    description: 'Fácil de usar e limpar.'
   },
   {
     name: 'Coleira Premium',
@@ -92,15 +83,15 @@ const catalogProducts = [
     badge: 'Acessório',
     price: 69,
     image: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=900&q=80',
-    description: 'Conforto e estilo com material resistente e fácil de limpar.'
+    description: 'Resistente e confortável para passeios.'
   },
   {
     name: 'Suplemento Vital',
-    category: 'Remédios',
+    category: 'Suplementos',
     badge: 'Saúde',
     price: 87,
     image: 'https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=80',
-    description: 'Auxilia na rotina de bem-estar com suporte para saúde e vitalidade.'
+    description: 'Suplemento alimentar. Consulte um veterinário antes de usar.'
   },
   {
     name: 'Brinquedo Interativo',
@@ -108,7 +99,7 @@ const catalogProducts = [
     badge: 'Brinquedo',
     price: 49,
     image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=900&q=80',
-    description: 'Durável, divertido e feito para estimular o corpo e a mente.'
+    description: 'Para brincar e gastar energia.'
   },
   {
     name: 'Kit de Higiene',
@@ -116,7 +107,7 @@ const catalogProducts = [
     badge: 'Kit',
     price: 99,
     image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=900&q=80',
-    description: 'Produtos essenciais para limpeza, cuidado e manutenção diária.'
+    description: 'Itens básicos para o cuidado diário.'
   }
 ];
 
@@ -507,7 +498,7 @@ function renderCatalogProducts(filter = 'todos') {
         <p>${product.description}</p>
         <div class="product-meta">
           <span class="price">R$ ${product.price}</span>
-          <button class="btn btn-primary add-to-cart" type="button">Comprar</button>
+          <button class="btn btn-primary add-to-cart" type="button">Adicionar ao carrinho</button>
         </div>
       </div>
     </article>
@@ -690,11 +681,19 @@ function handleCreateAccount(event) {
 }
 
 const revealTargets = document.querySelectorAll('section, .service-card, .product-card, .testimonial-card, .article-card, .stat, .overview-item, .booking-card, .booking-summary, .contact-card, .dashboard-card');
+const revealItemSelector = '.service-card, .product-card, .testimonial-card, .article-card, .stat, .overview-item, .booking-card, .booking-summary, .contact-card, .dashboard-card';
 
 if (revealTargets.length) {
-  revealTargets.forEach((element, index) => {
+  revealTargets.forEach(element => {
     element.classList.add('reveal');
-    element.style.transitionDelay = `${index * 45}ms`;
+
+    if (element.matches(revealItemSelector) && element.parentElement) {
+      const siblingIndex = Array.from(element.parentElement.children)
+        .filter(sibling => sibling.matches(revealItemSelector))
+        .indexOf(element);
+
+      element.style.setProperty('--reveal-delay', `${Math.min(siblingIndex, 3) * 70}ms`);
+    }
   });
 
   if ('IntersectionObserver' in window) {
@@ -714,6 +713,11 @@ if (revealTargets.length) {
 }
 
 if (serviceSelect) {
+  const requestedService = new URLSearchParams(window.location.search).get('servico');
+  if (requestedService && Array.from(serviceSelect.options).some(option => option.value === requestedService)) {
+    serviceSelect.value = requestedService;
+  }
+
   serviceSelect.addEventListener('change', updateSummary);
 }
 
@@ -739,31 +743,9 @@ if (bookingForm) {
       return;
     }
 
-    const appointmentDate = new Date(date + 'T00:00:00');
-    const shortDay = String(appointmentDate.getDate()).padStart(2, '0');
-    const shortMonth = appointmentDate.toLocaleDateString('pt-BR', { month: 'short' });
-
-    const newItem = document.createElement('li');
-    newItem.innerHTML = `
-      <div class="appointment-date">${shortDay} <small>${shortMonth.toUpperCase()}</small></div>
-      <div>
-        <h4 style="margin:0 0 4px;">${service} - ${petName}</h4>
-        <p style="margin:0; color: rgba(51,51,51,.7);">${time} — Agendamento online</p>
-      </div>
-      <span class="status-badge confirmed">Confirmado</span>
-    `;
-
-    if (appointmentsList) {
-      appointmentsList.prepend(newItem);
-    }
-
     bookingForm.reset();
     updateSummary();
     showToast('Agendamento confirmado com sucesso!');
-
-    if (clientPanel) {
-      clientPanel.classList.add('open');
-    }
   });
 }
 
@@ -772,10 +754,13 @@ serviceCards.forEach(card => {
     const service = card.dataset.service;
     if (!service) return;
 
-    if (serviceSelect) {
-      serviceSelect.value = service;
-      updateSummary();
+    if (!serviceSelect) {
+      window.location.href = `agendamento.html?servico=${encodeURIComponent(service)}`;
+      return;
     }
+
+    serviceSelect.value = service;
+    updateSummary();
 
     const agendamentosSection = document.getElementById('agendamentos');
     if (agendamentosSection) {
@@ -799,24 +784,6 @@ addToCartButtons.forEach(button => {
     showToast('Produto adicionado ao carrinho.');
   });
 });
-
-if (openDashboardBtn) {
-  openDashboardBtn.addEventListener('click', (event) => {
-    if (openDashboardBtn.tagName.toLowerCase() === 'a') {
-      return;
-    }
-
-    event.preventDefault();
-    if (clientPanel) {
-      clientPanel.classList.add('open');
-    }
-    showToast('Painel do cliente aberto.');
-  });
-}
-
-if (closePanelBtn && clientPanel) {
-  closePanelBtn.addEventListener('click', () => clientPanel.classList.remove('open'));
-}
 
 if (searchInput) {
   searchInput.addEventListener('input', (event) => {
@@ -850,43 +817,6 @@ if (whatsappFloat && chatWidget) {
 
 if (closeChatBtn && chatWidget) {
   closeChatBtn.addEventListener('click', () => chatWidget.classList.remove('open'));
-}
-
-if (ctaMainBtn) {
-  ctaMainBtn.addEventListener('click', () => scrollToSection('agendamentos', 'Seção de agendamentos aberta.'));
-}
-
-if (quickDashboardBtn) {
-  quickDashboardBtn.addEventListener('click', (event) => {
-    if (quickDashboardBtn.tagName.toLowerCase() === 'a') {
-      return;
-    }
-
-    event.preventDefault();
-    if (clientPanel) {
-      clientPanel.classList.add('open');
-    }
-    showToast('Dashboard pronto para revisão.');
-  });
-}
-
-if (quickAppointmentsBtn) {
-  quickAppointmentsBtn.addEventListener('click', () => scrollToSection('agendamentos', 'Agendamentos selecionados.'));
-}
-
-if (quickGroomingBtn) {
-  quickGroomingBtn.addEventListener('click', (event) => {
-    if (quickGroomingBtn.tagName.toLowerCase() === 'a') {
-      return;
-    }
-
-    event.preventDefault();
-    scrollToSection('banho-e-tosa', 'Banho e Tosa em destaque.');
-  });
-}
-
-if (quickStockBtn) {
-  quickStockBtn.addEventListener('click', () => scrollToSection('loja', 'Estoque e produtos disponíveis.'));
 }
 
 if (loginForm) {
