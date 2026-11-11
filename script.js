@@ -18,6 +18,7 @@ const toast = document.getElementById('toast');
 const serviceCards = document.querySelectorAll('.service-card');
 const addToCartButtons = document.querySelectorAll('.add-to-cart');
 const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
 const menuToggle = document.querySelector('.menu-toggle');
 const nav = document.querySelector('.nav');
 const whatsappFloat = document.querySelector('.whatsapp-float');
@@ -36,6 +37,7 @@ const cartItemsList = document.getElementById('cartItems');
 const cartEmpty = document.getElementById('cartEmpty');
 const cartTotal = document.getElementById('cartTotal');
 const cartCount = document.getElementById('cartCount');
+let currentSearchMatches = [];
 
 const priceMap = {
   'Banho e Tosa': 'R$ 69,00',
@@ -802,13 +804,176 @@ addToCartButtons.forEach(button => {
   });
 });
 
-if (searchInput) {
-  searchInput.addEventListener('input', (event) => {
-    const value = event.target.value.trim().toLowerCase();
-    document.querySelectorAll('section').forEach(section => {
-      const text = section.textContent.toLowerCase();
-      section.style.opacity = value && !text.includes(value) ? '0.35' : '1';
+function normalizeSearchText(value) {
+  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+function getSearchTargets() {
+  const serviceTargets = Array.from(serviceCards, card => {
+    const service = card.dataset.service || card.querySelector('h3')?.textContent.trim();
+    if (!service) return null;
+
+    return {
+      title: service,
+      detail: card.querySelector('.pill')?.textContent.trim() || card.querySelector('p')?.textContent.trim() || 'Serviço',
+      searchText: card.textContent,
+      url: `agendamento.html?servico=${encodeURIComponent(service)}`
+    };
+  }).filter(Boolean);
+
+  const productTargets = Array.from(document.querySelectorAll('.product-card'), card => {
+    const title = card.querySelector('h3')?.textContent.trim();
+    if (!title) return null;
+
+    return {
+      title,
+      detail: card.querySelector('p')?.textContent.trim() || 'Produto para seu pet',
+      searchText: card.textContent,
+      element: card
+    };
+  }).filter(Boolean);
+
+  const sectionTargets = Array.from(document.querySelectorAll('main section:not(.hero)'), section => {
+    const title = section.querySelector('h1, h2')?.textContent.trim();
+    if (!title) return null;
+
+    const eyebrow = section.querySelector('.eyebrow')?.textContent.trim() || '';
+    const description = section.querySelector('.section-head > p')?.textContent.trim() || '';
+    const containsCards = section.querySelector('.service-card, .product-card');
+
+    return {
+      title,
+      detail: eyebrow || 'Seção do site',
+      searchText: containsCards
+        ? `${section.id} ${eyebrow} ${title} ${description}`
+        : `${section.id} ${section.textContent}`,
+      element: section
+    };
+  }).filter(Boolean);
+
+  return [...serviceTargets, ...productTargets, ...sectionTargets];
+}
+
+function closeSearchResults() {
+  if (!searchInput || !searchResults) return;
+  searchResults.hidden = true;
+  searchInput.setAttribute('aria-expanded', 'false');
+}
+
+function renderSearchResults() {
+  if (!searchInput || !searchResults) return;
+
+  const query = normalizeSearchText(searchInput.value);
+  searchResults.replaceChildren();
+  currentSearchMatches = [];
+
+  if (query.length < 2) {
+    closeSearchResults();
+    return;
+  }
+
+  const terms = query.split(/\s+/);
+  currentSearchMatches = getSearchTargets()
+    .filter(target => {
+      const searchableText = normalizeSearchText(`${target.title} ${target.detail} ${target.searchText}`);
+      return terms.every(term => searchableText.includes(term));
+    })
+    .slice(0, 6);
+
+  if (!currentSearchMatches.length) {
+    const emptyMessage = document.createElement('p');
+    emptyMessage.className = 'search-results-empty';
+    emptyMessage.textContent = 'Nenhum resultado encontrado.';
+    searchResults.append(emptyMessage);
+  } else {
+    currentSearchMatches.forEach((result, index) => {
+      const option = document.createElement('button');
+      option.type = 'button';
+      option.className = 'search-result';
+      option.setAttribute('role', 'option');
+      option.setAttribute('aria-selected', 'false');
+      option.dataset.searchIndex = String(index);
+
+      const title = document.createElement('span');
+      title.className = 'search-result-title';
+      title.textContent = result.title;
+
+      const detail = document.createElement('span');
+      detail.className = 'search-result-detail';
+      detail.textContent = result.detail;
+
+      option.append(title, detail);
+      searchResults.append(option);
     });
+  }
+
+  searchResults.hidden = false;
+  searchInput.setAttribute('aria-expanded', 'true');
+}
+
+function openSearchResult(index) {
+  const result = currentSearchMatches[index];
+  if (!result) return;
+
+  closeSearchResults();
+  if (result.url) {
+    window.location.href = result.url;
+    return;
+  }
+
+  const section = result.element.closest('section');
+  const hashTarget = result.element.id ? result.element : section;
+  if (hashTarget?.id) {
+    window.history.replaceState(null, '', `#${hashTarget.id}`);
+  }
+  result.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+if (searchInput && searchResults) {
+  searchInput.addEventListener('input', renderSearchResults);
+  searchInput.addEventListener('keydown', event => {
+    if (event.key === 'ArrowDown') {
+      const firstResult = searchResults.querySelector('.search-result');
+      if (firstResult) {
+        event.preventDefault();
+        firstResult.focus();
+      }
+    } else if (event.key === 'Enter') {
+      if (!searchResults.hidden && currentSearchMatches.length) {
+        event.preventDefault();
+        openSearchResult(0);
+      }
+    } else if (event.key === 'Escape') {
+      closeSearchResults();
+    }
+  });
+
+  searchResults.addEventListener('click', event => {
+    const option = event.target.closest('.search-result');
+    if (option) openSearchResult(Number(option.dataset.searchIndex));
+  });
+
+  searchResults.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      searchInput.focus();
+      closeSearchResults();
+      return;
+    }
+
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+
+    const options = Array.from(searchResults.querySelectorAll('.search-result'));
+    const currentIndex = options.indexOf(document.activeElement);
+    if (!options.length || currentIndex < 0) return;
+
+    event.preventDefault();
+    const direction = event.key === 'ArrowDown' ? 1 : -1;
+    options[(currentIndex + direction + options.length) % options.length].focus();
+  });
+
+  document.addEventListener('pointerdown', event => {
+    if (!event.target.closest('.home-header .header-tools')) closeSearchResults();
   });
 }
 

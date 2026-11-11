@@ -39,8 +39,10 @@
       <div class="header-tools">
         <label class="search-box" aria-label="Buscar no site">
           <span>🔎</span>
-          <input id="searchInput" type="text" placeholder="Buscar" />
+          <input id="searchInput" type="text" placeholder="Buscar" autocomplete="off" role="combobox"
+            aria-autocomplete="list" aria-controls="searchResults" aria-expanded="false" />
         </label>
+        <div class="search-results" id="searchResults" role="listbox" aria-label="Resultados da busca" hidden></div>
         <div class="header-account-links" role="group" aria-label="Acesso à conta">
           <a class="header-link" href="login.html">Entrar</a>
           <a class="btn btn-soft" href="criar-conta.html">Criar conta</a>
@@ -223,7 +225,7 @@
               alt="Equipe da helpPatas petshop" loading="lazy" decoding="async" />
           </div>
           <div>
-            <p class="subtext" style="max-width: none;">Oferecemos banho, consultas e outros cuidados para cães e gatos.</p>
+            <p class="subtext about-highlight">Oferecemos banho, consultas e outros cuidados para cães e gatos.</p>
           </div>
         </div>
       </div>
