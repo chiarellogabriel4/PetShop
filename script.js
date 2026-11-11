@@ -23,6 +23,7 @@ const nav = document.querySelector('.nav');
 const whatsappFloat = document.querySelector('.whatsapp-float');
 const chatWidget = document.getElementById('chatWidget');
 const closeChatBtn = document.getElementById('closeChatBtn');
+const chatGroomingBtn = document.getElementById('chatGroomingBtn');
 const loginForm = document.getElementById('loginForm');
 const createAccountForm = document.getElementById('createAccountForm');
 const socialButtons = document.querySelectorAll('.social-btn');
@@ -833,6 +834,20 @@ if (whatsappFloat && chatWidget) {
 
 if (closeChatBtn && chatWidget) {
   closeChatBtn.addEventListener('click', () => chatWidget.classList.remove('open'));
+}
+
+if (chatGroomingBtn && chatWidget) {
+  chatGroomingBtn.addEventListener('click', () => {
+    const groomingSection = document.getElementById('banho-e-tosa');
+    if (!groomingSection) {
+      window.location.href = 'index.html#banho-e-tosa';
+      return;
+    }
+
+    chatWidget.classList.remove('open');
+    window.history.replaceState(null, '', '#banho-e-tosa');
+    groomingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 }
 
 if (loginForm) {
