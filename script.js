@@ -17,6 +17,7 @@ const bookingSummary = document.querySelector('.booking-summary');
 const toast = document.getElementById('toast');
 const serviceCards = document.querySelectorAll('.service-card');
 const addToCartButtons = document.querySelectorAll('.add-to-cart');
+const interactiveProductCards = document.querySelectorAll('#loja .product-card');
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 const menuToggle = document.querySelector('.menu-toggle');
@@ -803,6 +804,30 @@ addToCartButtons.forEach(button => {
     showToast('Produto adicionado ao carrinho.');
   });
 });
+
+if (window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) {
+  interactiveProductCards.forEach(card => {
+    card.addEventListener('pointermove', event => {
+      if (event.pointerType === 'touch') return;
+
+      const bounds = card.getBoundingClientRect();
+      const x = (event.clientX - bounds.left) / bounds.width;
+      const y = (event.clientY - bounds.top) / bounds.height;
+
+      card.style.setProperty('--pointer-x', `${x * 100}%`);
+      card.style.setProperty('--pointer-y', `${y * 100}%`);
+      card.style.setProperty('--tilt-x', `${((0.5 - y) * 5).toFixed(2)}deg`);
+      card.style.setProperty('--tilt-y', `${((x - 0.5) * 5).toFixed(2)}deg`);
+      card.classList.add('is-pointer-active');
+    });
+
+    card.addEventListener('pointerleave', () => {
+      card.style.setProperty('--tilt-x', '0deg');
+      card.style.setProperty('--tilt-y', '0deg');
+      card.classList.remove('is-pointer-active');
+    });
+  });
+}
 
 function normalizeSearchText(value) {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
