@@ -311,12 +311,16 @@ body {
 }
 
 #loja .product-meta .price {
-  font-size: 1.5rem;
+  color: var(--purple-dark);
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 #loja .product-meta {
-  align-items: center;
-  gap: 8px;
+  align-items: stretch;
+  flex-direction: column;
+  gap: 10px;
   margin-top: auto;
   padding-top: 16px;
 }
@@ -327,9 +331,10 @@ body {
 }
 
 #loja .product-meta .btn {
+  width: 100%;
   min-width: 0;
   min-height: 58px;
-  flex: 1 1 0;
+  flex: 0 0 auto;
   padding: 0.7rem 0.55rem;
   font-size: 0.9rem;
   line-height: 1.2;
