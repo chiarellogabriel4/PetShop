@@ -26,6 +26,9 @@ const whatsappFloat = document.querySelector('.whatsapp-float');
 const chatWidget = document.getElementById('chatWidget');
 const closeChatBtn = document.getElementById('closeChatBtn');
 const chatGroomingBtn = document.getElementById('chatGroomingBtn');
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+const chatMessages = document.getElementById('chatMessages');
 const loginForm = document.getElementById('loginForm');
 const createAccountForm = document.getElementById('createAccountForm');
 const socialButtons = document.querySelectorAll('.social-btn');
@@ -1018,12 +1021,167 @@ if (menuToggle && nav) {
   });
 }
 
+function appendChatMessage(message, sender, href) {
+  if (!chatMessages) return;
+
+  const bubble = document.createElement('div');
+  bubble.className = `chat-message ${sender}`;
+  bubble.textContent = message;
+
+  if (href) {
+    const link = document.createElement('a');
+    link.className = 'chat-reply-link';
+    link.href = href;
+    if (href.startsWith('agendamento.html')) {
+      link.textContent = 'Ir para agendamento';
+    } else if (href.startsWith('tel:')) {
+      link.textContent = 'Ligar para a helpPatas';
+    } else if (href.startsWith('https://wa.me/')) {
+      link.textContent = 'Falar no WhatsApp';
+    } else {
+      link.textContent = 'Ver detalhes';
+    }
+    bubble.append(document.createElement('br'), link);
+  }
+
+  chatMessages.append(bubble);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function getAssistantReply(message) {
+  const query = normalizeSearchText(message);
+  const urgentWords = ['urgencia', 'emergencia', 'sangue', 'veneno', 'convuls', 'passando mal', 'dor forte', 'engoliu'];
+  if (urgentWords.some(word => query.includes(word))) {
+    return {
+      text: 'Sinto muito. Não consigo avaliar sintomas; procure atendimento veterinário imediatamente. A página informa atendimento de emergência 24h. Ligue para (11) 4000-2024.',
+      href: 'tel:+551140002024'
+    };
+  }
+
+  const serviceAliases = [
+    { name: 'Banho e Tosa', terms: ['banho', 'tosa'] },
+    { name: 'Consulta Veterinária', terms: ['consulta', 'veterin'] },
+    { name: 'Vacinação', terms: ['vacina', 'vacinacao'] },
+    { name: 'Hospedagem', terms: ['hosped', 'hotel'] },
+    { name: 'Creche Pet', terms: ['creche'] },
+    { name: 'Emergência 24h', terms: ['emergencia', 'urgencia'] }
+  ];
+  const matchedService = serviceAliases.find(service => service.terms.some(term => query.includes(term)));
+  const isBookingQuery = /agend|marcar|horario|disponibilidade/.test(query);
+
+  if (/funcionamento|abre|aberto|fecha/.test(query)) {
+    return {
+      text: 'Não tenho os horários de funcionamento cadastrados. Ligue para (11) 4000-2024 para confirmar.'
+    };
+  }
+
+  if (isBookingQuery) {
+    const bookingUrl = matchedService
+      ? `agendamento.html?servico=${encodeURIComponent(matchedService.name)}`
+      : 'agendamento.html';
+    return {
+      text: matchedService
+        ? `Você pode agendar ${matchedService.name} pela página de agendamento.`
+        : 'Você pode escolher o serviço e um horário disponível na página de agendamento.',
+      href: bookingUrl
+    };
+  }
+
+  const productAliases = [
+    { term: 'racao', name: 'Ração' },
+    { term: 'brinquedo', name: 'Brinquedo Interativo' },
+    { term: 'suplemento', name: 'Suplemento Vital' },
+    { term: 'coleira', name: 'Coleira Premium' }
+  ];
+  const matchedProduct = productAliases.find(product => query.includes(product.term));
+  if (matchedProduct) {
+    const productCard = Array.from(document.querySelectorAll('#loja .product-card'))
+      .find(card => normalizeSearchText(card.dataset.name || '').includes(normalizeSearchText(matchedProduct.name)));
+    if (productCard) {
+      const price = productCard.querySelector('.price')?.textContent.trim();
+      const detail = productCard.dataset.description;
+      return {
+        text: `${matchedProduct.name}${price ? ` custa ${price}` : ''}.${detail ? ` ${detail}` : ''}`,
+        href: '#loja'
+      };
+    }
+  }
+
+  if (matchedService) {
+    const serviceCard = Array.from(serviceCards)
+      .find(card => normalizeSearchText(card.dataset.service || '').includes(normalizeSearchText(matchedService.name)));
+    const detail = serviceCard?.querySelector('p')?.textContent.trim();
+    const price = serviceCard?.querySelector('.pill')?.textContent.trim();
+    return {
+      text: `${matchedService.name}: ${detail || 'Consulte os detalhes do serviço.'}${price ? ` ${price}.` : ''}`,
+      href: `agendamento.html?servico=${encodeURIComponent(matchedService.name)}`
+    };
+  }
+
+  if (/local|endereco|onde fica/.test(query)) {
+    return { text: 'Estamos na Rua das Flores, 128 - Vila Pet, São Paulo/SP. Ligue para (11) 4000-2024 se precisar de ajuda.' };
+  }
+
+  if (/telefone|contato|ligar|whatsapp/.test(query)) {
+    const prefersWhatsApp = /whatsapp/.test(query) && !/telefone|ligar/.test(query);
+    return {
+      text: 'Você pode ligar para (11) 4000-2024 ou falar pelo WhatsApp (11) 99123-4567.',
+      href: prefersWhatsApp ? 'https://wa.me/5511991234567' : 'tel:+551140002024'
+    };
+  }
+
+  if (/^(oi|ola|bom dia|boa tarde|boa noite)\b/.test(query)) {
+    return { text: 'Olá! Posso ajudar com serviços, preços, produtos ou agendamento. O que você gostaria de saber?' };
+  }
+
+  if (/loja|produto|comprar/.test(query)) {
+    return { text: 'Na loja temos ração, brinquedos, suplementos e coleiras. Qual produto você quer conhecer?', href: '#loja' };
+  }
+
+  return {
+    text: 'Ainda não sei responder isso. Pergunte sobre banho e tosa, consultas, vacinação, hospedagem, produtos, preços ou agendamentos.'
+  };
+}
+
 if (whatsappFloat && chatWidget) {
-  whatsappFloat.addEventListener('click', () => chatWidget.classList.toggle('open'));
+  whatsappFloat.addEventListener('click', () => {
+    const isOpen = chatWidget.classList.toggle('open');
+    whatsappFloat.setAttribute('aria-expanded', String(isOpen));
+    chatWidget.setAttribute('aria-hidden', String(!isOpen));
+    if (isOpen) chatInput?.focus();
+  });
 }
 
 if (closeChatBtn && chatWidget) {
-  closeChatBtn.addEventListener('click', () => chatWidget.classList.remove('open'));
+  closeChatBtn.addEventListener('click', () => {
+    chatWidget.classList.remove('open');
+    chatWidget.setAttribute('aria-hidden', 'true');
+    whatsappFloat?.setAttribute('aria-expanded', 'false');
+    whatsappFloat?.focus();
+  });
+}
+
+if (chatForm && chatInput) {
+  chatForm.addEventListener('submit', event => {
+    event.preventDefault();
+    const question = chatInput.value.trim();
+    if (!question) return;
+
+    appendChatMessage(question, 'user');
+    chatInput.value = '';
+    const reply = getAssistantReply(question);
+    appendChatMessage(reply.text, 'assistant', reply.href);
+    chatInput.focus();
+  });
+
+  chatInput.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && chatWidget?.classList.contains('open')) {
+      chatWidget.classList.remove('open');
+      chatWidget.setAttribute('aria-hidden', 'true');
+      whatsappFloat?.setAttribute('aria-expanded', 'false');
+      whatsappFloat?.focus();
+    }
+  });
 }
 
 if (chatGroomingBtn && chatWidget) {

@@ -214,6 +214,139 @@ body {
   }
 }
 
+.chat-widget {
+  display: flex;
+  width: min(360px, calc(100vw - 120px));
+  max-height: min(520px, calc(100dvh - 40px));
+  flex-direction: column;
+}
+
+.chat-header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.chat-status {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.76rem;
+}
+
+.chat-body {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-messages {
+  display: flex;
+  min-height: 72px;
+  max-height: 250px;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.chat-message {
+  max-width: 92%;
+  overflow-wrap: anywhere;
+}
+
+.chat-message.assistant {
+  align-self: flex-start;
+}
+
+.chat-message.user {
+  align-self: flex-end;
+  background: var(--purple);
+  color: var(--white);
+}
+
+.chat-reply-link {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--purple);
+  font-weight: 700;
+}
+
+.chat-message.user .chat-reply-link {
+  color: var(--white);
+}
+
+.chat-actions {
+  margin-top: 0;
+}
+
+.chat-actions button,
+.chat-actions a {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 10px;
+  background: var(--orange-soft);
+  color: var(--orange);
+  padding: 10px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.chat-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  gap: 8px;
+}
+
+.chat-form input {
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid rgba(53, 20, 155, 0.16);
+  border-radius: 12px;
+  padding: 0 12px;
+}
+
+.chat-form button {
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--orange), #ff8b3d);
+  color: var(--white);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.chat-disclaimer {
+  margin: 0;
+  color: rgba(41, 37, 56, 0.66);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 600px) {
+  .chat-widget {
+    right: 12px;
+    bottom: 92px;
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 110px);
+  }
+}
+
 .booking-summary > :not(.booking-summary-shapes) {
   position: relative;
   z-index: 2;

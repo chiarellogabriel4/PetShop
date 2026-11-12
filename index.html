@@ -488,20 +488,33 @@
     </div>
   </footer>
 
-  <button class="whatsapp-float" aria-label="WhatsApp">💬</button>
+  <button class="whatsapp-float" type="button" aria-label="Abrir assistente virtual" aria-controls="chatWidget"
+    aria-expanded="false">💬</button>
 
-  <div class="chat-widget" id="chatWidget">
+  <div class="chat-widget" id="chatWidget" role="dialog" aria-label="Assistente virtual helpPatas" aria-hidden="true">
     <div class="chat-header">
-      <strong>Atendimento helpPatas petshop</strong>
+      <div>
+        <strong>Assistente helpPatas</strong>
+        <span class="chat-status">Respostas automáticas</span>
+      </div>
       <button class="close-panel" id="closeChatBtn" aria-label="Fechar chat">✕</button>
     </div>
     <div class="chat-body">
-      <div class="chat-message">Olá! Posso ajudar com banho e tosa, consulta, hospedagem ou loja pet. Como posso te
-        ajudar hoje?</div>
+      <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-relevant="additions">
+        <div class="chat-message assistant">Olá! Sou o assistente virtual da helpPatas. Pergunte sobre serviços,
+          preços, produtos ou agendamentos.</div>
+      </div>
       <div class="chat-actions">
         <button type="button" id="chatGroomingBtn">Banho e Tosa</button>
-        <button type="button">Agendar</button>
+        <a href="agendamento.html">Agendar</a>
       </div>
+      <form class="chat-form" id="chatForm">
+        <label class="sr-only" for="chatInput">Digite sua pergunta</label>
+        <input id="chatInput" name="question" type="text" maxlength="300" autocomplete="off"
+          placeholder="Digite sua pergunta..." required />
+        <button type="submit" aria-label="Enviar pergunta">➤</button>
+      </form>
+      <p class="chat-disclaimer">Assistente automático; não substitui orientação veterinária.</p>
     </div>
   </div>
 
