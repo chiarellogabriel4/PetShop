@@ -25,7 +25,6 @@ const nav = document.querySelector('.nav');
 const whatsappFloat = document.querySelector('.whatsapp-float');
 const chatWidget = document.getElementById('chatWidget');
 const closeChatBtn = document.getElementById('closeChatBtn');
-const chatGroomingBtn = document.getElementById('chatGroomingBtn');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 const chatMessages = document.getElementById('chatMessages');
@@ -1181,20 +1180,6 @@ if (chatForm && chatInput) {
       whatsappFloat?.setAttribute('aria-expanded', 'false');
       whatsappFloat?.focus();
     }
-  });
-}
-
-if (chatGroomingBtn && chatWidget) {
-  chatGroomingBtn.addEventListener('click', () => {
-    const groomingSection = document.getElementById('banho-e-tosa');
-    if (!groomingSection) {
-      window.location.href = 'index.html#banho-e-tosa';
-      return;
-    }
-
-    chatWidget.classList.remove('open');
-    window.history.replaceState(null, '', '#banho-e-tosa');
-    groomingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 }
 
