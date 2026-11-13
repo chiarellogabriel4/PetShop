@@ -552,6 +552,83 @@
       .add-to-cart {
         padding: .7rem 1rem;
       }
+      .blog-section {
+        margin-top: 46px;
+        background: linear-gradient(135deg, rgba(53,20,155,.05), rgba(255,102,0,.04));
+        border: 1px solid rgba(53,20,155,.08);
+        border-radius: 30px;
+        box-shadow: var(--shadow);
+        padding: 28px;
+      }
+      .blog-header {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      .blog-header h2 {
+        margin: 12px 0 0;
+        font-size: clamp(1.5rem, 2vw, 2.2rem);
+        letter-spacing: -.05em;
+      }
+      .blog-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+      }
+      .blog-card {
+        display: flex;
+        flex-direction: column;
+        background: rgba(255,255,255,.96);
+        border: 1px solid rgba(53,20,155,.08);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 12px 24px rgba(30,30,30,.08);
+        transition: transform .2s ease, box-shadow .2s ease;
+      }
+      .blog-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 28px rgba(30,30,30,.1);
+      }
+      .blog-card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+      }
+      .blog-card-body {
+        padding: 18px;
+      }
+      .blog-tag {
+        display: inline-block;
+        background: rgba(53,20,155,.08);
+        color: var(--purple);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: .7rem;
+        font-weight: 800;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+      }
+      .blog-card h3 {
+        margin: 12px 0 10px;
+        font-size: 1.15rem;
+        letter-spacing: -.04em;
+      }
+      .blog-card p {
+        margin: 0;
+        color: rgba(51,51,51,.7);
+        line-height: 1.6;
+      }
+      .blog-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 16px;
+        color: var(--purple);
+        font-weight: 800;
+      }
 
       @keyframes fadeUp {
         from {
@@ -567,6 +644,7 @@
       @media (max-width: 1100px) {
         .page-hero-inner { grid-template-columns: 1fr; }
         .product-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+        .blog-grid { grid-template-columns: 1fr 1fr; }
       }
 
       @media (max-width: 760px) {
@@ -575,6 +653,7 @@
         .product-grid { grid-template-columns: 1fr; }
         .promo-heading { flex-wrap: wrap; }
         .promo-ad { flex-basis: 286px; }
+        .blog-grid { grid-template-columns: 1fr; }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -825,6 +904,45 @@
 
           <p class="shopping-help">Clique em “Adicionar ao carrinho” para guardar um produto e ver o total.</p>
           <div class="product-grid" id="productGrid"></div>
+        </section>
+
+        <section class="blog-section" aria-labelledby="blogTitle">
+          <div class="blog-header">
+            <div>
+              <span class="eyebrow">Blog</span>
+              <h2 id="blogTitle">Dicas e novidades para o seu pet</h2>
+            </div>
+            <a class="btn btn-soft" href="https://www.petz.com.br/blog/" target="_blank" rel="noreferrer">Ver mais artigos</a>
+          </div>
+          <div class="blog-grid">
+            <article class="blog-card">
+              <img src="https://images.unsplash.com/photo-1511044568932-338cba0ad803?auto=format&fit=crop&w=1200&q=80" alt="Cachorro deitado em um sofá" />
+              <div class="blog-card-body">
+                <span class="blog-tag">Cuidados</span>
+                <h3>Como manter a rotina do seu cachorro mais saudável</h3>
+                <p>Veja dicas simples para rotina, higiene e bem-estar do seu melhor amigo.</p>
+                <a class="blog-link" href="https://www.petz.com.br/blog/" target="_blank" rel="noreferrer">Ler artigo <span aria-hidden="true">→</span></a>
+              </div>
+            </article>
+            <article class="blog-card">
+              <img src="https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?auto=format&fit=crop&w=1200&q=80" alt="Gato olhando para a câmera" />
+              <div class="blog-card-body">
+                <span class="blog-tag">Bem-estar</span>
+                <h3>5 hábitos que ajudam seu gato a viver mais feliz</h3>
+                <p>Descubra pequenas mudanças no dia a dia que fazem grande diferença para o seu pet.</p>
+                <a class="blog-link" href="https://www.petz.com.br/blog/" target="_blank" rel="noreferrer">Ler artigo <span aria-hidden="true">→</span></a>
+              </div>
+            </article>
+            <article class="blog-card">
+              <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=1200&q=80" alt="Pet com brinquedo e acessórios" />
+              <div class="blog-card-body">
+                <span class="blog-tag">Dicas</span>
+                <h3>Escolha os melhores itens para o dia a dia do seu pet</h3>
+                <p>Confira recomendações práticas para conforto, diversão e cuidado com a saúde.</p>
+                <a class="blog-link" href="https://www.petz.com.br/blog/" target="_blank" rel="noreferrer">Ler artigo <span aria-hidden="true">→</span></a>
+              </div>
+            </article>
+          </div>
         </section>
       </div>
     </main>
