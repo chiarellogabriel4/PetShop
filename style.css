@@ -105,7 +105,7 @@ button, input, select, textarea { font: inherit; }
   background: rgba(53,20,155,.05);
   border: 1px solid rgba(53,20,155,.14);
   border-radius: 999px;
-  padding: 8px 12px;
+  padding: 6px 12px;
   transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
   flex-shrink: 1;
 }
@@ -120,6 +120,8 @@ button, input, select, textarea { font: inherit; }
   width: 100%;
   min-width: 0;
   flex: 1;
+  min-height: 0;
+  padding: 0;
   outline: none;
   font-size: .9rem;
   color: var(--gray-dark);
