@@ -144,6 +144,82 @@
         align-items: center;
         padding: 42px;
       }
+      .promo-zone { margin-top: 34px; }
+      .promo-heading {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .promo-heading h2 {
+        margin: 0;
+        font-size: clamp(1.25rem, 2vw, 1.7rem);
+        letter-spacing: -.04em;
+      }
+      .promo-heading span {
+        border-radius: 999px;
+        padding: 5px 10px;
+        background: var(--orange-soft);
+        color: var(--orange);
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+      }
+      .promo-window { overflow: hidden; border-radius: 22px; }
+      .promo-track {
+        display: flex;
+        width: max-content;
+        animation: promo-scroll 36s linear infinite;
+      }
+      .promo-group {
+        display: flex;
+        gap: 16px;
+        padding-right: 16px;
+      }
+      .promo-ad {
+        display: flex;
+        flex: 0 0 320px;
+        align-items: center;
+        gap: 14px;
+        min-height: 128px;
+        padding: 14px;
+        border: 1px solid rgba(53,20,155,.08);
+        border-radius: 22px;
+        color: var(--gray-dark);
+        box-shadow: 0 12px 24px rgba(30,30,30,.07);
+        transition: transform .2s ease, box-shadow .2s ease;
+      }
+      .promo-ad--bed { background: linear-gradient(135deg, #fff1e8, #fff); }
+      .promo-ad--food { background: linear-gradient(135deg, #fff5dc, #fff); }
+      .promo-ad--toy { background: linear-gradient(135deg, #eaf5ff, #fff); }
+      .promo-ad--hygiene { background: linear-gradient(135deg, #eef8f3, #fff); }
+      .promo-ad img {
+        flex: 0 0 88px;
+        width: 88px;
+        height: 88px;
+        border-radius: 16px;
+        background: rgba(255,255,255,.68);
+        object-fit: contain;
+      }
+      .promo-copy { display: grid; gap: 3px; }
+      .promo-type {
+        color: var(--purple);
+        font-size: .68rem;
+        font-weight: 800;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+      }
+      .promo-name { font-size: 1.02rem; }
+      .promo-detail { color: rgba(51,51,51,.72); font-size: .78rem; }
+      .promo-cta { margin-top: 3px; color: var(--purple); font-size: .78rem; font-weight: 800; }
+      .promo-ad:hover { transform: translateY(-3px); box-shadow: 0 16px 28px rgba(30,30,30,.1); }
+      .promo-ad:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+      .promo-window:hover .promo-track,
+      .promo-window:focus-within .promo-track { animation-play-state: paused; }
+      @keyframes promo-scroll {
+        to { transform: translateX(-50%); }
+      }
       .eyebrow {
         display: inline-flex;
         padding: 7px 14px;
@@ -488,6 +564,20 @@
         .nav { display: none; }
         .topbar-inner, .header-inner, .footer-bottom { flex-direction: column; align-items: flex-start; }
         .product-grid { grid-template-columns: 1fr; }
+        .promo-heading { flex-wrap: wrap; }
+        .promo-ad { flex-basis: 286px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .promo-track { width: 100%; animation: none !important; }
+        .promo-group {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+          width: 100%;
+          padding-right: 0;
+        }
+        .promo-group[aria-hidden="true"] { display: none; }
+        .promo-ad { min-width: 0; }
       }
     </style>
     <link rel="stylesheet" href="visual.css" />
@@ -517,10 +607,6 @@
           <a href="#catalogo">Produtos</a>
           <a href="index.html#contato">Contato</a>
         </nav>
-        <div class="header-tools">
-          <a class="btn btn-soft" href="login.html">Entrar</a>
-          <a class="btn btn-primary" href="criar-conta.html">Criar conta</a>
-        </div>
       </div>
     </header>
 
@@ -570,6 +656,93 @@
               <div class="floating-highlight">
                 <strong>Compre em poucos passos</strong>
                 <small>Escolha um produto e adicione ao carrinho.</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="promo-zone" aria-labelledby="promoTitle">
+          <div class="promo-heading">
+            <h2 id="promoTitle">Destaques da loja</h2>
+            <span>Anúncios</span>
+          </div>
+          <div class="promo-window">
+            <div class="promo-track">
+              <div class="promo-group">
+                <a class="promo-ad promo-ad--bed" href="#catalogo">
+                  <img src="assets/cama.svg" alt="" />
+                  <span class="promo-copy">
+                    <span class="promo-type">Conforto</span>
+                    <strong class="promo-name">Cama Comfort</strong>
+                    <span class="promo-detail">Descanso para seu pet · R$ 149</span>
+                    <span class="promo-cta">Ver produtos <span aria-hidden="true">→</span></span>
+                  </span>
+                </a>
+                <a class="promo-ad promo-ad--food" href="#catalogo">
+                  <img src="assets/racao.svg" alt="" />
+                  <span class="promo-copy">
+                    <span class="promo-type">Nutrição</span>
+                    <strong class="promo-name">Ração</strong>
+                    <span class="promo-detail">Alimento para o dia a dia · R$ 129</span>
+                    <span class="promo-cta">Ver produtos <span aria-hidden="true">→</span></span>
+                  </span>
+                </a>
+                <a class="promo-ad promo-ad--toy" href="#catalogo">
+                  <img src="assets/brinquedo.svg" alt="" />
+                  <span class="promo-copy">
+                    <span class="promo-type">Diversão</span>
+                    <strong class="promo-name">Brinquedo Interativo</strong>
+                    <span class="promo-detail">Mais brincadeiras · R$ 49</span>
+                    <span class="promo-cta">Ver produtos <span aria-hidden="true">→</span></span>
+                  </span>
+                </a>
+                <a class="promo-ad promo-ad--hygiene" href="#catalogo">
+                  <img src="assets/kit-higiene.svg" alt="" />
+                  <span class="promo-copy">
+                    <span class="promo-type">Cuidados diários</span>
+                    <strong class="promo-name">Kit de Higiene</strong>
+                    <span class="promo-detail">Itens para o cuidado diário · R$ 99</span>
+                    <span class="promo-cta">Ver produtos <span aria-hidden="true">→</span></span>
+                  </span>
+                </a>
+              </div>
+              <div class="promo-group" aria-hidden="true">
+                <div class="promo-ad promo-ad--bed">
+                  <img src="assets/cama.svg" alt="" />
+                  <span class="promo-copy">
+                    <span class="promo-type">Conforto</span>
+                    <strong class="promo-name">Cama Comfort</strong>
+                    <span class="promo-detail">Descanso para seu pet · R$ 149</span>
+                    <span class="promo-cta">Ver produtos <span aria-hidden="true">→</span></span>
+                  </span>
+                </div>
+                <div class="promo-ad promo-ad--food">
+                  <img src="assets/racao.svg" alt="" />
+                  <span class="promo-copy">
+                    <span class="promo-type">Nutrição</span>
+                    <strong class="promo-name">Ração</strong>
+                    <span class="promo-detail">Alimento para o dia a dia · R$ 129</span>
+                    <span class="promo-cta">Ver produtos <span aria-hidden="true">→</span></span>
+                  </span>
+                </div>
+                <div class="promo-ad promo-ad--toy">
+                  <img src="assets/brinquedo.svg" alt="" />
+                  <span class="promo-copy">
+                    <span class="promo-type">Diversão</span>
+                    <strong class="promo-name">Brinquedo Interativo</strong>
+                    <span class="promo-detail">Mais brincadeiras · R$ 49</span>
+                    <span class="promo-cta">Ver produtos <span aria-hidden="true">→</span></span>
+                  </span>
+                </div>
+                <div class="promo-ad promo-ad--hygiene">
+                  <img src="assets/kit-higiene.svg" alt="" />
+                  <span class="promo-copy">
+                    <span class="promo-type">Cuidados diários</span>
+                    <strong class="promo-name">Kit de Higiene</strong>
+                    <span class="promo-detail">Itens para o cuidado diário · R$ 99</span>
+                    <span class="promo-cta">Ver produtos <span aria-hidden="true">→</span></span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
