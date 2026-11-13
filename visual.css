@@ -1394,12 +1394,6 @@ main[id] {
     font-size: 0.82rem;
   }
 
-  .home-header .header-tools #ctaMainBtn {
-    min-height: 42px;
-    padding-inline: 0.8rem;
-    font-size: 0.86rem;
-    white-space: nowrap;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
