@@ -530,15 +530,24 @@
       }
       .product-meta {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
+        align-items: stretch;
+        flex-direction: column;
+        gap: 10px;
         margin-top: 18px;
       }
       .price {
         font-size: 1.3rem;
         font-weight: 800;
         letter-spacing: -.05em;
+        white-space: nowrap;
+      }
+      .product-meta .btn {
+        width: 100%;
+        min-width: 0;
+        padding: .7rem .55rem;
+        font-size: .9rem;
+        line-height: 1.2;
+        text-align: center;
       }
       .add-to-cart {
         padding: .7rem 1rem;
