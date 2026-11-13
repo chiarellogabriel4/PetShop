@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360">
+  <rect width="480" height="360" rx="28" fill="#fff3e5"/>
+  <circle cx="92" cy="78" r="42" fill="#ffe1bd"/>
+  <circle cx="390" cy="280" r="58" fill="#ffe1bd"/>
+  <ellipse cx="240" cy="285" rx="127" ry="18" fill="#38208f" opacity=".1"/>
+  <path d="M145 85c-46 43-65 99-43 144 22 46 79 72 138 65 67-8 120-54 126-112 4-41-22-78-63-96" fill="none" stroke="#38208f" stroke-width="42" stroke-linecap="round"/>
+  <path d="M145 85c-46 43-65 99-43 144 22 46 79 72 138 65 67-8 120-54 126-112 4-41-22-78-63-96" fill="none" stroke="#ed6a2c" stroke-width="28" stroke-linecap="round"/>
+  <rect x="194" y="221" width="57" height="45" rx="9" fill="#ffd36c" stroke="#38208f" stroke-width="7" transform="rotate(-8 222 243)"/>
+  <rect x="211" y="231" width="24" height="25" rx="4" fill="#fff1e8" stroke="#38208f" stroke-width="5" transform="rotate(-8 223 243)"/>
+  <circle cx="151" cy="124" r="5" fill="#fff1e8"/><circle cx="129" cy="157" r="5" fill="#fff1e8"/><circle cx="117" cy="193" r="5" fill="#fff1e8"/>
+  <path d="M294 261c0-10 8-18 18-18s18 8 18 18c0 16-18 29-18 29s-18-13-18-29z" fill="#8d7bd1" stroke="#38208f" stroke-width="6"/>
+  <circle cx="305" cy="258" r="3" fill="#fff"/>
+</svg>

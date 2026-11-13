@@ -57,7 +57,7 @@ const catalogProducts = [
     category: 'Rações',
     badge: 'Ração',
     price: 129,
-    image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=900&q=80',
+    image: 'assets/racao.svg',
     description: 'Alimento completo para o dia a dia do seu pet.'
   },
   {
@@ -65,7 +65,7 @@ const catalogProducts = [
     category: 'Camas',
     badge: 'Cama',
     price: 149,
-    image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=900&q=80',
+    image: 'assets/cama.svg',
     description: 'Confortável para o descanso do seu pet.'
   },
   {
@@ -73,7 +73,7 @@ const catalogProducts = [
     category: 'Casinhas',
     badge: 'Casinha',
     price: 249,
-    image: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=900&q=80',
+    image: 'assets/casinha.svg',
     description: 'Um espaço protegido para seu pet descansar.'
   },
   {
@@ -81,7 +81,7 @@ const catalogProducts = [
     category: 'Potes de Ração',
     badge: 'Acessório',
     price: 59,
-    image: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&w=900&q=80',
+    image: 'assets/pote-racao.svg',
     description: 'Fácil de usar e limpar.'
   },
   {
@@ -89,7 +89,7 @@ const catalogProducts = [
     category: 'Coleiras',
     badge: 'Acessório',
     price: 69,
-    image: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=900&q=80',
+    image: 'assets/coleira.svg',
     description: 'Resistente e confortável para passeios.'
   },
   {
@@ -97,7 +97,7 @@ const catalogProducts = [
     category: 'Suplementos',
     badge: 'Saúde',
     price: 87,
-    image: 'https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=900&q=80',
+    image: 'assets/suplemento.svg',
     description: 'Suplemento alimentar. Consulte um veterinário antes de usar.'
   },
   {
@@ -105,7 +105,7 @@ const catalogProducts = [
     category: 'Brinquedos',
     badge: 'Brinquedo',
     price: 49,
-    image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=900&q=80',
+    image: 'assets/brinquedo.svg',
     description: 'Para brincar e gastar energia.'
   },
   {
@@ -113,7 +113,7 @@ const catalogProducts = [
     category: 'Higiene',
     badge: 'Kit',
     price: 99,
-    image: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=900&q=80',
+    image: 'assets/kit-higiene.svg',
     description: 'Itens básicos para o cuidado diário.'
   }
 ];
