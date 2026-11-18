@@ -17,7 +17,7 @@ const bookingSummary = document.querySelector('.booking-summary');
 const toast = document.getElementById('toast');
 const serviceCards = document.querySelectorAll('.service-card');
 const addToCartButtons = document.querySelectorAll('.add-to-cart');
-const interactiveProductCards = document.querySelectorAll('#loja .product-card');
+
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 const menuToggle = document.querySelector('.menu-toggle');
@@ -687,7 +687,7 @@ function handleCreateAccount(event) {
   }, 300);
 }
 
-const revealTargets = document.querySelectorAll('section, .service-card, .product-card, .testimonial-card, .article-card, .stat, .overview-item, .booking-card, .booking-summary, .contact-card, .dashboard-card');
+const revealTargets = document.querySelectorAll('.section-head, .service-card, .product-card, .testimonial-card, .article-card, .stat, .overview-item, .booking-card, .booking-summary, .contact-card, .dashboard-card');
 const revealItemSelector = '.service-card, .product-card, .testimonial-card, .article-card, .stat, .overview-item, .booking-card, .booking-summary, .contact-card, .dashboard-card';
 
 if (revealTargets.length) {
@@ -703,7 +703,7 @@ if (revealTargets.length) {
     }
   });
 
-  if ('IntersectionObserver' in window) {
+  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const revealObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -711,7 +711,7 @@ if (revealTargets.length) {
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0, rootMargin: '0px 0px 40px 0px' });
 
     revealTargets.forEach(element => revealObserver.observe(element));
   } else {
@@ -736,20 +736,6 @@ if (timeSelect) {
   timeSelect.addEventListener('change', updateSummary);
 }
 
-if (bookingSummary) {
-  bookingSummary.addEventListener('pointermove', event => {
-    if (event.pointerType === 'touch') return;
-
-    const bounds = bookingSummary.getBoundingClientRect();
-    bookingSummary.style.setProperty('--pointer-x', `${event.clientX - bounds.left}px`);
-    bookingSummary.style.setProperty('--pointer-y', `${event.clientY - bounds.top}px`);
-    bookingSummary.classList.add('is-pointer-active');
-  });
-
-  bookingSummary.addEventListener('pointerleave', () => {
-    bookingSummary.classList.remove('is-pointer-active');
-  });
-}
 
 if (bookingForm) {
   bookingForm.addEventListener('submit', function (event) {
@@ -807,29 +793,6 @@ addToCartButtons.forEach(button => {
   });
 });
 
-if (window.matchMedia('(hover: hover) and (prefers-reduced-motion: no-preference)').matches) {
-  interactiveProductCards.forEach(card => {
-    card.addEventListener('pointermove', event => {
-      if (event.pointerType === 'touch') return;
-
-      const bounds = card.getBoundingClientRect();
-      const x = (event.clientX - bounds.left) / bounds.width;
-      const y = (event.clientY - bounds.top) / bounds.height;
-
-      card.style.setProperty('--pointer-x', `${x * 100}%`);
-      card.style.setProperty('--pointer-y', `${y * 100}%`);
-      card.style.setProperty('--tilt-x', `${((0.5 - y) * 5).toFixed(2)}deg`);
-      card.style.setProperty('--tilt-y', `${((x - 0.5) * 5).toFixed(2)}deg`);
-      card.classList.add('is-pointer-active');
-    });
-
-    card.addEventListener('pointerleave', () => {
-      card.style.setProperty('--tilt-x', '0deg');
-      card.style.setProperty('--tilt-y', '0deg');
-      card.classList.remove('is-pointer-active');
-    });
-  });
-}
 
 function normalizeSearchText(value) {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
@@ -1005,19 +968,29 @@ if (searchInput && searchResults) {
 }
 
 if (menuToggle && nav) {
-  menuToggle.addEventListener('click', () => {
-    nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
-    nav.style.position = 'absolute';
-    nav.style.top = '100%';
-    nav.style.left = '0';
-    nav.style.right = '0';
-    nav.style.padding = '16px 20px';
-    nav.style.background = '#fff';
-    nav.style.borderBottom = '1px solid rgba(53,20,155,0.08)';
-    nav.style.flexDirection = 'column';
-    nav.style.alignItems = 'flex-start';
-    nav.style.boxShadow = '0 16px 24px rgba(0,0,0,0.06)';
+  nav.id ||= 'primaryNavigation';
+  menuToggle.setAttribute('aria-controls', nav.id);
+  const setMenuOpen = open => {
+    nav.classList.toggle('is-open', open);
+    menuToggle.setAttribute('aria-expanded', String(open));
+    menuToggle.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+    menuToggle.textContent = open ? '×' : '☰';
+  };
+  setMenuOpen(false);
+  menuToggle.addEventListener('click', () => setMenuOpen(!nav.classList.contains('is-open')));
+  nav.addEventListener('click', event => {
+    if (event.target.closest('a')) setMenuOpen(false);
   });
+  document.addEventListener('pointerdown', event => {
+    if (!nav.contains(event.target) && !menuToggle.contains(event.target)) setMenuOpen(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && nav.classList.contains('is-open')) {
+      setMenuOpen(false);
+      menuToggle.focus();
+    }
+  });
+  window.matchMedia('(max-width: 1100px)').addEventListener('change', () => setMenuOpen(false));
 }
 
 function appendChatMessage(message, sender, href) {
