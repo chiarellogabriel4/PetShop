@@ -63,7 +63,8 @@ function createApp(pool, {setupToken='', production=false}={}) {
     } catch(e){next(e);}
   });
   const auth=(req,res,next)=>req.user?next():res.status(401).json({error:'Entre na sua conta para continuar.'});
-  const admin=(req,res,next)=>req.user?.role==='admin'?next():res.status(req.user?403:401).json({error:'Acesso exclusivo da administração.'});
+  const panel=(req,res,next)=>['admin','staff'].includes(req.user?.role)?next():res.status(req.user?403:401).json({error:'Acesso exclusivo da administraÃ§Ã£o.'});
+  const owner=(req,res,next)=>req.user?.role==='admin'?next():res.status(req.user?403:401).json({error:'Somente o administrador pode gerenciar a equipe.'});
   const authLimit=rateLimit({windowMs:15*60000,limit:15,standardHeaders:'draft-8',legacyHeaders:false,message:{error:'Muitas tentativas. Aguarde 15 minutos.'}});
   async function session(res,user) {
     const token=randomBytes(32).toString('hex');
@@ -111,9 +112,15 @@ function createApp(pool, {setupToken='', production=false}={}) {
     const {rows}=await pool.query(`INSERT INTO helppatas.bookings(id,customer_id,customer_name,customer_email,pet_name,pet_type,service,date,time,price,status,notes) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING ${bookingColumns}`,[randomUUID(),req.user.id,b.customerName,b.customerEmail,b.petName,b.petType,b.service,b.date,b.time,b.price,b.status,b.notes]);
     res.status(201).json({booking:rows[0]});
   });
-  app.use('/api/admin',admin);
+  app.use('/api/admin',panel);
   app.get('/api/admin/bookings',async(req,res)=>{res.json({bookings:(await pool.query(`SELECT ${bookingColumns} FROM helppatas.bookings ORDER BY date,time`)).rows});});
   app.get('/api/admin/customers',async(req,res)=>{res.json({customers:(await pool.query(`SELECT id,name,surname,email FROM helppatas.users WHERE role='customer' ORDER BY name`)).rows});});
+  app.get('/api/admin/staff',panel,async(req,res)=>{res.json({staff:(await pool.query(`SELECT id,name,surname,email,role,created_at AS "createdAt" FROM helppatas.users WHERE role='staff' ORDER BY name`)).rows});});
+  app.post('/api/admin/staff',owner,async(req,res)=>{
+    const a=account(req.body);
+    const {rows}=await pool.query(`INSERT INTO helppatas.users(id,name,surname,email,password_hash,role) VALUES($1,$2,$3,$4,$5,'staff') RETURNING id,name,surname,email,role,created_at AS "createdAt"`,[randomUUID(),a.name,a.surname,a.email,await hashPassword(a.password)]);
+    res.status(201).json({staff:rows[0]});
+  });
   app.post('/api/admin/bookings',async(req,res)=>{
     const b=bookingData(req.body,req.user,true);
     const customer=await pool.query('SELECT id FROM helppatas.users WHERE email=$1',[b.customerEmail.toLowerCase()]);
@@ -132,7 +139,7 @@ function createApp(pool, {setupToken='', production=false}={}) {
   });
   app.use('/api',(req,res)=>res.status(404).json({error:'Rota não encontrada.'}));
   const root=path.resolve(__dirname,'..');
-  app.get(['/admin.html','/admin'],(req,res,next)=>{if(!req.user)return res.redirect('/login.html?next=admin');if(req.user.role!=='admin')return res.status(403).send('Acesso exclusivo da administração.');next();});
+  app.get(['/admin.html','/admin'],(req,res,next)=>{if(!req.user)return res.redirect('/login.html?next=admin');if(!['admin','staff'].includes(req.user.role))return res.status(403).send('Acesso exclusivo da administração.');next();});
   const files=new Set(['index.html','login.html','criar-conta.html','agendamento.html','banho-e-tosa.html','loja.html','dashboard-cliente.html','admin.html','setup.html','admin.css','admin.js','style.css','visual.css','script.js','api.js','account.js','setup.js','grooming.js']);
   app.use('/assets',express.static(path.join(root,'assets'),{dotfiles:'deny',index:false}));
   app.get('/',(req,res)=>res.sendFile(path.join(root,'index.html')));

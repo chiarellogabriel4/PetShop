@@ -513,7 +513,7 @@ async function handleLogin(event) {
   try {
     const result = await petApi('/api/auth/login', {method:'POST', body:JSON.stringify({email:document.getElementById('loginEmail').value.trim(), password:document.getElementById('loginPassword').value})});
     saveCurrentUser(result.user);
-    location.href = result.user.role === 'admin' ? 'admin.html' : 'dashboard-cliente.html';
+    location.href = ['admin','staff'].includes(result.user.role) ? 'admin.html' : 'dashboard-cliente.html';
   } catch(error) { showToast(error.message); } finally { button.disabled=false; }
 }
 

@@ -1,9 +1,9 @@
 'use strict';
 (() => {
-  let bookings = [], customers = [];
+  let bookings = [], customers = [], staff = [], currentUser = null;
   const statuses = ['Pendente', 'Confirmado', 'Em atendimento', 'Concluído', 'Cancelado'];
   const prices = {'Banho e Tosa':69,'Consulta Veterinária':89,'Vacinação':120,'Hospedagem':49,'Creche Pet':59,'Emergência 24h':0};
-  const $ = id => document.getElementById(id), form = $('adminBookingForm'), dialog = $('bookingDialog');
+  const $ = id => document.getElementById(id), form = $('adminBookingForm'), dialog = $('bookingDialog'), staffForm = $('staffForm'), staffDialog = $('staffDialog');
   const money = n => Number(n || 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
   const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
   const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -23,9 +23,11 @@
       const clients=read('petcareUsers').filter(c=>norm(`${c.name} ${c.surname || ''} ${c.email}`).includes(norm($('clientSearch').value)));
       $('clientList').innerHTML=clients.length?clients.map(c=>`<article class="client"><span class="avatar" aria-hidden="true">${esc((c.name || '?').slice(0,1).toUpperCase())}</span><div><strong>${esc(c.name)} ${esc(c.surname)}</strong><small>${esc(c.email)}</small></div></article>`).join(''):'<div class="empty"><h3>Nenhum cliente encontrado</h3><p>As contas criadas no site aparecerão aqui.</p></div>';
     } catch { toast('Não foi possível ler os dados locais. Nenhum dado foi alterado.'); }
+      $('newStaff').hidden=currentUser?.role!=='admin';
+      $('staffList').innerHTML=staff.length?staff.map(c=>`<article class="client"><span class="avatar" aria-hidden="true">${esc((c.name || '?').slice(0,1).toUpperCase())}</span><div><strong>${esc(c.name)} ${esc(c.surname)}</strong><small>${esc(c.email)} · acesso operacional</small></div></article>`).join(''):'<div class="empty"><h3>Nenhum funcionário cadastrado</h3><p>Adicione pessoas da equipe para compartilhar o acesso ao painel.</p></div>';
   }
   async function refresh() {
-    try {const [b,c]=await Promise.all([petApi('/api/admin/bookings'),petApi('/api/admin/customers')]);bookings=b.bookings;customers=c.customers;render();}
+    try {const [me,b,c,s]=await Promise.all([petApi('/api/auth/me'),petApi('/api/admin/bookings'),petApi('/api/admin/customers'),petApi('/api/admin/staff')]);currentUser=me.user;bookings=b.bookings;customers=c.customers;staff=s.staff;render();}
     catch(error){toast(error.message);if(error.status===401)location.href='login.html?next=admin';}
   }
   function openForm(b) { form.reset(); form.elements.id.value=''; form.elements.date.value=today(); form.elements.price.value=69; $('formError').textContent=''; $('dialogTitle').textContent=b?'Editar agendamento':'Novo agendamento'; if(b) for(const [k,v] of Object.entries(b)) if(form.elements.namedItem(k)) form.elements.namedItem(k).value=v??''; dialog.showModal(); }
@@ -47,6 +49,14 @@
     } catch(error) { $('formError').textContent=error.message; }
   });
   $('bookingRows').addEventListener('click',event=>{ const button=event.target.closest('[data-edit]'); if(!button) return; try {const b=read('bookings').find(b=>b.id===button.dataset.edit); if(b) openForm(b);} catch {toast('Não foi possível abrir o agendamento.');} });
+  $('newStaff').addEventListener('click',()=>{staffForm.reset();$('staffFormError').textContent='';staffDialog.showModal();});
+  for(const id of ['closeStaffDialog','cancelStaffDialog']) $(id).addEventListener('click',()=>staffDialog.close());
+  staffForm.addEventListener('submit',async event=>{
+    event.preventDefault();if(!staffForm.reportValidity())return;
+    const data=Object.fromEntries(new FormData(staffForm));
+    try {const button=staffForm.querySelector('[type=submit]');button.disabled=true;try{await petApi('/api/admin/staff',{method:'POST',body:JSON.stringify(data)});staffDialog.close();await refresh();toast('Funcionário cadastrado com acesso ao painel.');}finally{button.disabled=false;}}
+    catch(error){$('staffFormError').textContent=error.message;}
+  });
   $('bookingRows').addEventListener('change',async event=>{
     const select=event.target.closest('select[data-id]');if(!select)return;
     if(select.value==='Cancelado'&&!confirm('Cancelar o atendimento? O registro permanece no hist'+String.fromCharCode(243)+'rico.')){render();return;}

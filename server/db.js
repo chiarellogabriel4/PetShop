@@ -15,7 +15,7 @@ async function migrate(pool) {
     CREATE TABLE IF NOT EXISTS helppatas.users (
       id uuid PRIMARY KEY, name text NOT NULL, surname text NOT NULL DEFAULT '',
       email text NOT NULL UNIQUE, password_hash text NOT NULL,
-      role text NOT NULL DEFAULT 'customer' CHECK (role IN ('customer','admin')),
+      role text NOT NULL DEFAULT 'customer' CHECK (role IN ('customer','admin','staff')),
       created_at timestamptz NOT NULL DEFAULT now()
     );
     CREATE TABLE IF NOT EXISTS helppatas.sessions (
@@ -34,6 +34,12 @@ async function migrate(pool) {
     );
     CREATE INDEX IF NOT EXISTS bookings_customer_idx ON helppatas.bookings(customer_id);
     CREATE INDEX IF NOT EXISTS bookings_date_idx ON helppatas.bookings(date);
+    DO $$
+    BEGIN
+      ALTER TABLE helppatas.users DROP CONSTRAINT IF EXISTS users_role_check;
+      ALTER TABLE helppatas.users ADD CONSTRAINT users_role_check CHECK (role IN ('customer','admin','staff'));
+    EXCEPTION WHEN duplicate_object THEN NULL;
+    END $$;
   `);
 }
 module.exports = { createPool, migrate };

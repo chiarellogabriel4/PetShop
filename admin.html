@@ -15,6 +15,7 @@
       <a href="#visao-geral" class="active">Visão geral <span>↗</span></a>
       <a href="#agenda">Agendamentos <span>◷</span></a>
       <a href="#clientes">Clientes <span>◎</span></a>
+      <a href="#equipe">Equipe <span>+</span></a>
     </nav>
     <div class="sidebar-bottom"><span class="local-dot"></span> Conectado ao servidor<p>Dados compartilhados pelo Neon.</p><a href="index.html">← Voltar ao site</a></div>
   </aside>
@@ -39,6 +40,7 @@
         <div class="panel-foot" id="bookingCount"></div>
       </section>
       <section class="panel" id="clientes"><div class="panel-heading"><div><h2>Seus clientes</h2><p>Contas cadastradas no site.</p></div><label class="client-search"><span class="sr-only">Buscar clientes</span><input type="search" id="clientSearch" placeholder="Buscar nome ou e-mail"></label></div><div id="clientList" class="client-list"></div></section>
+      <section class="panel" id="equipe"><div class="panel-heading"><div><h2>Equipe do petshop</h2><p>Funcionários com acesso operacional ao painel.</p></div><button class="primary" id="newStaff">+ Cadastrar funcionário</button></div><div id="staffList" class="client-list"></div></section>
       <footer>helpPatas · Gestão com cuidado <span>Neon PostgreSQL</span></footer>
     </div>
   </main>
@@ -54,6 +56,13 @@
         <label>Status<select name="status"><option>Pendente</option><option>Confirmado</option><option>Em atendimento</option><option>Concluído</option><option>Cancelado</option></select></label>
         <label class="full">Observações<textarea name="notes" maxlength="1000" rows="3"></textarea></label>
       </div><p id="formError" role="alert"></p><div class="dialog-actions"><button type="button" class="secondary" id="cancelDialog">Cancelar</button><button class="primary" type="submit">Salvar agendamento</button></div>
+    </form>
+  </dialog>
+  <dialog id="staffDialog" aria-labelledby="staffDialogTitle">
+    <form id="staffForm">
+      <div class="dialog-heading"><div><span class="eyebrow">EQUIPE</span><h2 id="staffDialogTitle">Cadastrar funcionário</h2></div><button type="button" class="icon-button" id="closeStaffDialog" aria-label="Fechar">Ã—</button></div>
+      <div class="form-grid"><label>Nome<input name="name" required maxlength="100"></label><label>Sobrenome<input name="surname" maxlength="100"></label><label class="full">E-mail de acesso<input name="email" type="email" required maxlength="160" placeholder="funcionario@helppatas.com.br"></label><label>Senha inicial<input name="password" type="password" required minlength="10" maxlength="128" autocomplete="new-password"><small>A senha deve ter pelo menos 10 caracteres.</small></label></div>
+      <p id="staffFormError" role="alert"></p><div class="dialog-actions"><button type="button" class="secondary" id="cancelStaffDialog">Cancelar</button><button class="primary" type="submit">Criar acesso</button></div>
     </form>
   </dialog>
   <div class="toast" id="adminToast" role="status" aria-live="polite"></div>
