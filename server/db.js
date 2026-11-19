@@ -34,6 +34,13 @@ async function migrate(pool) {
     );
     CREATE INDEX IF NOT EXISTS bookings_customer_idx ON helppatas.bookings(customer_id);
     CREATE INDEX IF NOT EXISTS bookings_date_idx ON helppatas.bookings(date);
+    CREATE TABLE IF NOT EXISTS helppatas.pets (
+      id uuid PRIMARY KEY, customer_id uuid NOT NULL REFERENCES helppatas.users(id) ON DELETE CASCADE,
+      name text NOT NULL, pet_type text NOT NULL, photo_data bytea, photo_type text,
+      created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(),
+      CHECK ((photo_data IS NULL AND photo_type IS NULL) OR (photo_data IS NOT NULL AND photo_type IN ('image/jpeg','image/png','image/webp')))
+    );
+    CREATE INDEX IF NOT EXISTS pets_customer_idx ON helppatas.pets(customer_id);
     DO $$
     BEGIN
       ALTER TABLE helppatas.users DROP CONSTRAINT IF EXISTS users_role_check;

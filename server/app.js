@@ -35,6 +35,23 @@ function bookingData(body, user, admin) {
   if(customerEmail&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) throw Object.assign(Error('E-mail do tutor inválido.'),{status:400});
   return {petName,petType,service,date,time,price,status,customerName,customerEmail,notes:text(body.notes,'observações',1000,false)};
 }
+function petData(body) {
+  const name=text(body.name,'nome do pet',80), petType=text(body.petType,'tipo do pet',50,false);
+  const raw=body.photo == null ? '' : body.photo;
+  if(raw === '') return {name,petType,photo:null,type:null};
+  if(typeof raw !== 'string' || raw.length > 1800000) throw Object.assign(Error('A foto deve ter no máximo 1,3 MB.'),{status:400});
+  const match=/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/.exec(raw);
+  if(!match) throw Object.assign(Error('Envie uma imagem JPG, PNG ou WEBP válida.'),{status:400});
+  const photo=Buffer.from(match[2],'base64');
+  if(photo.length===0 || photo.length>1300000) throw Object.assign(Error('A foto deve ter no máximo 1,3 MB.'),{status:400});
+  const signatures={
+    'image/jpeg':photo[0]===0xff&&photo[1]===0xd8&&photo[2]===0xff,
+    'image/png':photo.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])),
+    'image/webp':photo.subarray(0,4).toString('ascii')==='RIFF'&&photo.subarray(8,12).toString('ascii')==='WEBP'
+  };
+  if(!signatures[match[1]]) throw Object.assign(Error('O conteúdo da foto não corresponde ao formato informado.'),{status:400});
+  return {name,petType,photo,type:match[1]};
+}
 const bookingColumns=`id, customer_id AS "customerId", customer_name AS "customerName", customer_email AS "customerEmail", pet_name AS "petName", pet_type AS "petType", service, to_char(date,'YYYY-MM-DD') AS date, to_char(time,'HH24:MI') AS time, price::float8 AS price, status, notes, created_at AS "createdAt", updated_at AS "updatedAt"`;
 
 function createApp(pool, {setupToken='', production=false}={}) {
@@ -43,7 +60,7 @@ function createApp(pool, {setupToken='', production=false}={}) {
   if(production) app.set('trust proxy',1);
   app.use(helmet({contentSecurityPolicy:{directives:{defaultSrc:["'self'"],scriptSrc:["'self'"],styleSrc:["'self'","'unsafe-inline'",'https://fonts.googleapis.com'],fontSrc:["'self'",'https://fonts.gstatic.com'],imgSrc:["'self'",'data:','https://images.unsplash.com','https://ui-avatars.com'],upgradeInsecureRequests:production?[]:null}},strictTransportSecurity:production?undefined:false}));
   app.use('/api',rateLimit({windowMs:60000,limit:150,standardHeaders:'draft-8',legacyHeaders:false,message:{error:'Muitas solicitações. Aguarde um minuto.'}}));
-  app.use(express.json({limit:'16kb'}));
+  app.use(express.json({limit:'2mb'}));
   app.use('/api',(req,res,next)=>{
     res.set('Cache-Control','no-store');
     if(!['GET','HEAD','OPTIONS'].includes(req.method)) {
@@ -111,6 +128,34 @@ function createApp(pool, {setupToken='', production=false}={}) {
     const b=bookingData(req.body,req.user,false);
     const {rows}=await pool.query(`INSERT INTO helppatas.bookings(id,customer_id,customer_name,customer_email,pet_name,pet_type,service,date,time,price,status,notes) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING ${bookingColumns}`,[randomUUID(),req.user.id,b.customerName,b.customerEmail,b.petName,b.petType,b.service,b.date,b.time,b.price,b.status,b.notes]);
     res.status(201).json({booking:rows[0]});
+  });
+  app.get('/api/pets',auth,async(req,res)=>{
+    const {rows}=await pool.query(`SELECT id,name,pet_type AS "petType",photo_type AS "photoType",(photo_data IS NOT NULL) AS "hasPhoto" FROM helppatas.pets WHERE customer_id=$1 ORDER BY name`,[req.user.id]);
+    res.json({pets:rows.map(p=>({...p,photoUrl:p.hasPhoto?`/api/pets/${p.id}/photo`:null}))});
+  });
+  app.get('/api/pets/:id/photo',auth,async(req,res)=>{
+    if(!uuid.test(req.params.id)) return res.status(400).json({error:'Identificador inválido.'});
+    const {rows}=await pool.query('SELECT photo_data,photo_type FROM helppatas.pets WHERE id=$1 AND customer_id=$2',[req.params.id,req.user.id]);
+    if(!rows.length||!rows[0].photo_data)return res.status(404).end();
+    res.set({'Content-Type':rows[0].photo_type,'Cache-Control':'private, no-store'}).send(rows[0].photo_data);
+  });
+  app.post('/api/pets',auth,async(req,res)=>{
+    const p=petData(req.body);
+    const {rows}=await pool.query(`INSERT INTO helppatas.pets(id,customer_id,name,pet_type,photo_data,photo_type) VALUES($1,$2,$3,$4,$5,$6) RETURNING id,name,pet_type AS "petType",photo_type AS "photoType",(photo_data IS NOT NULL) AS "hasPhoto"`,[randomUUID(),req.user.id,p.name,p.petType,p.photo,p.type]);
+    const pet=rows[0];res.status(201).json({pet:{...pet,photoUrl:pet.hasPhoto?`/api/pets/${pet.id}/photo`:null}});
+  });
+  app.put('/api/pets/:id',auth,async(req,res)=>{
+    if(!uuid.test(req.params.id)) return res.status(400).json({error:'Identificador inválido.'});
+    const p=petData(req.body);
+    const {rows}=await pool.query(`UPDATE helppatas.pets SET name=$3,pet_type=$4,photo_data=COALESCE($5,photo_data),photo_type=COALESCE($6,photo_type),updated_at=now() WHERE id=$1 AND customer_id=$2 RETURNING id,name,pet_type AS "petType",photo_type AS "photoType",(photo_data IS NOT NULL) AS "hasPhoto"`,[req.params.id,req.user.id,p.name,p.petType,p.photo,p.type]);
+    if(!rows.length)return res.status(404).json({error:'Pet não encontrado.'});
+    const pet=rows[0];res.json({pet:{...pet,photoUrl:pet.hasPhoto?`/api/pets/${pet.id}/photo`:null}});
+  });
+  app.delete('/api/pets/:id',auth,async(req,res)=>{
+    if(!uuid.test(req.params.id)) return res.status(400).json({error:'Identificador inválido.'});
+    const result=await pool.query('DELETE FROM helppatas.pets WHERE id=$1 AND customer_id=$2',[req.params.id,req.user.id]);
+    if(!result.rowCount)return res.status(404).json({error:'Pet não encontrado.'});
+    res.json({ok:true});
   });
   app.use('/api/admin',panel);
   app.get('/api/admin/bookings',async(req,res)=>{res.json({bookings:(await pool.query(`SELECT ${bookingColumns} FROM helppatas.bookings ORDER BY date,time`)).rows});});
