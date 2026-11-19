@@ -186,6 +186,12 @@ function createApp(pool, {setupToken='', production=false}={}) {
     const {rows}=await pool.query(`UPDATE helppatas.bookings SET customer_name=$2,customer_email=$3,pet_name=$4,pet_type=$5,service=$6,date=$7,time=$8,price=$9,status=$10,notes=$11,updated_at=now() WHERE id=$1 RETURNING ${bookingColumns}`,[req.params.id,b.customerName,b.customerEmail,b.petName,b.petType,b.service,b.date,b.time,b.price,b.status,b.notes]);
     if(!rows.length)return res.status(404).json({error:'Agendamento não encontrado.'});res.json({booking:rows[0]});
   });
+  app.delete('/api/admin/bookings/:id',async(req,res)=>{
+    if(!uuid.test(req.params.id)) return res.status(400).json({error:'Identificador inválido.'});
+    const result=await pool.query('DELETE FROM helppatas.bookings WHERE id=$1',[req.params.id]);
+    if(!result.rowCount)return res.status(404).json({error:'Agendamento não encontrado.'});
+    res.json({ok:true});
+  });
   app.patch('/api/admin/bookings/:id/status',async(req,res)=>{
     if(!uuid.test(req.params.id)||!statuses.includes(req.body.status))return res.status(400).json({error:'Status ou identificador inválido.'});
     const {rows}=await pool.query(`UPDATE helppatas.bookings SET status=$2,updated_at=now() WHERE id=$1 RETURNING ${bookingColumns}`,[req.params.id,req.body.status]);

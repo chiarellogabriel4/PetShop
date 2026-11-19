@@ -4,6 +4,7 @@ if (currentYear) currentYear.textContent = new Date().getFullYear();
 let currentSessionUser = null;
 const SESSION_KEY = 'petcareSession';
 const CART_KEY = 'petcareCart';
+const safeBookingText = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const bookingForm = document.getElementById('bookingForm');
 const serviceSelect = document.getElementById('service');
@@ -581,7 +582,7 @@ if (timeSelect) {
 if (bookingForm) {
   const petNameInput=document.getElementById('petName'), petTypeInput=document.getElementById('petType');
   const petIdInput=document.createElement('input');petIdInput.type='hidden';petIdInput.name='petId';bookingForm.appendChild(petIdInput);
-  (async()=>{try{const {pets}=await petApi('/api/pets');if(!pets.length)return;const list=document.createElement('datalist');list.id='registeredPets';pets.forEach(p=>{const option=document.createElement('option');option.value=p.name;option.dataset.petId=p.id;option.label=p.petType||'Pet cadastrado';list.appendChild(option);});document.body.appendChild(list);petNameInput.setAttribute('list',list.id);petNameInput.placeholder='Escolha um pet cadastrado ou digite o nome';petNameInput.addEventListener('input',()=>{const match=pets.find(p=>p.name.toLowerCase()===petNameInput.value.trim().toLowerCase());petIdInput.value=match?.id||'';if(match?.petType)petTypeInput.value=match.petType;});}catch{ /* visitantes fazem login no envio */ }})();
+  (async()=>{try{const {pets}=await petApi('/api/pets');if(!pets.length)return;const list=document.createElement('datalist');list.id='registeredPets';pets.forEach(p=>{const option=document.createElement('option');option.value=p.name;option.dataset.petId=p.id;option.label=p.petType||'Pet cadastrado';list.appendChild(option);});document.body.appendChild(list);petNameInput.setAttribute('list',list.id);petNameInput.placeholder='Escolha um pet cadastrado ou digite o nome';const preview=document.createElement('div');preview.id='bookingPetPreview';preview.className='booking-pet-preview';preview.hidden=true;preview.style.cssText='display:flex;align-items:center;gap:10px;margin-top:8px;padding:8px 10px;border-radius:12px;background:#f7f4ff;color:#5b3cc4;font-size:.78rem';petNameInput.closest('.field').appendChild(preview);const showPet=(pet)=>{petIdInput.value=pet?.id||'';if(pet?.petType)petTypeInput.value=pet.petType;preview.innerHTML=pet?`${pet.photoUrl?`<img style="width:38px;height:38px;border-radius:10px;object-fit:cover" src="${safeBookingText(pet.photoUrl)}" alt="Foto de ${safeBookingText(pet.name)}">`:''}<span>Pet do seu perfil: <strong>${safeBookingText(pet.name)}</strong></span>`:'';preview.hidden=!pet;};petNameInput.addEventListener('input',()=>showPet(pets.find(p=>p.name.toLowerCase()===petNameInput.value.trim().toLowerCase())));if(pets.length===1){petNameInput.value=pets[0].name;showPet(pets[0]);}}catch{ /* visitantes fazem login no envio */ }})();
   bookingForm.addEventListener('submit', async function (event) {
     event.preventDefault();
     const formData = new FormData(bookingForm);
@@ -605,6 +606,7 @@ if (bookingForm) {
       return;
     } finally {button.disabled=false;}
     bookingForm.reset();
+    const bookingPetPreview=document.getElementById('bookingPetPreview');if(bookingPetPreview){bookingPetPreview.hidden=true;bookingPetPreview.innerHTML='';}
     updateSummary();
     showToast('Agendamento registrado! Aguardando confirmação da equipe.');
   });
