@@ -830,6 +830,8 @@ body {
   :is(.hero-image-wrap, .grooming-image, .about-photo, .product-card):hover img {
     transform: scale(1.015);
   }
+
+  .hero-image-wrap:hover img { transform: scale(1.002); }
 }
 
 :is(input, select, textarea):focus {
