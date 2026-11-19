@@ -1,7 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const { rateLimit } = require('express-rate-limit');
-const { randomUUID, randomBytes, timingSafeEqual } = require('node:crypto');
+const { randomUUID, randomBytes, timingSafeEqual, createPublicKey, createVerify, createSign } = require('node:crypto');
 const path = require('node:path');
 const { hashPassword, verifyPassword, digest } = require('./security');
 
@@ -9,6 +9,37 @@ const services = {'Banho e Tosa':69,'Consulta Veterinária':89,'Vacinação':120
 const statuses = ['Pendente','Confirmado','Em atendimento','Concluído','Cancelado'];
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const publicUser = u => ({id:u.id,name:u.name,surname:u.surname,email:u.email,role:u.role,avatar:u.avatar_url||(u.avatar_data?'/api/profile/avatar':null)});
+const base64url = value => Buffer.from(value).toString('base64').replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+const decodeBase64url = value => Buffer.from(value.replace(/-/g,'+').replace(/_/g,'/'),'base64');
+function decodeJwt(token) {
+  const parts=String(token||'').split('.');
+  if(parts.length!==3) throw Object.assign(Error('Token OAuth inválido.'),{status:401});
+  try { return {header:JSON.parse(decodeBase64url(parts[0]).toString()),payload:JSON.parse(decodeBase64url(parts[1]).toString()),signingInput:`${parts[0]}.${parts[1]}`,signature:decodeBase64url(parts[2])}; }
+  catch { throw Object.assign(Error('Token OAuth inválido.'),{status:401}); }
+}
+async function verifyJwt(token, jwksUrl, expected) {
+  const decoded=decodeJwt(token);
+  if(decoded.header.alg!=='RS256'&&decoded.header.alg!=='ES256') throw Object.assign(Error('Algoritmo OAuth não permitido.'),{status:401});
+  const response=await fetch(jwksUrl); if(!response.ok) throw Object.assign(Error('Não foi possível validar o provedor OAuth.'),{status:502});
+  const {keys}=await response.json(); const jwk=keys.find(key=>key.kid===decoded.header.kid&&key.alg===decoded.header.alg);
+  if(!jwk) throw Object.assign(Error('Chave de assinatura OAuth não encontrada.'),{status:401});
+  const verifier=createVerify(decoded.header.alg==='RS256'?'RSA-SHA256':'SHA256'); verifier.update(decoded.signingInput); verifier.end();
+  let signature=decoded.signature;
+  if(decoded.header.alg==='ES256'&&signature.length===64) { const r=signature.subarray(0,32),s=signature.subarray(32); const derLength=6+((r[0]&0x80)?1:0)+((s[0]&0x80)?1:0); signature=Buffer.concat([Buffer.from([0x30,derLength,0x02,32+(r[0]&0x80?1:0)]),r[0]&0x80?Buffer.from([0]):Buffer.alloc(0),r,Buffer.from([0x02,32+(s[0]&0x80?1:0)]),s[0]&0x80?Buffer.from([0]):Buffer.alloc(0),s]); }
+  if(!verifier.verify(createPublicKey({key:jwk,format:'jwk'}),signature)) throw Object.assign(Error('Assinatura OAuth inválida.'),{status:401});
+  const now=Math.floor(Date.now()/1000);
+  if(expected.iss&&!expected.iss.includes(decoded.payload.iss)||expected.aud&&decoded.payload.aud!==expected.aud||decoded.payload.exp<now||decoded.payload.iat>now+120) throw Object.assign(Error('Claims OAuth inválidos.'),{status:401});
+  if(expected.nonce&&decoded.payload.nonce!==expected.nonce) throw Object.assign(Error('Nonce OAuth inválido.'),{status:401});
+  return decoded.payload;
+}
+function appleClientSecret() {
+  const key=String(process.env.APPLE_PRIVATE_KEY||'').replace(/\\n/g,'\n');
+  const header=base64url(JSON.stringify({alg:'ES256',kid:process.env.APPLE_KEY_ID,typ:'JWT'}));
+  const payload=base64url(JSON.stringify({iss:process.env.APPLE_TEAM_ID,iat:Math.floor(Date.now()/1000),exp:Math.floor(Date.now()/1000)+86400*150,aud:'https://appleid.apple.com',sub:process.env.APPLE_CLIENT_ID}));
+  const input=`${header}.${payload}`; const signer=createSign('SHA256'); signer.update(input); signer.end(); const der=signer.sign(key);
+  let offset=2; const read=()=>{const length=der[offset+1];const start=offset+2;offset=start+length;return der.subarray(start,start+length)}; const r=read(),s=read();
+  return `${input}.${base64url(Buffer.concat([r.length>32?r.subarray(r.length-32):Buffer.concat([Buffer.alloc(32-r.length),r]),s.length>32?s.subarray(s.length-32):Buffer.concat([Buffer.alloc(32-s.length),s])]))}`;
+}
 function text(value, name, max, required = true) {
   if (value == null && !required) return '';
   if (typeof value !== 'string' || value.length > max || (required && !value.trim())) throw Object.assign(Error(`Confira o campo ${name}.`),{status:400});
@@ -62,9 +93,11 @@ function createApp(pool, {setupToken='', production=false}={}) {
   app.use(helmet({contentSecurityPolicy:{directives:{defaultSrc:["'self'"],scriptSrc:["'self'"],styleSrc:["'self'","'unsafe-inline'",'https://fonts.googleapis.com'],fontSrc:["'self'",'https://fonts.gstatic.com'],imgSrc:["'self'",'data:','https://images.unsplash.com','https://ui-avatars.com','https://*.googleusercontent.com'],upgradeInsecureRequests:production?[]:null}},strictTransportSecurity:production?undefined:false}));
   app.use('/api',rateLimit({windowMs:60000,limit:150,standardHeaders:'draft-8',legacyHeaders:false,message:{error:'Muitas solicitações. Aguarde um minuto.'}}));
   app.use(express.json({limit:'2mb'}));
+  app.use(express.urlencoded({extended:false}));
   app.use('/api',(req,res,next)=>{
     res.set('Cache-Control','no-store');
-    if(!['GET','HEAD','OPTIONS'].includes(req.method)) {
+    const oauthCallback=/^\/api\/auth\/(google|apple)\/callback$/.test(req.path);
+    if(!['GET','HEAD','OPTIONS'].includes(req.method)&&!oauthCallback) {
       const expected=`${req.protocol}://${req.get('host')}`;
       if(req.get('origin')!==expected || !req.is('application/json')) return res.status(403).json({error:'Solicitação não autorizada. Abra o site pelo servidor.'});
     }
@@ -102,6 +135,22 @@ function createApp(pool, {setupToken='', production=false}={}) {
       res.status(501).json({error:`O login com ${name} está aguardando a configuração do callback OAuth.`});
     });
   }
+  function oauthCookie(res,name,value) { res.cookie(name,value,{httpOnly:true,sameSite:'lax',secure:production,maxAge:10*60*1000,path:'/'}); }
+  function oauthState(res,provider) { const state=randomBytes(32).toString('hex'),nonce=randomBytes(32).toString('hex');oauthCookie(res,`oauth_state_${provider}`,state);oauthCookie(res,`oauth_nonce_${provider}`,nonce);return {state,nonce}; }
+  function oauthCookieValue(req,name) { return (req.headers.cookie||'').split(';').map(v=>v.trim()).find(v=>v.startsWith(`${name}=`))?.slice(name.length+1); }
+  function checkOAuthState(req,res,provider,state) { const expected=oauthCookieValue(req,`oauth_state_${provider}`),nonce=oauthCookieValue(req,`oauth_nonce_${provider}`);res.clearCookie(`oauth_state_${provider}`,{path:'/'});res.clearCookie(`oauth_nonce_${provider}`,{path:'/'});if(!expected||!state||expected.length!==String(state).length||!timingSafeEqual(Buffer.from(expected),Buffer.from(String(state))))throw Object.assign(Error('Estado OAuth inválido ou expirado.'),{status:401});return nonce; }
+  async function oauthUser(provider,claims) {
+    const email=String(claims.email||'').toLowerCase();if(!email||claims.email_verified===false)throw Object.assign(Error('O provedor não confirmou o e-mail desta conta.'),{status:401});
+    const existing=await pool.query('SELECT * FROM helppatas.users WHERE (oauth_provider=$1 AND oauth_subject=$2) OR email=$3 LIMIT 1',[provider,claims.sub,email]);
+    const displayName=String(claims.name||email.split('@')[0]||'Cliente').trim().slice(0,100);const [name,...surnameParts]=displayName.split(/\s+/);const surname=surnameParts.join(' ').slice(0,100);
+    if(existing.rows[0]) { const user=existing.rows[0];if(user.oauth_provider&&(user.oauth_provider!==provider||user.oauth_subject!==claims.sub))throw Object.assign(Error('Este e-mail já está vinculado a outro login social.'),{status:409});const {rows}=await pool.query('UPDATE helppatas.users SET oauth_provider=$2,oauth_subject=$3,avatar_url=COALESCE($4,avatar_url),name=COALESCE(NULLIF($5,\'\'),name),surname=COALESCE(NULLIF($6,\'\'),surname) WHERE id=$1 RETURNING *',[user.id,provider,claims.sub,claims.picture||null,name,surname]);return rows[0]; }
+    const {rows}=await pool.query('INSERT INTO helppatas.users(id,name,surname,email,password_hash,oauth_provider,oauth_subject,avatar_url) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *',[randomUUID(),name,surname,email,await hashPassword(randomBytes(32).toString('hex')),provider,claims.sub,claims.picture||null]);return rows[0];
+  }
+  const oauthRedirect=()=>`${(process.env.OAUTH_REDIRECT_BASE_URL||`${production?'https':'http'}://${process.env.PUBLIC_HOST||'127.0.0.1:3000'}`).replace(/\/$/,'')}`;
+  app.get('/api/auth/google/begin',(req,res)=>{if(!socialProviderConfig.google)return res.status(503).json({error:'O login com Google ainda não foi configurado.'});const {state,nonce}=oauthState(res,'google');const redirect=`${oauthRedirect()}/api/auth/google/callback`;const url=new URL('https://accounts.google.com/o/oauth2/v2/auth');for(const [k,v] of Object.entries({client_id:process.env.GOOGLE_CLIENT_ID,redirect_uri:redirect,response_type:'code',scope:'openid email profile',state,nonce}))url.searchParams.set(k,v);res.json({url:url.toString()});});
+  app.get('/api/auth/google/callback',async(req,res)=>{try{const nonce=checkOAuthState(req,res,'google',req.query.state);const redirect=`${oauthRedirect()}/api/auth/google/callback`;const body=new URLSearchParams({code:String(req.query.code||''),client_id:process.env.GOOGLE_CLIENT_ID,client_secret:process.env.GOOGLE_CLIENT_SECRET,redirect_uri:redirect,grant_type:'authorization_code'});const response=await fetch('https://oauth2.googleapis.com/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});const tokens=await response.json();if(!response.ok)throw Error(tokens.error_description||'Falha ao trocar o código Google.');const claims=await verifyJwt(tokens.id_token,'https://www.googleapis.com/oauth2/v3/certs',{iss:'https://accounts.google.com',aud:process.env.GOOGLE_CLIENT_ID,nonce});const user=await oauthUser('google',claims);await session(res,user);res.redirect('/dashboard-cliente.html');}catch(error){res.redirect(`/login.html?oauth_error=${encodeURIComponent(error.message||'Falha no login Google.')}`);}});
+  app.get('/api/auth/apple/begin',(req,res)=>{if(!socialProviderConfig.apple)return res.status(503).json({error:'O login com Apple ainda não foi configurado.'});const {state,nonce}=oauthState(res,'apple');const redirect=`${oauthRedirect()}/api/auth/apple/callback`;const url=new URL('https://appleid.apple.com/auth/authorize');for(const [k,v] of Object.entries({client_id:process.env.APPLE_CLIENT_ID,redirect_uri:redirect,response_type:'code',response_mode:'form_post',scope:'name email',state,nonce}))url.searchParams.set(k,v);res.json({url:url.toString()});});
+  app.post('/api/auth/apple/callback',async(req,res)=>{try{const nonce=checkOAuthState(req,res,'apple',req.body.state);const redirect=`${oauthRedirect()}/api/auth/apple/callback`;const body=new URLSearchParams({client_id:process.env.APPLE_CLIENT_ID,client_secret:appleClientSecret(),code:String(req.body.code||''),grant_type:'authorization_code',redirect_uri:redirect});const response=await fetch('https://appleid.apple.com/auth/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body});const tokens=await response.json();if(!response.ok)throw Error(tokens.error_description||'Falha ao trocar o código Apple.');const claims=await verifyJwt(tokens.id_token,'https://appleid.apple.com/auth/keys',{iss:'https://appleid.apple.com',aud:process.env.APPLE_CLIENT_ID,nonce});const user=await oauthUser('apple',claims);await session(res,user);res.redirect('/dashboard-cliente.html');}catch(error){res.redirect(`/login.html?oauth_error=${encodeURIComponent(error.message||'Falha no login Apple.')}`);}});
   app.get('/api/auth/me',(req,res)=>res.json({user:req.user?publicUser(req.user):null}));
   app.get('/api/profile/avatar',auth,async(req,res)=>{
     const {rows}=await pool.query('SELECT avatar_data,avatar_type FROM helppatas.users WHERE id=$1',[req.user.id]);

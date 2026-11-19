@@ -16,6 +16,7 @@ async function migrate(pool) {
       id uuid PRIMARY KEY, name text NOT NULL, surname text NOT NULL DEFAULT '',
       email text NOT NULL UNIQUE, password_hash text NOT NULL,
       avatar_url text, avatar_data bytea, avatar_type text,
+      oauth_provider text, oauth_subject text,
       role text NOT NULL DEFAULT 'customer' CHECK (role IN ('customer','admin','staff')),
       created_at timestamptz NOT NULL DEFAULT now()
     );
@@ -45,6 +46,9 @@ async function migrate(pool) {
     ALTER TABLE helppatas.users ADD COLUMN IF NOT EXISTS avatar_url text;
     ALTER TABLE helppatas.users ADD COLUMN IF NOT EXISTS avatar_data bytea;
     ALTER TABLE helppatas.users ADD COLUMN IF NOT EXISTS avatar_type text;
+    ALTER TABLE helppatas.users ADD COLUMN IF NOT EXISTS oauth_provider text;
+    ALTER TABLE helppatas.users ADD COLUMN IF NOT EXISTS oauth_subject text;
+    CREATE UNIQUE INDEX IF NOT EXISTS users_oauth_identity_idx ON helppatas.users(oauth_provider, oauth_subject) WHERE oauth_provider IS NOT NULL AND oauth_subject IS NOT NULL;
     ALTER TABLE helppatas.bookings ADD COLUMN IF NOT EXISTS pet_id uuid REFERENCES helppatas.pets(id) ON DELETE SET NULL;
     CREATE INDEX IF NOT EXISTS bookings_pet_idx ON helppatas.bookings(pet_id);
     DO $$

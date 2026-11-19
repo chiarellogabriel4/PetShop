@@ -432,7 +432,7 @@ async function handleSocialAuth(event) {
   if (!provider) return;
   button.disabled = true;
   try {
-    const result = await petApi(`/api/auth/${provider}/start`);
+    const result = await petApi(`/api/auth/${provider}/begin`);
     if (!result?.url) throw new Error('Este login social ainda não está disponível.');
     window.location.assign(result.url);
   } catch (error) {
@@ -1059,6 +1059,12 @@ updateSummary();
 setupCartInteractions();
 renderCart();
 renderUserProfileChip();
+
+const oauthError = new URLSearchParams(location.search).get('oauth_error');
+if (oauthError) {
+  showToast(oauthError);
+  history.replaceState({}, document.title, location.pathname);
+}
 
 // The server session is authoritative; legacy browser credentials are never used.
 localStorage.removeItem('petcareSession');
