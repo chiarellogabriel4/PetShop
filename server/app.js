@@ -90,6 +90,18 @@ function createApp(pool, {setupToken='', production=false}={}) {
     await pool.query(`INSERT INTO helppatas.sessions(token_hash,user_id,expires_at) VALUES($1,$2,now()+interval '7 days')`,[digest(token),user.id]);
     res.cookie('hp_session',token,{httpOnly:true,sameSite:'lax',secure:production,maxAge:7*86400000,path:'/'});
   }
+  const socialProviderConfig = {
+    google: Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET),
+    apple: Boolean(process.env.APPLE_CLIENT_ID && process.env.APPLE_TEAM_ID && process.env.APPLE_KEY_ID && process.env.APPLE_PRIVATE_KEY)
+  };
+  app.get('/api/auth/providers',(req,res)=>res.json(socialProviderConfig));
+  for (const provider of ['google','apple']) {
+    app.get(`/api/auth/${provider}/start`,(req,res)=>{
+      const name = provider === 'google' ? 'Google' : 'Apple';
+      if (!socialProviderConfig[provider]) return res.status(503).json({error:`O login com ${name} ainda não foi configurado. Preencha as variáveis OAuth no arquivo .env.`});
+      res.status(501).json({error:`O login com ${name} está aguardando a configuração do callback OAuth.`});
+    });
+  }
   app.get('/api/auth/me',(req,res)=>res.json({user:req.user?publicUser(req.user):null}));
   app.get('/api/profile/avatar',auth,async(req,res)=>{
     const {rows}=await pool.query('SELECT avatar_data,avatar_type FROM helppatas.users WHERE id=$1',[req.user.id]);

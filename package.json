@@ -20,9 +20,13 @@
   },
   "homepage": "https://github.com/chiarellogabriel4/PetShop#readme",
   "dependencies": {
+    "cloudinary": "^2.11.0",
     "express": "^5.3.0",
     "express-rate-limit": "^8.7.5",
     "helmet": "^8.3.0",
+    "install": "^0.13.0",
+    "multer": "^2.5.0",
+    "npm": "^11.21.3",
     "pg": "^8.23.1"
   },
   "private": true,

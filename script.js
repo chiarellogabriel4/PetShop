@@ -426,8 +426,20 @@ function showToast(message) {
   window.alert(message);
 }
 
-function handleSocialAuth() {
-  showToast('Login social ainda não configurado. Use e-mail e senha.');
+async function handleSocialAuth(event) {
+  const button = event.currentTarget;
+  const provider = button?.dataset.provider;
+  if (!provider) return;
+  button.disabled = true;
+  try {
+    const result = await petApi(`/api/auth/${provider}/start`);
+    if (!result?.url) throw new Error('Este login social ainda não está disponível.');
+    window.location.assign(result.url);
+  } catch (error) {
+    showToast(error.message || 'Não foi possível iniciar o login social.');
+  } finally {
+    button.disabled = false;
+  }
 }
 
 function renderCatalogProducts(filter = 'todos') {
