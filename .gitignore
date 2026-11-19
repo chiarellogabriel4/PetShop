@@ -5,4 +5,5 @@
 
 # Dependencies and logs
 node_modules/
+.vercel/
 *.log

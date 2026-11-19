@@ -30,6 +30,16 @@ Contas e agendamentos da demonstração antiga em localStorage não são importa
 
 ## Publicação e testes
 
+### Vercel
+
+A publicação usa [vercel.json](./vercel.json) e a função [api/index.js](./api/index.js). Todas as páginas, inclusive a administração, passam pelo Express; apenas o diretório `public` é publicado diretamente. O arquivo privado `.env` não é enviado.
+
+No projeto da Vercel, abra **Settings → Environment Variables**, adicione `DATABASE_URL` com a conexão atual do Neon e selecione **Production** (e **Preview** se também for testar previews). Use o mesmo banco para entrar com o administrador já criado. Não envie a senha pelo chat.
+
+Depois envie estas alterações ao repositório conectado à Vercel e faça um novo deployment. Se o projeto tiver configurações manuais antigas, use **Framework Preset: Other**, raiz do projeto nesta pasta e Node.js 24. O arquivo de configuração define o diretório público.
+
+Verifique `/api/auth/me`: sem login, deve retornar JSON com `user: null`, nunca HTML ou erro 404. Entre pelo login publicado. Cookies em produção são enviados apenas por HTTPS. A criação inicial de administrador está desativada na função online.
+
 O servidor de desenvolvimento escuta apenas nesta máquina. Para publicação, hospede o Node atrás de HTTPS, defina `NODE_ENV=production` e configure um único proxy confiável (o servidor usa `trust proxy = 1`). Configure também recuperação de acesso, monitoramento e backups conforme sua operação. O CSV é um relatório, não um backup restaurável. Esta entrega não publica o site.
 
 `npm.cmd test` executa testes de senha e validação. `node --env-file=.env tests/integration.cjs` verifica persistência no Neon, sessões, restrições administrativas, isolamento de clientes, origem, arquivos privados e logout. O teste cria contas temporárias próprias e remove apenas os registros que criou.
