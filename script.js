@@ -1,7 +1,7 @@
 const currentYear = document.getElementById('currentYear');
 if (currentYear) currentYear.textContent = new Date().getFullYear();
 
-const STORAGE_KEY = 'petcareUsers';
+let currentSessionUser = null;
 const SESSION_KEY = 'petcareSession';
 const CART_KEY = 'petcareCart';
 
@@ -118,34 +118,10 @@ const catalogProducts = [
   }
 ];
 
-function getUsers() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  } catch {
-    return [];
-  }
-}
-
-function saveUsers(users) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-}
-
-function getCurrentUser() {
-  try {
-    return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
-  } catch {
-    return null;
-  }
-}
+function getCurrentUser() { return currentSessionUser; }
 
 function saveCurrentUser(user) {
-  const normalizedUser = {
-    ...user,
-    name: user.name || user.email || 'Usuário',
-    avatar: user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || user.email || 'Usuário')}&background=35149b&color=fff&size=128`
-  };
-
-  localStorage.setItem(SESSION_KEY, JSON.stringify(normalizedUser));
+  currentSessionUser = user;
   renderUserProfileChip();
 }
 
@@ -433,54 +409,8 @@ function showToast(message) {
   window.alert(message);
 }
 
-function handleSocialAuth(event) {
-  const button = event.currentTarget;
-  const provider = button.dataset.provider || button.textContent.trim();
-
-  if (!provider) {
-    return;
-  }
-
-  const users = getUsers();
-  const existingSocialUser = users.find(user => user.provider === provider);
-
-  if (existingSocialUser) {
-    saveCurrentUser({
-      id: existingSocialUser.id,
-      name: existingSocialUser.name,
-      email: existingSocialUser.email,
-      provider: existingSocialUser.provider,
-      avatar: existingSocialUser.avatar || ''
-    });
-
-    showToast(`Bem-vindo de volta com ${provider}!`);
-  } else {
-    const newUser = {
-      id: Date.now(),
-      name: `Usuário ${provider}`,
-      surname: '',
-      email: `${provider.toLowerCase()}-${Date.now()}@petcare.com.br`,
-      password: `social-${provider.toLowerCase()}-${Date.now()}`,
-      provider,
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(`Usuário ${provider}`)}&background=35149b&color=fff&size=128`
-    };
-
-    users.push(newUser);
-    saveUsers(users);
-    saveCurrentUser({
-      id: newUser.id,
-      name: newUser.name,
-      email: newUser.email,
-      provider: newUser.provider,
-      avatar: newUser.avatar || ''
-    });
-
-    showToast(`Conta criada com ${provider} com sucesso!`);
-  }
-
-  setTimeout(() => {
-    window.location.href = 'dashboard-cliente.html';
-  }, 300);
+function handleSocialAuth() {
+  showToast('Login social ainda não configurado. Use e-mail e senha.');
 }
 
 function renderCatalogProducts(filter = 'todos') {
@@ -576,115 +506,26 @@ function registerDashboardGreeting() {
   }
 }
 
-function handleLogin(event) {
+async function handleLogin(event) {
   event.preventDefault();
-
-  const emailInput = document.getElementById('loginEmail');
-  const passwordInput = document.getElementById('loginPassword');
-
-  if (!emailInput || !passwordInput) {
-    return;
-  }
-
-  const email = emailInput.value.trim().toLowerCase();
-  const password = passwordInput.value.trim();
-
-  if (!email || !password) {
-    showToast('Preencha e-mail e senha para continuar.');
-    return;
-  }
-
-  const users = getUsers();
-  const user = users.find(item => item.email.toLowerCase() === email && item.password === password);
-
-  if (!user) {
-    showToast('E-mail ou senha inválidos.');
-    return;
-  }
-
-  saveCurrentUser({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    avatar: user.avatar || ''
-  });
-
-  showToast('Login realizado com sucesso!');
-  setTimeout(() => {
-    window.location.href = 'dashboard-cliente.html';
-  }, 300);
+  const button = loginForm.querySelector('[type=submit]');
+  button.disabled = true;
+  try {
+    const result = await petApi('/api/auth/login', {method:'POST', body:JSON.stringify({email:document.getElementById('loginEmail').value.trim(), password:document.getElementById('loginPassword').value})});
+    saveCurrentUser(result.user);
+    location.href = result.user.role === 'admin' ? 'admin.html' : 'dashboard-cliente.html';
+  } catch(error) { showToast(error.message); } finally { button.disabled=false; }
 }
 
-function handleCreateAccount(event) {
+async function handleCreateAccount(event) {
   event.preventDefault();
-
-  const nomeInput = document.getElementById('nome');
-  const sobrenomeInput = document.getElementById('sobrenome');
-  const registerEmailInput = document.getElementById('registerEmail');
-  const senhaInput = document.getElementById('senha');
-  const confirmarSenhaInput = document.getElementById('confirmarSenha');
-  const termsCheckbox = document.getElementById('termsCheckbox');
-
-  if (!nomeInput || !sobrenomeInput || !registerEmailInput || !senhaInput || !confirmarSenhaInput || !termsCheckbox) {
-    return;
-  }
-
-  const name = nomeInput.value.trim();
-  const surname = sobrenomeInput.value.trim();
-  const email = registerEmailInput.value.trim().toLowerCase();
-  const password = senhaInput.value.trim();
-  const confirmPassword = confirmarSenhaInput.value.trim();
-
-  if (!name || !surname || !email || !password || !confirmPassword) {
-    showToast('Preencha todos os campos para criar sua conta.');
-    return;
-  }
-
-  if (password.length < 6) {
-    showToast('A senha deve ter pelo menos 6 caracteres.');
-    return;
-  }
-
-  if (password !== confirmPassword) {
-    showToast('As senhas não conferem.');
-    return;
-  }
-
-  if (!termsCheckbox.checked) {
-    showToast('Você precisa aceitar os termos para continuar.');
-    return;
-  }
-
-  const users = getUsers();
-  const existingUser = users.some(item => item.email.toLowerCase() === email);
-
-  if (existingUser) {
-    showToast('Este e-mail já está cadastrado.');
-    return;
-  }
-
-  const user = {
-    id: Date.now(),
-    name,
-    surname,
-    email,
-    password,
-    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=35149b&color=fff&size=128`
-  };
-
-  users.push(user);
-  saveUsers(users);
-  saveCurrentUser({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    avatar: user.avatar || ''
-  });
-
-  showToast('Conta criada com sucesso!');
-  setTimeout(() => {
-    window.location.href = 'dashboard-cliente.html';
-  }, 300);
+  const password=document.getElementById('senha').value;
+  if(password!==document.getElementById('confirmarSenha').value) {showToast('As senhas não conferem.');return;}
+  const button=createAccountForm.querySelector('[type=submit]');button.disabled=true;
+  try {
+    const result=await petApi('/api/auth/register',{method:'POST',body:JSON.stringify({name:document.getElementById('nome').value.trim(),surname:document.getElementById('sobrenome').value.trim(),email:document.getElementById('registerEmail').value.trim(),password,terms:document.getElementById('termsCheckbox').checked})});
+    saveCurrentUser(result.user);location.href='dashboard-cliente.html';
+  } catch(error){showToast(error.message);} finally{button.disabled=false;}
 }
 
 const revealTargets = document.querySelectorAll('.section-head, .service-card, .product-card, .testimonial-card, .article-card, .stat, .overview-item, .booking-card, .booking-summary, .contact-card, .dashboard-card');
@@ -738,7 +579,7 @@ if (timeSelect) {
 
 
 if (bookingForm) {
-  bookingForm.addEventListener('submit', function (event) {
+  bookingForm.addEventListener('submit', async function (event) {
     event.preventDefault();
     const formData = new FormData(bookingForm);
     const service = formData.get('service');
@@ -751,9 +592,18 @@ if (bookingForm) {
       return;
     }
 
+    const button=bookingForm.querySelector('[type=submit]');
+    button.disabled=true;
+    try {
+      await petApi('/api/bookings',{method:'POST',body:JSON.stringify(Object.fromEntries(formData))});
+    } catch(error) {
+      showToast(error.message);
+      if(error.status===401) setTimeout(()=>{location.href='login.html';},1600);
+      return;
+    } finally {button.disabled=false;}
     bookingForm.reset();
     updateSummary();
-    showToast('Agendamento confirmado com sucesso!');
+    showToast('Agendamento registrado! Aguardando confirmação da equipe.');
   });
 }
 
@@ -1176,3 +1026,7 @@ updateSummary();
 setupCartInteractions();
 renderCart();
 renderUserProfileChip();
+
+// The server session is authoritative; legacy browser credentials are never used.
+localStorage.removeItem('petcareSession');
+petApi('/api/auth/me').then(({user})=>{saveCurrentUser(user);registerDashboardGreeting();}).catch(()=>{});

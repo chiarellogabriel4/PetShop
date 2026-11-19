@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administração | helpPatas</title>
+  <link rel="stylesheet" href="admin.css">
+  <script src="api.js" defer></script>
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="index.html"><span class="brand-icon">🐾</span> helpPatas<span class="brand-sub">GESTÃO DO PETSHOP</span></a>
+    <span class="nav-label">SEU NEGÓCIO</span>
+    <nav aria-label="Administração">
+      <a href="#visao-geral" class="active">Visão geral <span>↗</span></a>
+      <a href="#agenda">Agendamentos <span>◷</span></a>
+      <a href="#clientes">Clientes <span>◎</span></a>
+    </nav>
+    <div class="sidebar-bottom"><span class="local-dot"></span> Conectado ao servidor<p>Dados compartilhados pelo Neon.</p><a href="index.html">← Voltar ao site</a></div>
+  </aside>
+  <main>
+    <header class="top"><span>Painel administrativo</span><span id="todayLabel"></span><button class="secondary" id="adminLogout">Sair da conta</button></header>
+    <div class="content">
+      <section id="visao-geral">
+        <div class="heading"><div><span class="eyebrow">TUDO SOB CONTROLE</span><h1>Um bom dia começa com organização.</h1><p>Acompanhe os atendimentos e cuide de cada detalhe.</p></div><button class="primary" id="newBooking">+ Novo agendamento</button></div>
+        <div class="notice"><strong>Gestão conectada</strong><span>Agenda e clientes sincronizados com o banco de dados. Acesso restrito à equipe administrativa.</span></div>
+        <div class="metrics">
+          <article><span>Atendimentos hoje</span><strong id="metricToday">0</strong><small>Exceto cancelados</small></article>
+          <article><span>Aguardando confirmação</span><strong id="metricPending">0</strong><small>Agendamentos pendentes</small></article>
+          <article><span>Serviços concluídos</span><strong id="metricDone">0</strong><small>Em todo o período</small></article>
+          <article><span>Valor dos serviços concluídos</span><strong id="metricRevenue">R$ 0,00</strong><small>Valores estimados · não indica pagamento</small></article>
+        </div>
+      </section>
+      <section class="panel" id="agenda">
+        <div class="panel-heading"><div><h2>Agenda de atendimentos</h2><p>Consulte, organize e atualize os próximos cuidados.</p></div><button class="secondary" id="exportBookings">Exportar CSV ↓</button></div>
+        <div class="filters"><label>Buscar<input id="bookingSearch" type="search" placeholder="Pet, tutor ou serviço"></label><label>Status<select id="statusFilter"><option value="">Todos os status</option><option>Pendente</option><option>Confirmado</option><option>Em atendimento</option><option>Concluído</option><option>Cancelado</option></select></label><label>Data<input type="date" id="dateFilter"></label><button class="secondary" id="clearFilters">Limpar filtros</button></div>
+        <div class="table-wrap"><table><caption class="sr-only">Agendamentos do petshop</caption><thead><tr><th>Pet / tutor</th><th>Serviço</th><th>Data e hora</th><th>Valor estimado</th><th>Status</th><th>Ações</th></tr></thead><tbody id="bookingRows"></tbody></table></div>
+        <div class="empty" id="bookingEmpty"><span>◷</span><h3>Nenhum agendamento por aqui</h3><p>Cadastre um atendimento ou receba um agendamento pelo site.</p></div>
+        <div class="panel-foot" id="bookingCount"></div>
+      </section>
+      <section class="panel" id="clientes"><div class="panel-heading"><div><h2>Seus clientes</h2><p>Contas cadastradas no site.</p></div><label class="client-search"><span class="sr-only">Buscar clientes</span><input type="search" id="clientSearch" placeholder="Buscar nome ou e-mail"></label></div><div id="clientList" class="client-list"></div></section>
+      <footer>helpPatas · Gestão com cuidado <span>Neon PostgreSQL</span></footer>
+    </div>
+  </main>
+  <dialog id="bookingDialog" aria-labelledby="dialogTitle">
+    <form id="adminBookingForm">
+      <div class="dialog-heading"><div><span class="eyebrow">AGENDA</span><h2 id="dialogTitle">Novo agendamento</h2></div><button type="button" class="icon-button" id="closeDialog" aria-label="Fechar">×</button></div>
+      <input type="hidden" name="id"><div class="form-grid">
+        <label>Nome do pet<input name="petName" required maxlength="80"></label><label>Tipo do pet<input name="petType" required maxlength="50" placeholder="Ex.: cachorro"></label>
+        <label>Nome do tutor<input name="customerName" required maxlength="100"></label><label>E-mail do tutor (opcional)<input name="customerEmail" type="email" maxlength="160"></label>
+        <label>Serviço<select name="service" required><option>Banho e Tosa</option><option>Consulta Veterinária</option><option>Vacinação</option><option>Hospedagem</option><option>Creche Pet</option><option>Emergência 24h</option></select></label>
+        <label>Valor estimado (R$)<input name="price" type="number" min="0" step="0.01" max="100000" required></label>
+        <label>Data<input name="date" type="date" required></label><label>Horário<input name="time" type="time" required></label>
+        <label>Status<select name="status"><option>Pendente</option><option>Confirmado</option><option>Em atendimento</option><option>Concluído</option><option>Cancelado</option></select></label>
+        <label class="full">Observações<textarea name="notes" maxlength="1000" rows="3"></textarea></label>
+      </div><p id="formError" role="alert"></p><div class="dialog-actions"><button type="button" class="secondary" id="cancelDialog">Cancelar</button><button class="primary" type="submit">Salvar agendamento</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="adminToast" role="status" aria-live="polite"></div>
+</body>
+</html>

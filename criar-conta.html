@@ -502,7 +502,7 @@
             <div class="form-row">
               <div class="field">
                 <label for="senha">Senha</label>
-                <input id="senha" type="password" placeholder="Crie uma senha" />
+                <input id="senha" type="password" placeholder="Pelo menos 10 caracteres" minlength="10" maxlength="128" autocomplete="new-password" required />
               </div>
               <div class="field">
                 <label for="confirmarSenha">Confirmar senha</label>
@@ -538,6 +538,7 @@
         <span>Feito para pets e tutores que valorizam qualidade.</span>
       </div>
     </footer>
+    <script src="api.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

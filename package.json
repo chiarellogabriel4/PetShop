@@ -1,0 +1,32 @@
+{
+  "name": "petshop",
+  "version": "1.0.0",
+  "description": "helpPatas petshop with Neon PostgreSQL and server authentication",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node --env-file=.env server/index.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chiarellogabriel4/PetShop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/chiarellogabriel4/PetShop/issues"
+  },
+  "homepage": "https://github.com/chiarellogabriel4/PetShop#readme",
+  "dependencies": {
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.5",
+    "helmet": "^8.3.0",
+    "pg": "^8.23.1"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=24"
+  }
+}
