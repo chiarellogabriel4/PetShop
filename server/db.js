@@ -41,6 +41,8 @@ async function migrate(pool) {
       CHECK ((photo_data IS NULL AND photo_type IS NULL) OR (photo_data IS NOT NULL AND photo_type IN ('image/jpeg','image/png','image/webp')))
     );
     CREATE INDEX IF NOT EXISTS pets_customer_idx ON helppatas.pets(customer_id);
+    ALTER TABLE helppatas.bookings ADD COLUMN IF NOT EXISTS pet_id uuid REFERENCES helppatas.pets(id) ON DELETE SET NULL;
+    CREATE INDEX IF NOT EXISTS bookings_pet_idx ON helppatas.bookings(pet_id);
     DO $$
     BEGIN
       ALTER TABLE helppatas.users DROP CONSTRAINT IF EXISTS users_role_check;

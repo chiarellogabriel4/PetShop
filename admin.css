@@ -13,3 +13,4 @@ dialog{animation:dialog-in .25s ease both}.toast{transform:translate(-50%,14px);
 @media(max-width:760px){.top #todayLabel{display:none}.content{padding:28px 16px}.metrics article{padding:18px 14px}.metrics article>span{min-height:34px}.panel-heading{padding:20px}.filters{padding:0 20px 20px}.client-list{padding:0 20px 20px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 .booking-note{max-width:230px;overflow:hidden;text-overflow:ellipsis;color:#615a73}.booking-note[title="Sem observações"]{color:#a29cac;font-style:italic}
+.booking-pet-cell{display:flex;align-items:center;gap:10px}.pet-booking-thumb,.pet-booking-placeholder{width:38px;height:38px;border-radius:12px;object-fit:cover;flex:0 0 38px}.pet-booking-placeholder{display:grid;place-items:center;background:#f0ecff;color:#5b3cc4;font-size:1.1rem}

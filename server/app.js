@@ -52,7 +52,8 @@ function petData(body) {
   if(!signatures[match[1]]) throw Object.assign(Error('O conteúdo da foto não corresponde ao formato informado.'),{status:400});
   return {name,petType,photo,type:match[1]};
 }
-const bookingColumns=`id, customer_id AS "customerId", customer_name AS "customerName", customer_email AS "customerEmail", pet_name AS "petName", pet_type AS "petType", service, to_char(date,'YYYY-MM-DD') AS date, to_char(time,'HH24:MI') AS time, price::float8 AS price, status, notes, created_at AS "createdAt", updated_at AS "updatedAt"`;
+const bookingColumns=`id, pet_id AS "petId", customer_id AS "customerId", customer_name AS "customerName", customer_email AS "customerEmail", pet_name AS "petName", pet_type AS "petType", service, to_char(date,'YYYY-MM-DD') AS date, to_char(time,'HH24:MI') AS time, price::float8 AS price, status, notes, created_at AS "createdAt", updated_at AS "updatedAt"`;
+const adminBookingColumns=bookingColumns.replace('pet_id AS "petId"','COALESCE(b.pet_id,(SELECT p.id FROM helppatas.pets p WHERE p.customer_id=b.customer_id AND lower(trim(p.name))=lower(trim(b.pet_name)) LIMIT 1)) AS "petId"');
 
 function createApp(pool, {setupToken='', production=false}={}) {
   const app=express();
@@ -126,7 +127,8 @@ function createApp(pool, {setupToken='', production=false}={}) {
   app.get('/api/bookings',auth,async(req,res)=>{const {rows}=await pool.query(`SELECT ${bookingColumns} FROM helppatas.bookings WHERE customer_id=$1 ORDER BY date,time`,[req.user.id]);res.json({bookings:rows});});
   app.post('/api/bookings',auth,async(req,res)=>{
     const b=bookingData(req.body,req.user,false);
-    const {rows}=await pool.query(`INSERT INTO helppatas.bookings(id,customer_id,customer_name,customer_email,pet_name,pet_type,service,date,time,price,status,notes) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING ${bookingColumns}`,[randomUUID(),req.user.id,b.customerName,b.customerEmail,b.petName,b.petType,b.service,b.date,b.time,b.price,b.status,b.notes]);
+    const pet=await pool.query('SELECT id FROM helppatas.pets WHERE id=$1 AND customer_id=$2 OR customer_id=$2 AND lower(trim(name))=lower(trim($3)) ORDER BY (id=$1) DESC LIMIT 1',[uuid.test(String(req.body.petId||''))?req.body.petId:null,req.user.id,b.petName]);
+    const {rows}=await pool.query(`INSERT INTO helppatas.bookings(id,pet_id,customer_id,customer_name,customer_email,pet_name,pet_type,service,date,time,price,status,notes) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING ${bookingColumns}`,[randomUUID(),pet.rows[0]?.id||null,req.user.id,b.customerName,b.customerEmail,b.petName,b.petType,b.service,b.date,b.time,b.price,b.status,b.notes]);
     res.status(201).json({booking:rows[0]});
   });
   app.get('/api/pets',auth,async(req,res)=>{
@@ -158,7 +160,13 @@ function createApp(pool, {setupToken='', production=false}={}) {
     res.json({ok:true});
   });
   app.use('/api/admin',panel);
-  app.get('/api/admin/bookings',async(req,res)=>{res.json({bookings:(await pool.query(`SELECT ${bookingColumns} FROM helppatas.bookings ORDER BY date,time`)).rows});});
+  app.get('/api/admin/pets/:id/photo',async(req,res)=>{
+    if(!uuid.test(req.params.id)) return res.status(400).json({error:'Identificador inválido.'});
+    const {rows}=await pool.query('SELECT photo_data,photo_type FROM helppatas.pets WHERE id=$1',[req.params.id]);
+    if(!rows.length||!rows[0].photo_data)return res.status(404).end();
+    res.set({'Content-Type':rows[0].photo_type,'Cache-Control':'private, no-store'}).send(rows[0].photo_data);
+  });
+  app.get('/api/admin/bookings',async(req,res)=>{res.json({bookings:(await pool.query(`SELECT ${adminBookingColumns} FROM helppatas.bookings b ORDER BY date,time`)).rows});});
   app.get('/api/admin/customers',async(req,res)=>{res.json({customers:(await pool.query(`SELECT id,name,surname,email FROM helppatas.users WHERE role='customer' ORDER BY name`)).rows});});
   app.get('/api/admin/staff',panel,async(req,res)=>{res.json({staff:(await pool.query(`SELECT id,name,surname,email,role,created_at AS "createdAt" FROM helppatas.users WHERE role='staff' ORDER BY name`)).rows});});
   app.post('/api/admin/staff',owner,async(req,res)=>{
@@ -169,7 +177,8 @@ function createApp(pool, {setupToken='', production=false}={}) {
   app.post('/api/admin/bookings',async(req,res)=>{
     const b=bookingData(req.body,req.user,true);
     const customer=await pool.query('SELECT id FROM helppatas.users WHERE email=$1',[b.customerEmail.toLowerCase()]);
-    const {rows}=await pool.query(`INSERT INTO helppatas.bookings(id,customer_id,customer_name,customer_email,pet_name,pet_type,service,date,time,price,status,notes) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING ${bookingColumns}`,[randomUUID(),customer.rows[0]?.id||null,b.customerName,b.customerEmail,b.petName,b.petType,b.service,b.date,b.time,b.price,b.status,b.notes]);res.status(201).json({booking:rows[0]});
+    const pet=customer.rows[0]?await pool.query('SELECT id FROM helppatas.pets WHERE customer_id=$1 AND lower(trim(name))=lower(trim($2)) LIMIT 1',[customer.rows[0].id,b.petName]):{rows:[]};
+    const {rows}=await pool.query(`INSERT INTO helppatas.bookings(id,pet_id,customer_id,customer_name,customer_email,pet_name,pet_type,service,date,time,price,status,notes) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING ${bookingColumns}`,[randomUUID(),pet.rows[0]?.id||null,customer.rows[0]?.id||null,b.customerName,b.customerEmail,b.petName,b.petType,b.service,b.date,b.time,b.price,b.status,b.notes]);res.status(201).json({booking:rows[0]});
   });
   app.put('/api/admin/bookings/:id',async(req,res)=>{
     if(!uuid.test(req.params.id)) return res.status(400).json({error:'Identificador inválido.'});
