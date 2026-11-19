@@ -15,6 +15,7 @@ async function migrate(pool) {
     CREATE TABLE IF NOT EXISTS helppatas.users (
       id uuid PRIMARY KEY, name text NOT NULL, surname text NOT NULL DEFAULT '',
       email text NOT NULL UNIQUE, password_hash text NOT NULL,
+      avatar_url text, avatar_data bytea, avatar_type text,
       role text NOT NULL DEFAULT 'customer' CHECK (role IN ('customer','admin','staff')),
       created_at timestamptz NOT NULL DEFAULT now()
     );
@@ -41,6 +42,9 @@ async function migrate(pool) {
       CHECK ((photo_data IS NULL AND photo_type IS NULL) OR (photo_data IS NOT NULL AND photo_type IN ('image/jpeg','image/png','image/webp')))
     );
     CREATE INDEX IF NOT EXISTS pets_customer_idx ON helppatas.pets(customer_id);
+    ALTER TABLE helppatas.users ADD COLUMN IF NOT EXISTS avatar_url text;
+    ALTER TABLE helppatas.users ADD COLUMN IF NOT EXISTS avatar_data bytea;
+    ALTER TABLE helppatas.users ADD COLUMN IF NOT EXISTS avatar_type text;
     ALTER TABLE helppatas.bookings ADD COLUMN IF NOT EXISTS pet_id uuid REFERENCES helppatas.pets(id) ON DELETE SET NULL;
     CREATE INDEX IF NOT EXISTS bookings_pet_idx ON helppatas.bookings(pet_id);
     DO $$

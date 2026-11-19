@@ -126,6 +126,21 @@ function saveCurrentUser(user) {
   renderUserProfileChip();
 }
 
+function setupProfileAvatarUpload(chip) {
+  const user=getCurrentUser();
+  if(!user) return;
+  chip.title='Clique para alterar sua foto';
+  chip.setAttribute('role','button');
+  chip.tabIndex=0;
+  let input=document.getElementById('profileAvatarInput');
+  if(!input){input=document.createElement('input');input.id='profileAvatarInput';input.type='file';input.accept='image/jpeg,image/png,image/webp';input.hidden=true;document.body.appendChild(input);}
+  const choose=()=>input.click();
+  chip.onclick=choose;chip.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();choose();}};
+  input.onchange=async()=>{const file=input.files?.[0];if(!file)return;if(!file.type.startsWith('image/')||file.size>10*1024*1024){showToast('Escolha uma imagem de até 10 MB.');input.value='';return;}try{const photo=await compressProfilePhoto(file);const result=await petApi('/api/profile/avatar',{method:'PUT',body:JSON.stringify({photo})});if(result.user.avatar)result.user.avatar+=`?v=${Date.now()}`;saveCurrentUser(result.user);showToast('Foto de perfil atualizada.');}catch(error){showToast(error.message);}finally{input.value='';}};
+}
+
+function compressProfilePhoto(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(new Error('Não foi possível ler a foto.'));reader.onload=()=>{const image=new Image();image.onerror=()=>reject(new Error('Não foi possível abrir a foto.'));image.onload=()=>{const scale=Math.min(1,800/Math.max(image.width,image.height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(image.width*scale));canvas.height=Math.max(1,Math.round(image.height*scale));canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);const data=canvas.toDataURL('image/jpeg',.84);if(data.length>1800000)return reject(new Error('A foto ficou muito grande. Escolha outra imagem.'));resolve(data);};image.src=reader.result;};reader.readAsDataURL(file);});}
+
 function injectUserProfileStyles() {
   if (document.getElementById('petcare-user-profile-styles')) {
     return;
@@ -209,6 +224,7 @@ function renderUserProfileChip() {
   }
 
   chip.className = 'user-profile-chip';
+  setupProfileAvatarUpload(chip);
 
   const safeName = currentUser.name.replace(/[<>]/g, '');
 

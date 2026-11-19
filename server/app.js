@@ -8,7 +8,7 @@ const { hashPassword, verifyPassword, digest } = require('./security');
 const services = {'Banho e Tosa':69,'Consulta Veterinária':89,'Vacinação':120,'Hospedagem':49,'Creche Pet':59,'Emergência 24h':0};
 const statuses = ['Pendente','Confirmado','Em atendimento','Concluído','Cancelado'];
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const publicUser = u => ({id:u.id,name:u.name,surname:u.surname,email:u.email,role:u.role});
+const publicUser = u => ({id:u.id,name:u.name,surname:u.surname,email:u.email,role:u.role,avatar:u.avatar_url||(u.avatar_data?'/api/profile/avatar':null)});
 function text(value, name, max, required = true) {
   if (value == null && !required) return '';
   if (typeof value !== 'string' || value.length > max || (required && !value.trim())) throw Object.assign(Error(`Confira o campo ${name}.`),{status:400});
@@ -59,7 +59,7 @@ function createApp(pool, {setupToken='', production=false}={}) {
   const app=express();
   app.disable('x-powered-by');
   if(production) app.set('trust proxy',1);
-  app.use(helmet({contentSecurityPolicy:{directives:{defaultSrc:["'self'"],scriptSrc:["'self'"],styleSrc:["'self'","'unsafe-inline'",'https://fonts.googleapis.com'],fontSrc:["'self'",'https://fonts.gstatic.com'],imgSrc:["'self'",'data:','https://images.unsplash.com','https://ui-avatars.com'],upgradeInsecureRequests:production?[]:null}},strictTransportSecurity:production?undefined:false}));
+  app.use(helmet({contentSecurityPolicy:{directives:{defaultSrc:["'self'"],scriptSrc:["'self'"],styleSrc:["'self'","'unsafe-inline'",'https://fonts.googleapis.com'],fontSrc:["'self'",'https://fonts.gstatic.com'],imgSrc:["'self'",'data:','https://images.unsplash.com','https://ui-avatars.com','https://*.googleusercontent.com'],upgradeInsecureRequests:production?[]:null}},strictTransportSecurity:production?undefined:false}));
   app.use('/api',rateLimit({windowMs:60000,limit:150,standardHeaders:'draft-8',legacyHeaders:false,message:{error:'Muitas solicitações. Aguarde um minuto.'}}));
   app.use(express.json({limit:'2mb'}));
   app.use('/api',(req,res,next)=>{
@@ -91,6 +91,18 @@ function createApp(pool, {setupToken='', production=false}={}) {
     res.cookie('hp_session',token,{httpOnly:true,sameSite:'lax',secure:production,maxAge:7*86400000,path:'/'});
   }
   app.get('/api/auth/me',(req,res)=>res.json({user:req.user?publicUser(req.user):null}));
+  app.get('/api/profile/avatar',auth,async(req,res)=>{
+    const {rows}=await pool.query('SELECT avatar_data,avatar_type FROM helppatas.users WHERE id=$1',[req.user.id]);
+    if(!rows.length||!rows[0].avatar_data)return res.status(404).end();
+    res.set({'Content-Type':rows[0].avatar_type,'Cache-Control':'private, no-store'}).send(rows[0].avatar_data);
+  });
+  app.put('/api/profile/avatar',auth,async(req,res)=>{
+    const image=petData({name:'avatar',petType:'',photo:req.body.photo});
+    await pool.query('UPDATE helppatas.users SET avatar_data=$2,avatar_type=$3,avatar_url=NULL WHERE id=$1',[req.user.id,image.photo,image.type]);
+    const {rows}=await pool.query('SELECT * FROM helppatas.users WHERE id=$1',[req.user.id]);
+    res.json({user:publicUser(rows[0])});
+  });
+  app.delete('/api/profile/avatar',auth,async(req,res)=>{await pool.query('UPDATE helppatas.users SET avatar_data=NULL,avatar_type=NULL WHERE id=$1',[req.user.id]);res.json({user:publicUser({...req.user,avatar_data:null,avatar_url:null})});});
   app.post('/api/auth/register',authLimit,async(req,res)=>{
     const a=account(req.body);
     if(req.body.terms!==true) return res.status(400).json({error:'Aceite os termos para continuar.'});
