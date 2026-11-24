@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const list = document.getElementById('staffRequestList');
+  const list = document.getElementById('staffRequestListPanel') || document.getElementById('staffRequestList');
   if (!list) return;
   const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const toast = message => { const element=document.getElementById('adminToast'); if(element){element.textContent=message;element.classList.add('show');setTimeout(()=>element.classList.remove('show'),3200);} };
