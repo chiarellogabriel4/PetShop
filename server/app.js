@@ -114,7 +114,7 @@ function createApp(pool, {setupToken='', production=false}={}) {
     } catch(e){next(e);}
   });
   const auth=(req,res,next)=>req.user?next():res.status(401).json({error:'Entre na sua conta para continuar.'});
-  const panel=(req,res,next)=>['admin','staff'].includes(req.user?.role)?next():res.status(req.user?403:401).json({error:'Acesso exclusivo da administraÃ§Ã£o.'});
+  const panel=(req,res,next)=>['admin','staff'].includes(req.user?.role)?next():res.status(req.user?403:401).json({error:'Acesso exclusivo da administração.'});
   const owner=(req,res,next)=>req.user?.role==='admin'?next():res.status(req.user?403:401).json({error:'Somente o administrador pode gerenciar a equipe.'});
   const authLimit=rateLimit({windowMs:15*60000,limit:15,standardHeaders:'draft-8',legacyHeaders:false,message:{error:'Muitas tentativas. Aguarde 15 minutos.'}});
   async function session(res,user) {
