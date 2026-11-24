@@ -20,5 +20,16 @@ dialog{animation:dialog-in .25s ease both}.toast{transform:translate(-50%,14px);
 .staff-request-item{align-items:flex-start}.staff-request-details{min-width:0}.staff-request-details small{margin-top:6px}.staff-request-details b{color:#514a65}.staff-request-item .request-actions button{white-space:nowrap}
 #solicitacoes-equipe{display:none}
 #staff-requests-panel{margin:28px 40px;max-width:calc(100% - 80px)}
-@media(max-width:760px){#staff-requests-panel{margin:24px 16px;max-width:calc(100% - 32px)}.staff-request-item .request-actions{flex-wrap:wrap}}
+#staff-requests-panel .panel-heading{align-items:flex-start;padding-bottom:20px}
+#staff-requests-panel .panel-heading>a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 14px;border-radius:10px;white-space:nowrap;flex-shrink:0}
+#staff-requests-panel .client-list{display:grid;grid-template-columns:1fr;gap:12px;padding:0 24px 24px}
+#staff-requests-panel .staff-request-item{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;padding:18px 20px;border:1px solid #e7e2f2;border-radius:16px;background:linear-gradient(135deg,#fff,#fbf9ff);box-shadow:0 8px 22px rgba(67,48,119,.06);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+#staff-requests-panel .staff-request-item:hover{transform:translateY(-2px);border-color:#d6c9f4;box-shadow:0 14px 28px rgba(67,48,119,.11)}
+#staff-requests-panel .staff-request-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px;align-items:center}
+#staff-requests-panel .staff-request-details strong{grid-column:1/-1;margin-bottom:4px;font-size:.96rem;color:#2f2545}
+#staff-requests-panel .staff-request-details small{margin-top:5px;line-height:1.45;overflow-wrap:anywhere}
+#staff-requests-panel .staff-request-details small:last-of-type{width:max-content;max-width:100%;margin-top:10px;padding:5px 9px;border:1px solid #ddd3f4;border-radius:999px;background:#f3efff;color:#5b3cc4;font-weight:700}
+#staff-requests-panel .request-actions{grid-column:1/-1;display:flex;gap:9px;margin-top:14px;padding-top:14px;border-top:1px solid #eeeaf5}
+#staff-requests-panel .request-actions button{min-height:38px;border-radius:9px;padding:8px 13px}
+@media(max-width:760px){#staff-requests-panel{margin:24px 16px;max-width:calc(100% - 32px)}#staff-requests-panel .panel-heading{flex-direction:column}#staff-requests-panel .panel-heading>a{white-space:normal;text-align:center}.staff-request-item .request-actions{flex-wrap:wrap}#staff-requests-panel .staff-request-details{grid-template-columns:1fr}}
 .status[data-status="Confirmado"]{background:#eef4ff;color:#355fa8;border-color:#d7e4ff}.status[data-status="Em atendimento"]{background:#f4edff;color:#7042b5;border-color:#e4d7ff}
