@@ -7,32 +7,53 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="visual.css">
   <style>
-    .staff-request-page { padding: 56px 0 72px; }
-    .staff-request-page .auth-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(360px, 1.1fr); gap: 48px; align-items: start; }
-    .staff-request-page .auth-hero { padding-top: 28px; }
-    .staff-request-page .auth-hero h1 { max-width: 620px; }
-    .staff-request-page .auth-hero p { max-width: 580px; line-height: 1.7; color: rgba(51,51,51,.75); }
-    .staff-request-page .auth-card { padding: 32px; }
+    .staff-request-page { position: relative; isolation: isolate; min-height: calc(100vh - 82px); padding: clamp(42px, 7vw, 84px) 0 88px; overflow: hidden; background: radial-gradient(circle at 12% 12%, rgba(255, 138, 61, .16), transparent 28%), radial-gradient(circle at 88% 18%, rgba(91, 60, 196, .14), transparent 30%); }
+    .staff-request-page::before, .staff-request-page::after { position: absolute; z-index: -1; content: ''; border-radius: 999px; pointer-events: none; filter: blur(2px); }
+    .staff-request-page::before { width: 360px; height: 360px; right: -150px; bottom: 8%; background: rgba(255, 102, 0, .08); animation: staff-orb-drift 12s ease-in-out infinite; }
+    .staff-request-page::after { width: 260px; height: 260px; left: -120px; top: 34%; background: rgba(91, 60, 196, .08); animation: staff-orb-drift 15s 1s ease-in-out infinite reverse; }
+    .staff-request-page .brand::before { content: none !important; }
+    .staff-request-page .auth-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(360px, 1.1fr); gap: clamp(34px, 6vw, 84px); align-items: center; }
+    .staff-request-page .auth-hero { padding-top: 8px; animation: staff-copy-in 700ms cubic-bezier(.2,.65,.3,1) both; }
+    .staff-request-page .auth-hero h1 { max-width: 620px; margin-top: 20px; font-size: clamp(2.8rem, 5vw, 5rem); }
+    .staff-request-page .auth-hero p { max-width: 580px; line-height: 1.75; color: rgba(51,51,51,.75); font-size: 1.06rem; }
+    .staff-request-page .auth-hero .account-list { display: grid; gap: 12px; margin-top: 30px; }
+    .staff-request-page .auth-hero .account-list li { display: flex; align-items: center; gap: 11px; width: fit-content; padding: 10px 14px; border: 1px solid rgba(91,60,196,.1); border-radius: 999px; background: rgba(255,255,255,.6); box-shadow: 0 8px 20px rgba(39,20,95,.05); animation: staff-item-in 600ms cubic-bezier(.2,.65,.3,1) both; }
+    .staff-request-page .auth-hero .account-list li:nth-child(2) { animation-delay: 80ms; }
+    .staff-request-page .auth-hero .account-list li:nth-child(3) { animation-delay: 160ms; }
+    .staff-request-page .auth-hero .account-list li span { display: none; }
+    .staff-request-page .auth-card { position: relative; overflow: hidden; padding: clamp(24px, 4vw, 38px); border: 1px solid rgba(91,60,196,.14); border-radius: 28px; background: rgba(255,255,255,.86); box-shadow: 0 24px 70px rgba(39,20,95,.14); backdrop-filter: blur(14px); animation: staff-card-in 800ms 80ms cubic-bezier(.2,.65,.3,1) both; }
+    .staff-request-page .auth-card::before { position: absolute; inset: 0 0 auto; height: 5px; content: ''; background: linear-gradient(90deg, var(--orange), #ffb064, var(--purple)); }
+    .staff-request-page .auth-card h2 { margin: 10px 0 24px; font-size: clamp(1.55rem, 3vw, 2rem); letter-spacing: -.04em; }
     .staff-request-page .form-grid { display: grid; gap: 18px; }
     .staff-request-page .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-    .staff-request-page label { display: grid; gap: 7px; font-weight: 700; color: var(--gray-dark); }
-    .staff-request-page input, .staff-request-page select { width: 100%; border: 1px solid var(--gray-mid); border-radius: 12px; padding: 12px 14px; background: #fff; }
-    .staff-request-page small { color: rgba(51,51,51,.65); font-weight: 400; }
+    .staff-request-page label { display: grid; gap: 7px; font-weight: 700; color: var(--gray-dark); font-size: .9rem; }
+    .staff-request-page input, .staff-request-page select { width: 100%; min-height: 48px; border: 1px solid rgba(53,20,155,.14); border-radius: 13px; padding: 12px 14px; background: rgba(255,255,255,.9); color: var(--gray-dark); transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background 180ms ease; }
+    .staff-request-page input:hover, .staff-request-page select:hover { border-color: rgba(91,60,196,.34); }
+    .staff-request-page input:focus, .staff-request-page select:focus { outline: none; border-color: var(--purple); background: #fff; box-shadow: 0 0 0 4px rgba(91,60,196,.1), 0 8px 18px rgba(39,20,95,.06); transform: translateY(-1px); }
+    .staff-request-page small { color: rgba(51,51,51,.65); font-weight: 400; line-height: 1.5; }
     .check-row { display: flex !important; align-items: center; gap: 10px !important; font-weight: 500 !important; }
     .check-row input { width: auto; }
-    .success-message { color: #18794e; font-weight: 700; }
+    .staff-request-page .btn-primary { width: 100%; margin-top: 2px; }
+    .staff-request-page .btn-primary:not(:disabled):hover { box-shadow: 0 16px 28px rgba(255,102,0,.3); transform: translateY(-2px); }
+    .staff-request-page .btn-primary:disabled { cursor: wait; opacity: .7; }
+    .success-message { color: #18794e; font-weight: 700; animation: staff-item-in 300ms ease both; }
     .error-message { color: #b13a46; font-weight: 700; }
     .form-note { margin-top: 20px; text-align: center; color: rgba(51,51,51,.7); }
     .form-note a { color: var(--purple); font-weight: 800; }
+    @keyframes staff-copy-in { from { opacity: 0; transform: translateX(-22px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes staff-card-in { from { opacity: 0; transform: translateY(24px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes staff-item-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes staff-orb-drift { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(0, -18px, 0) scale(1.06); } }
     @media (max-width: 900px) { .staff-request-page .auth-grid { grid-template-columns: 1fr; gap: 28px; } .staff-request-page .auth-hero { padding-top: 0; } }
-    @media (max-width: 760px) { .staff-request-page .form-row { grid-template-columns: 1fr; } .staff-request-page .auth-card { padding: 24px; } }
+    @media (max-width: 760px) { .staff-request-page .form-row { grid-template-columns: 1fr; } .staff-request-page .auth-card { padding: 24px; border-radius: 22px; } .staff-request-page .auth-hero h1 { font-size: clamp(2.45rem, 12vw, 3.8rem); } .staff-request-page .auth-hero .account-list li { width: 100%; border-radius: 14px; } }
+    @media (prefers-reduced-motion: reduce) { .staff-request-page *, .staff-request-page::before, .staff-request-page::after { animation: none !important; transition: none !important; } }
   </style>
   <script src="api.js" defer></script>
   <script src="staff-request.js" defer></script>
 </head>
 <body>
   <header class="site-header"><div class="container header-inner">
-    <a class="brand" href="index.html"><span class="brand-mark">🐾</span><span>helpPatas petshop</span></a>
+    <a class="brand" href="index.html"><span>helpPatas petshop</span></a>
     <a class="btn btn-soft" href="login.html">Entrar</a>
   </div></header>
   <main class="auth-page staff-request-page"><div class="container auth-grid">
