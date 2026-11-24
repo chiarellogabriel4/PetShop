@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solicitar acesso à equipe | helpPatas</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="visual.css">
+  <style>
+    .staff-request-page { padding: 56px 0 72px; }
+    .staff-request-page .auth-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(360px, 1.1fr); gap: 48px; align-items: start; }
+    .staff-request-page .auth-hero { padding-top: 28px; }
+    .staff-request-page .auth-hero h1 { max-width: 620px; }
+    .staff-request-page .auth-hero p { max-width: 580px; line-height: 1.7; color: rgba(51,51,51,.75); }
+    .staff-request-page .auth-card { padding: 32px; }
+    .staff-request-page .form-grid { display: grid; gap: 18px; }
+    .staff-request-page .form-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .staff-request-page label { display: grid; gap: 7px; font-weight: 700; color: var(--gray-dark); }
+    .staff-request-page input, .staff-request-page select { width: 100%; border: 1px solid var(--gray-mid); border-radius: 12px; padding: 12px 14px; background: #fff; }
+    .staff-request-page small { color: rgba(51,51,51,.65); font-weight: 400; }
+    .check-row { display: flex !important; align-items: center; gap: 10px !important; font-weight: 500 !important; }
+    .check-row input { width: auto; }
+    .success-message { color: #18794e; font-weight: 700; }
+    .error-message { color: #b13a46; font-weight: 700; }
+    .form-note { margin-top: 20px; text-align: center; color: rgba(51,51,51,.7); }
+    .form-note a { color: var(--purple); font-weight: 800; }
+    @media (max-width: 900px) { .staff-request-page .auth-grid { grid-template-columns: 1fr; gap: 28px; } .staff-request-page .auth-hero { padding-top: 0; } }
+    @media (max-width: 760px) { .staff-request-page .form-row { grid-template-columns: 1fr; } .staff-request-page .auth-card { padding: 24px; } }
+  </style>
+  <script src="api.js" defer></script>
+  <script src="staff-request.js" defer></script>
+</head>
+<body>
+  <header class="site-header"><div class="container header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">🐾</span><span>helpPatas petshop</span></a>
+    <a class="btn btn-soft" href="login.html">Entrar</a>
+  </div></header>
+  <main class="auth-page staff-request-page"><div class="container auth-grid">
+    <section class="auth-hero">
+      <span class="eyebrow">TRABALHE COM A HELPPATAS</span>
+      <h1>Solicite seu acesso à equipe.</h1>
+      <p>Preencha seus dados de qualquer lugar. A administração vai analisar a solicitação e liberar o acesso ao painel quando estiver tudo certo.</p>
+      <ul class="account-list"><li><span>✓</span> Cadastro feito pelo celular ou computador</li><li><span>✓</span> Aprovação manual pela administração</li><li><span>✓</span> Acesso operacional protegido por senha</li></ul>
+    </section>
+    <section class="auth-card"><span class="eyebrow">SOLICITAÇÃO DE ACESSO</span><h2>Seus dados</h2>
+      <form id="staffRequestForm" class="form-grid">
+        <div class="form-row"><label>Nome<input name="name" required maxlength="100" autocomplete="given-name"></label><label>Sobrenome<input name="surname" maxlength="100" autocomplete="family-name"></label></div>
+        <label>E-mail<input name="email" type="email" required maxlength="160" autocomplete="email"></label>
+        <div class="form-row"><label>Telefone<input name="phone" type="tel" maxlength="30" autocomplete="tel"></label><label>Cargo desejado<select name="requestedPosition" required><option value="">Selecione</option><option>Recepção</option><option>Banho e Tosa</option><option>Atendimento veterinário</option><option>Administrativo</option><option>Outro</option></select></label></div>
+        <label>Crie uma senha<input name="password" type="password" required minlength="10" maxlength="128" autocomplete="new-password"><small>Use pelo menos 10 caracteres. A senha será ativada somente após a aprovação.</small></label>
+        <label class="check-row"><input name="terms" type="checkbox" required> Confirmo que os dados informados são verdadeiros.</label>
+        <p id="staffRequestMessage" role="status"></p>
+        <button class="btn btn-primary" type="submit">Enviar solicitação</button>
+      </form>
+      <p class="form-note">Já recebeu acesso? <a href="login.html">Entre na sua conta</a>.</p>
+    </section>
+  </div></main>
+  <footer class="site-footer"><div class="container">helpPatas · Cuidado com pessoas e pets.</div></footer>
+</body>
+</html>

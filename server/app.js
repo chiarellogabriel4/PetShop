@@ -51,6 +51,15 @@ function account(body) {
   if(typeof body.password!=='string' || body.password.length<10 || body.password.length>128) throw Object.assign(Error('A senha deve ter entre 10 e 128 caracteres.'),{status:400});
   return {name,surname,email,password:body.password};
 }
+function staffRequestData(body) {
+  const name=text(body.name,'nome',100), surname=text(body.surname,'sobrenome',100,false);
+  const email=text(body.email,'e-mail',160).toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw Object.assign(Error('Informe um e-mail válido.'),{status:400});
+  const requestedPosition=text(body.requestedPosition,'cargo desejado',100);
+  const phone=text(body.phone,'telefone',30,false);
+  if(typeof body.password!=='string' || body.password.length<10 || body.password.length>128) throw Object.assign(Error('A senha deve ter entre 10 e 128 caracteres.'),{status:400});
+  return {name,surname,email,phone,requestedPosition,password:body.password};
+}
 function bookingData(body, user, admin) {
   const petName=text(body.petName,'nome do pet',80), petType=text(body.petType,'tipo do pet',50), service=text(body.service,'serviço',100);
   if (!Object.hasOwn(services,service)) throw Object.assign(Error('Serviço inválido.'),{status:400});
@@ -170,6 +179,13 @@ function createApp(pool, {setupToken='', production=false}={}) {
     const {rows}=await pool.query(`INSERT INTO helppatas.users(id,name,surname,email,password_hash) VALUES($1,$2,$3,$4,$5) RETURNING *`,[randomUUID(),a.name,a.surname,a.email,await hashPassword(a.password)]);
     await session(res,rows[0]);res.status(201).json({user:publicUser(rows[0])});
   });
+  app.post('/api/staff-requests',authLimit,async(req,res)=>{
+    const request=staffRequestData(req.body);
+    const existing=await pool.query('SELECT 1 FROM helppatas.users WHERE email=$1 UNION ALL SELECT 1 FROM helppatas.staff_requests WHERE email=$1 AND status=\'Pendente\' LIMIT 1',[request.email]);
+    if(existing.rowCount) throw Object.assign(Error('Já existe uma conta ou solicitação pendente para este e-mail.'),{status:409});
+    await pool.query(`INSERT INTO helppatas.staff_requests(id,name,surname,email,phone,requested_position,password_hash) VALUES($1,$2,$3,$4,$5,$6,$7)`,[randomUUID(),request.name,request.surname,request.email,request.phone,request.requestedPosition,await hashPassword(request.password)]);
+    res.status(201).json({message:'Solicitação enviada. Aguarde a análise da administração.'});
+  });
   app.post('/api/auth/login',authLimit,async(req,res)=>{
     const email=text(req.body.email,'e-mail',160).toLowerCase();
     if(typeof req.body.password!=='string'||req.body.password.length>128) return res.status(400).json({error:'Confira a senha.'});
@@ -242,6 +258,21 @@ function createApp(pool, {setupToken='', production=false}={}) {
   app.get('/api/admin/bookings',async(req,res)=>{res.json({bookings:(await pool.query(`SELECT ${adminBookingColumns} FROM helppatas.bookings b ORDER BY date,time`)).rows});});
   app.get('/api/admin/customers',async(req,res)=>{res.json({customers:(await pool.query(`SELECT id,name,surname,email FROM helppatas.users WHERE role='customer' ORDER BY name`)).rows});});
   app.get('/api/admin/staff',panel,async(req,res)=>{res.json({staff:(await pool.query(`SELECT id,name,surname,email,role,created_at AS "createdAt" FROM helppatas.users WHERE role='staff' ORDER BY name`)).rows});});
+  app.get('/api/admin/staff-requests',owner,async(req,res)=>{res.json({requests:(await pool.query(`SELECT id,name,surname,email,phone,requested_position AS "requestedPosition",status,created_at AS "createdAt" FROM helppatas.staff_requests ORDER BY CASE WHEN status='Pendente' THEN 0 ELSE 1 END, created_at DESC`)).rows});});
+  app.patch('/api/admin/staff-requests/:id',owner,async(req,res)=>{
+    if(!uuid.test(req.params.id)||!['Aprovado','Recusado'].includes(req.body.status)) return res.status(400).json({error:'Solicitação ou status inválido.'});
+    const client=await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const result=await client.query(`SELECT * FROM helppatas.staff_requests WHERE id=$1 AND status='Pendente' FOR UPDATE`,[req.params.id]);
+      if(!result.rows.length){await client.query('ROLLBACK');return res.status(404).json({error:'Solicitação não encontrada ou já analisada.'});}
+      const request=result.rows[0];
+      if(req.body.status==='Aprovado') await client.query(`INSERT INTO helppatas.users(id,name,surname,email,password_hash,role) VALUES($1,$2,$3,$4,$5,'staff')`,[randomUUID(),request.name,request.surname,request.email,request.password_hash]);
+      await client.query(`UPDATE helppatas.staff_requests SET status=$2,reviewed_at=now(),reviewed_by=$3 WHERE id=$1`,[request.id,req.body.status,req.user.id]);
+      await client.query('COMMIT');
+      res.json({ok:true,message:req.body.status==='Aprovado'?'Solicitação aprovada e acesso criado.':'Solicitação recusada.'});
+    } catch(error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); }
+  });
   app.post('/api/admin/staff',owner,async(req,res)=>{
     const a=account(req.body);
     const {rows}=await pool.query(`INSERT INTO helppatas.users(id,name,surname,email,password_hash,role) VALUES($1,$2,$3,$4,$5,'staff') RETURNING id,name,surname,email,role,created_at AS "createdAt"`,[randomUUID(),a.name,a.surname,a.email,await hashPassword(a.password)]);
@@ -273,7 +304,7 @@ function createApp(pool, {setupToken='', production=false}={}) {
   app.use('/api',(req,res)=>res.status(404).json({error:'Rota não encontrada.'}));
   const root=path.resolve(__dirname,'..');
   app.get(['/admin.html','/admin'],(req,res,next)=>{if(!req.user)return res.redirect('/login.html?next=admin');if(!['admin','staff'].includes(req.user.role))return res.status(403).send('Acesso exclusivo da administração.');next();});
-  const files=new Set(['index.html','login.html','criar-conta.html','agendamento.html','banho-e-tosa.html','loja.html','dashboard-cliente.html','admin.html','setup.html','admin.css','admin.js','style.css','visual.css','script.js','api.js','account.js','setup.js','grooming.js']);
+  const files=new Set(['index.html','login.html','criar-conta.html','agendamento.html','banho-e-tosa.html','loja.html','admin.html','staff-request.html','setup.html','admin.css','admin.js','staff-request.js','staff-requests-admin.js','style.css','visual.css','script.js','api.js','account.js','setup.js','grooming.js']);
   app.use('/assets',express.static(path.join(root,'assets'),{dotfiles:'deny',index:false}));
   app.get('/',(req,res)=>res.sendFile(path.join(root,'index.html')));
   app.get('/:file',(req,res,next)=>files.has(req.params.file)?res.sendFile(path.join(root,req.params.file)):next());

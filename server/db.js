@@ -20,6 +20,21 @@ async function migrate(pool) {
       role text NOT NULL DEFAULT 'customer' CHECK (role IN ('customer','admin','staff')),
       created_at timestamptz NOT NULL DEFAULT now()
     );
+    CREATE TABLE IF NOT EXISTS helppatas.staff_requests (
+      id uuid PRIMARY KEY,
+      name text NOT NULL,
+      surname text NOT NULL DEFAULT '',
+      email text NOT NULL,
+      phone text NOT NULL DEFAULT '',
+      requested_position text NOT NULL,
+      password_hash text NOT NULL,
+      status text NOT NULL DEFAULT 'Pendente' CHECK (status IN ('Pendente','Aprovado','Recusado')),
+      created_at timestamptz NOT NULL DEFAULT now(),
+      reviewed_at timestamptz,
+      reviewed_by uuid REFERENCES helppatas.users(id) ON DELETE SET NULL
+    );
+    CREATE INDEX IF NOT EXISTS staff_requests_status_idx ON helppatas.staff_requests(status, created_at);
+    CREATE UNIQUE INDEX IF NOT EXISTS staff_requests_pending_email_idx ON helppatas.staff_requests(lower(email)) WHERE status='Pendente';
     CREATE TABLE IF NOT EXISTS helppatas.sessions (
       token_hash text PRIMARY KEY, user_id uuid NOT NULL REFERENCES helppatas.users(id) ON DELETE CASCADE,
       expires_at timestamptz NOT NULL
