@@ -537,13 +537,17 @@ function registerDashboardGreeting() {
 
 async function handleLogin(event) {
   event.preventDefault();
+  if (!loginForm.reportValidity()) return;
   const button = loginForm.querySelector('[type=submit]');
+  const originalLabel = button.textContent;
   button.disabled = true;
+  button.setAttribute('aria-busy', 'true');
+  button.textContent = 'Entrando...';
   try {
     const result = await petApi('/api/auth/login', {method:'POST', body:JSON.stringify({email:document.getElementById('loginEmail').value.trim(), password:document.getElementById('loginPassword').value})});
     saveCurrentUser(result.user);
     location.href = ['admin','staff'].includes(result.user.role) ? 'admin.html' : 'dashboard-cliente.html';
-  } catch(error) { showToast(error.message); } finally { button.disabled=false; }
+  } catch(error) { showToast(error.message); } finally { button.disabled=false; button.removeAttribute('aria-busy'); button.textContent=originalLabel; }
 }
 
 async function handleCreateAccount(event) {
