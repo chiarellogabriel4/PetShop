@@ -379,6 +379,26 @@
       }
     </style>
     <link rel="stylesheet" href="visual.css" />
+    <style>
+      .header-store-link { display: inline-flex; align-items: center; gap: 7px; padding: .65rem .9rem; border-radius: 999px; color: var(--orange); background: #fff0e6; border: 1px solid rgba(255,102,0,.14); font-weight: 800; }
+      .header-store-link:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(255,102,0,.12); }
+      .password-field { position: relative; }
+      .password-field input { padding-right: 80px; }
+      .password-toggle { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); border: 0; border-radius: 9px; padding: 7px 8px; background: #f1edff; color: var(--purple); font-size: .76rem; font-weight: 800; cursor: pointer; }
+      .password-toggle:hover { background: #e7ddff; }
+      .field-hint { color: rgba(51,51,51,.6); font-size: .76rem; }
+      .secure-note { display: flex; align-items: flex-start; gap: 10px; padding: 13px 14px; border-radius: 14px; background: #f7fbf8; border: 1px solid rgba(47,191,113,.18); color: #216f49; }
+      .secure-note > span { font-size: 1rem; line-height: 1.3; }
+      .secure-note strong, .secure-note small { display: block; }
+      .secure-note strong { font-size: .82rem; }
+      .secure-note small { margin-top: 3px; color: #4f7562; line-height: 1.45; }
+      .login-trust-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+      .login-trust-row > div { padding: 16px 18px; border-radius: 16px; background: rgba(255,255,255,.72); border: 1px solid rgba(53,20,155,.08); }
+      .login-trust-row strong, .login-trust-row span { display: block; }
+      .login-trust-row strong { color: var(--purple-dark); font-size: .84rem; }
+      .login-trust-row span { margin-top: 4px; color: rgba(51,51,51,.64); font-size: .76rem; line-height: 1.4; }
+      @media (max-width: 760px) { .header-store-link { padding-inline: .7rem; font-size: .84rem; } .login-trust-row { grid-template-columns: 1fr; } }
+    </style>
   </head>
   <body>
     <div class="topbar">
@@ -408,6 +428,7 @@
           <a href="index.html#contato">Contato</a>
         </nav>
         <div class="header-tools">
+          <a class="header-store-link" href="loja.html">🛒 Loja</a>
           <a class="btn btn-soft" href="login.html">Entrar</a>
           <a class="btn btn-primary" href="criar-conta.html">Criar conta</a>
         </div>
@@ -467,7 +488,11 @@
 
             <div class="field">
               <label for="loginPassword">Senha</label>
-              <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required />
+              <div class="password-field">
+                <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required />
+                <button class="password-toggle" id="togglePassword" type="button" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button>
+              </div>
+              <small class="field-hint">Use a senha cadastrada na sua conta helpPatas.</small>
             </div>
 
             <div class="form-row">
@@ -486,6 +511,8 @@
               <button class="social-btn" id="googleLoginButton" data-provider="google" type="button" aria-label="Entrar com Google"><span aria-hidden="true">G</span> Google</button>
               <button class="social-btn" id="appleLoginButton" data-provider="apple" type="button" aria-label="Entrar com Apple"><span aria-hidden="true">●</span> Apple</button>
             </div>
+
+            <div class="secure-note"><span aria-hidden="true">🔒</span><div><strong>Seus dados estão protegidos</strong><small>Utilizamos uma conexão segura para cuidar das informações da sua conta.</small></div></div>
           </form>
 
           <div class="card-footer">
@@ -493,6 +520,11 @@
             É funcionário? <a href="staff-request.html">Solicite acesso à equipe</a>
           </div>
         </section>
+      </div>
+      <div class="container login-trust-row" aria-label="Benefícios de acessar sua conta">
+        <div><strong>Agendamentos em um só lugar</strong><span>Consulte e acompanhe seus serviços.</span></div>
+        <div><strong>Histórico do seu pet</strong><span>Tenha mais contexto para cada cuidado.</span></div>
+        <div><strong>Atendimento helpPatas</strong><span>Estamos aqui quando você precisar.</span></div>
       </div>
     </main>
 

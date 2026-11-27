@@ -55,7 +55,7 @@
   </header>
 
   <main id="top">
-    <section class="hero">
+    <section class="hero hero-banner-section" aria-label="Ofertas e novidades da helpPatas">
       <div class="container hero-inner">
         <div>
           <span class="eyebrow">Cuidado para cães e gatos</span>
@@ -67,9 +67,25 @@
           </div>
         </div>
         <div class="hero-visual">
-          <div class="hero-image-wrap">
-            <img src="assets/hero-pets-help-patas.png" width="1672" height="941"
-              alt="Cachorro e gato acolhidos em um pet shop" loading="eager" fetchpriority="high" decoding="async" />
+          <div class="hero-image-wrap hero-carousel" aria-label="Publicidade e ofertas da helpPatas" aria-roledescription="carrossel">
+            <div class="hero-carousel-track">
+              <article class="hero-ad-slide hero-ad-slide--orange is-active" data-carousel-slide aria-roledescription="slide" aria-label="1 de 3">
+                <img class="hero-ad-image" src="assets/hero-banner-1.png" alt="Cachorro e gato juntos em uma campanha especial da helpPatas" />
+                <div class="hero-ad-copy"><span class="hero-ad-kicker">Oferta da semana</span><h2>Carinho que cabe na rotina</h2><p>Agende banho e tosa com condições especiais para seu pet.</p><a class="hero-ad-link" href="banho-e-tosa.html">Agendar agora <span aria-hidden="true">→</span></a></div>
+                <div class="hero-ad-art hero-ad-art--pets" aria-hidden="true"><span>🐶</span><span>🐱</span></div>
+              </article>
+              <article class="hero-ad-slide hero-ad-slide--purple" data-carousel-slide aria-roledescription="slide" aria-label="2 de 3" aria-hidden="true">
+                <img class="hero-ad-image" src="assets/hero-banner-2.png" alt="Cachorro recebendo cuidados de banho e tosa" />
+                <div class="hero-ad-copy"><span class="hero-ad-kicker">Loja helpPatas</span><h2>Mais cuidado em cada escolha</h2><p>Produtos selecionados para alimentação, conforto e diversão.</p><a class="hero-ad-link" href="loja.html">Conhecer a loja <span aria-hidden="true">→</span></a></div>
+                <div class="hero-ad-art hero-ad-art--products" aria-hidden="true"><span>🦴</span><span>🧸</span><span>🛍️</span></div>
+              </article>
+              <article class="hero-ad-slide hero-ad-slide--green" data-carousel-slide aria-roledescription="slide" aria-label="3 de 3" aria-hidden="true">
+                <img class="hero-ad-image" src="assets/hero-banner-3.png" alt="Presente com brinquedos para pets" />
+                <div class="hero-ad-copy"><span class="hero-ad-kicker">Cuidado completo</span><h2>Seu pet merece esse momento</h2><p>Conte com uma equipe preparada para cuidar com carinho.</p><a class="hero-ad-link" href="#servicos">Ver serviços <span aria-hidden="true">→</span></a></div>
+                <div class="hero-ad-art hero-ad-art--heart" aria-hidden="true">♥</div>
+              </article>
+            </div>
+            <div class="hero-carousel-controls"><button class="hero-carousel-arrow" type="button" data-carousel-prev aria-label="Publicidade anterior">‹</button><div class="hero-carousel-dots" role="tablist" aria-label="Selecionar publicidade"><button class="hero-carousel-dot is-active" type="button" data-carousel-dot="0" role="tab" aria-selected="true" aria-label="Mostrar publicidade 1"></button><button class="hero-carousel-dot" type="button" data-carousel-dot="1" role="tab" aria-selected="false" aria-label="Mostrar publicidade 2"></button><button class="hero-carousel-dot" type="button" data-carousel-dot="2" role="tab" aria-selected="false" aria-label="Mostrar publicidade 3"></button></div><button class="hero-carousel-arrow" type="button" data-carousel-next aria-label="Próxima publicidade">›</button></div>
             <span class="hero-decor hero-bone hero-bone-one" aria-hidden="true">&#129460;</span>
             <span class="hero-decor hero-bone hero-bone-two" aria-hidden="true">&#129460;</span>
             <span class="hero-decor hero-bubble hero-bubble-one" aria-hidden="true"></span>
@@ -77,6 +93,29 @@
             <span class="hero-decor hero-spark hero-spark-one" aria-hidden="true">✦</span>
             <span class="hero-decor hero-spark hero-spark-two" aria-hidden="true">✦</span>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="service-promise" aria-label="Vantagens da helpPatas">
+      <div class="container promise-grid">
+        <div class="promise-item"><span class="promise-icon">✓</span><div><strong>Atendimento de confiança</strong><small>Equipe que cuida de verdade</small></div></div>
+        <div class="promise-item"><span class="promise-icon">⌁</span><div><strong>Agendamento fácil</strong><small>Escolha o melhor dia e horário</small></div></div>
+        <div class="promise-item"><span class="promise-icon">♡</span><div><strong>Carinho em cada detalhe</strong><small>Conforto para pets e tutores</small></div></div>
+        <div class="promise-item"><span class="promise-icon">↗</span><div><strong>Compra segura</strong><small>Produtos selecionados para seu pet</small></div></div>
+      </div>
+    </section>
+
+    <section class="departments" id="departamentos">
+      <div class="container">
+        <div class="section-head"><div><span class="eyebrow">Encontre mais rápido</span><h2>Cuidados para cada momento</h2></div><p class="subtext">Explore os principais departamentos da helpPatas.</p></div>
+        <div class="departments-container">
+          <a class="departments-card" href="loja.html?pet=cachorro"><strong>Cachorro</strong><span class="department-mascot mascot-dog" aria-hidden="true"><span class="mascot-ear"></span><span class="mascot-eye mascot-eye-left"></span><span class="mascot-eye mascot-eye-right"></span><span class="mascot-muzzle"></span></span></a>
+          <a class="departments-card" href="loja.html?pet=gato"><strong>Gato</strong><span class="department-mascot mascot-cat" aria-hidden="true"><span class="mascot-ear"></span><span class="mascot-eye mascot-eye-left"></span><span class="mascot-eye mascot-eye-right"></span><span class="mascot-muzzle"></span></span></a>
+          <a class="departments-card" href="loja.html?pet=passaro"><strong>Pássaro</strong><span class="department-mascot mascot-bird" aria-hidden="true"><span class="mascot-eye"></span><span class="mascot-wing"></span><span class="mascot-beak"></span></span></a>
+          <a class="departments-card" href="loja.html?pet=peixe"><strong>Peixe</strong><span class="department-mascot mascot-fish" aria-hidden="true"><span class="mascot-eye"></span><span class="mascot-fin"></span><span class="mascot-bubble"></span></span></a>
+          <a class="departments-card" href="loja.html?pet=outros"><strong>Outros pets</strong><span class="department-mascot mascot-other" aria-hidden="true"><span class="mascot-eye"></span><span class="mascot-leaf"></span><span class="mascot-muzzle"></span></span></a>
+          <a class="departments-card" href="loja.html#catalogo"><strong>Casa e jardim</strong><span class="department-mascot mascot-plant" aria-hidden="true"><span class="mascot-pot"></span><span class="mascot-leaf"></span><span class="mascot-leaf mascot-leaf-two"></span></span></a>
         </div>
       </div>
     </section>
@@ -367,6 +406,10 @@
           <a class="btn btn-soft" href="loja.html">Ver mais</a>
         </div>
       </div>
+    </section>
+
+    <section class="promo-banner" aria-label="Oferta especial">
+      <div class="container promo-banner-inner"><div><span class="eyebrow">Clube helpPatas</span><h2>Seu pet merece cuidado o ano todo</h2><p>Crie sua conta, acompanhe seus agendamentos e tenha uma experiência mais prática.</p></div><a class="btn btn-primary" href="criar-conta.html">Quero fazer parte</a></div>
     </section>
 
     <section>

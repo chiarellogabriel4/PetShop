@@ -116,6 +116,60 @@ const catalogProducts = [
     price: 99,
     image: 'assets/kit-higiene.svg',
     description: 'Itens básicos para o cuidado diário.'
+  },
+  {
+    name: 'Ração para Pássaros',
+    category: 'Pássaros',
+    badge: 'Pássaros',
+    price: 42,
+    image: 'assets/racao.svg',
+    description: 'Mistura selecionada para a alimentação diária das aves.',
+    pet: 'passaro'
+  },
+  {
+    name: 'Viveiro Essencial',
+    category: 'Pássaros',
+    badge: 'Pássaros',
+    price: 189,
+    image: 'assets/casinha.svg',
+    description: 'Espaço seguro e confortável para seu pássaro.',
+    pet: 'passaro'
+  },
+  {
+    name: 'Alimento para Peixes',
+    category: 'Peixes',
+    badge: 'Peixes',
+    price: 29,
+    image: 'assets/racao.svg',
+    description: 'Alimento equilibrado para peixes ornamentais.',
+    pet: 'peixe'
+  },
+  {
+    name: 'Aquário Starter',
+    category: 'Peixes',
+    badge: 'Peixes',
+    price: 219,
+    image: 'assets/pote-racao.svg',
+    description: 'Kit inicial para montar um ambiente bonito e seguro.',
+    pet: 'peixe'
+  },
+  {
+    name: 'Alimento para Pequenos Pets',
+    category: 'Outros pets',
+    badge: 'Outros pets',
+    price: 39,
+    image: 'assets/racao.svg',
+    description: 'Nutrição para roedores e pequenos animais.',
+    pet: 'outros'
+  },
+  {
+    name: 'Toca Conforto',
+    category: 'Outros pets',
+    badge: 'Outros pets',
+    price: 79,
+    image: 'assets/cama.svg',
+    description: 'Um cantinho acolhedor para descansar e se esconder.',
+    pet: 'outros'
   }
 ];
 
@@ -442,16 +496,21 @@ async function handleSocialAuth(event) {
   }
 }
 
-function renderCatalogProducts(filter = 'todos') {
+function renderCatalogProducts(filter = 'todos', pet = 'todos') {
   const productGrid = document.getElementById('productGrid');
 
   if (!productGrid) {
     return;
   }
 
-  const filteredProducts = filter === 'todos'
+  const petProducts = pet === 'todos'
     ? catalogProducts
-    : catalogProducts.filter(product => product.category === filter);
+    : catalogProducts.filter(product =>
+      product.pet === pet || (!product.pet && (pet === 'cachorro' || pet === 'gato'))
+    );
+  const filteredProducts = filter === 'todos'
+    ? petProducts
+    : petProducts.filter(product => product.category === filter);
 
   productGrid.innerHTML = filteredProducts.map((product, index) => `
     <article class="product-card" style="animation-delay:${index * 60}ms;">
@@ -479,6 +538,52 @@ function renderCatalogProducts(filter = 'todos') {
   });
 }
 
+function setupHeroCarousel() {
+  const carousel = document.querySelector('.hero-carousel');
+  if (!carousel) return;
+
+  const slides = Array.from(carousel.querySelectorAll('[data-carousel-slide]'));
+  const dots = Array.from(carousel.querySelectorAll('[data-carousel-dot]'));
+  const previous = carousel.querySelector('[data-carousel-prev]');
+  const next = carousel.querySelector('[data-carousel-next]');
+  if (slides.length < 2) return;
+
+  let current = 0;
+  let timer;
+
+  const showSlide = index => {
+    current = (index + slides.length) % slides.length;
+    slides.forEach((slide, slideIndex) => {
+      const active = slideIndex === current;
+      slide.classList.toggle('is-active', active);
+      slide.setAttribute('aria-hidden', String(!active));
+    });
+    dots.forEach((dot, dotIndex) => {
+      const active = dotIndex === current;
+      dot.classList.toggle('is-active', active);
+      dot.setAttribute('aria-selected', String(active));
+    });
+  };
+
+  const restart = () => {
+    window.clearInterval(timer);
+    timer = window.setInterval(() => showSlide(current + 1), 6500);
+  };
+
+  previous?.addEventListener('click', () => { showSlide(current - 1); restart(); });
+  next?.addEventListener('click', () => { showSlide(current + 1); restart(); });
+  dots.forEach((dot, index) => dot.addEventListener('click', () => { showSlide(index); restart(); }));
+  carousel.addEventListener('mouseenter', () => window.clearInterval(timer));
+  carousel.addEventListener('mouseleave', restart);
+  carousel.addEventListener('focusin', () => window.clearInterval(timer));
+  carousel.addEventListener('focusout', event => {
+    if (!carousel.contains(event.relatedTarget)) restart();
+  });
+
+  showSlide(0);
+  restart();
+}
+
 function setupCatalogFilters() {
   const filterButtons = document.querySelectorAll('.filter-btn');
 
@@ -486,16 +591,25 @@ function setupCatalogFilters() {
     return;
   }
 
+  const requestedPet = new URLSearchParams(window.location.search).get('pet') || 'todos';
+  const validPets = ['todos', 'passaro', 'peixe', 'outros', 'cachorro', 'gato'];
+  const selectedPet = validPets.includes(requestedPet) ? requestedPet : 'todos';
+  const petLabels = { passaro: 'Pássaros', peixe: 'Peixes', outros: 'Outros pets', cachorro: 'Cachorros', gato: 'Gatos' };
+  const catalogTitle = document.getElementById('catalogTitle');
+  if (catalogTitle && selectedPet !== 'todos') {
+    catalogTitle.textContent = `Produtos para ${petLabels[selectedPet]}`;
+  }
+
   filterButtons.forEach(button => {
     button.addEventListener('click', () => {
       const selectedFilter = button.dataset.filter;
 
       filterButtons.forEach(item => item.classList.toggle('active', item === button));
-      renderCatalogProducts(selectedFilter);
+      renderCatalogProducts(selectedFilter, selectedPet);
     });
   });
 
-  renderCatalogProducts();
+  renderCatalogProducts('todos', selectedPet);
 }
 
 function updateSummary() {
@@ -1047,6 +1161,18 @@ if (loginForm) {
   loginForm.addEventListener('submit', handleLogin);
 }
 
+const togglePassword = document.getElementById('togglePassword');
+const loginPassword = document.getElementById('loginPassword');
+if (togglePassword && loginPassword) {
+  togglePassword.addEventListener('click', () => {
+    const isVisible = loginPassword.type === 'text';
+    loginPassword.type = isVisible ? 'password' : 'text';
+    togglePassword.textContent = isVisible ? 'Mostrar' : 'Ocultar';
+    togglePassword.setAttribute('aria-label', isVisible ? 'Mostrar senha' : 'Ocultar senha');
+    togglePassword.setAttribute('aria-pressed', String(!isVisible));
+  });
+}
+
 if (createAccountForm) {
   createAccountForm.addEventListener('submit', handleCreateAccount);
 }
@@ -1057,6 +1183,7 @@ if (socialButtons.length) {
   });
 }
 
+setupHeroCarousel();
 setupCatalogFilters();
 registerDashboardGreeting();
 updateSummary();
