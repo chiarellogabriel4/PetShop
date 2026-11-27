@@ -22,6 +22,11 @@
       $('bookingEmpty').hidden=items.length>0; $('bookingCount').textContent=`${items.length} de ${all.length} agendamento(s)`;
       const clients=read('petcareUsers').filter(c=>norm(`${c.name} ${c.surname || ''} ${c.email}`).includes(norm($('clientSearch').value)));
       $('clientList').innerHTML=clients.length?clients.map(c=>`<article class="client"><span class="avatar" aria-hidden="true">${esc((c.name || '?').slice(0,1).toUpperCase())}</span><div><strong>${esc(c.name)} ${esc(c.surname)}</strong><small>${esc(c.email)}</small></div></article>`).join(''):'<div class="empty"><h3>Nenhum cliente encontrado</h3><p>As contas criadas no site aparecerão aqui.</p></div>';
+      if(currentUser?.role==='admin') [...$('clientList').querySelectorAll('.client')].forEach((card,index)=>{
+        const client=clients[index];
+        if(!client) return;
+        card.insertAdjacentHTML('beforeend',`<button class="secondary promote-client" type="button" data-promote-client="${esc(client.id)}">Tornar funcionário</button>`);
+      });
     } catch { toast('Não foi possível ler os dados locais. Nenhum dado foi alterado.'); }
       $('newStaff').hidden=currentUser?.role!=='admin';
       $('staffList').innerHTML=staff.length?staff.map(c=>`<article class="client"><span class="avatar" aria-hidden="true">${esc((c.name || '?').slice(0,1).toUpperCase())}</span><div><strong>${esc(c.name)} ${esc(c.surname)}</strong><small>${esc(c.email)} · acesso operacional</small></div></article>`).join(''):'<div class="empty"><h3>Nenhum funcionário cadastrado</h3><p>Adicione pessoas da equipe para compartilhar o acesso ao painel.</p></div>';
@@ -51,6 +56,18 @@
   $('bookingRows').addEventListener('click',event=>{ const button=event.target.closest('[data-edit]'); if(!button) return; try {const b=read('bookings').find(b=>b.id===button.dataset.edit); if(b) openForm(b);} catch {toast('Não foi possível abrir o agendamento.');} });
   $('bookingRows').addEventListener('click',async event=>{const button=event.target.closest('[data-delete]');if(!button)return;const booking=read('bookings').find(b=>b.id===button.dataset.delete);if(!booking)return;if(!confirm(`Excluir o agendamento de ${booking.petName}? Esta ação não pode ser desfeita.`))return;button.disabled=true;try{await petApi('/api/admin/bookings/'+button.dataset.delete,{method:'DELETE',body:'{}'});await refresh();toast('Agendamento excluído.');}catch(error){button.disabled=false;toast(error.message);}});
   $('newStaff').addEventListener('click',()=>{staffForm.reset();$('staffFormError').textContent='';staffDialog.showModal();});
+  $('clientList').addEventListener('click',async event=>{
+    const button=event.target.closest('[data-promote-client]');
+    if(!button) return;
+    const client=customers.find(item=>item.id===button.dataset.promoteClient);
+    if(!client || !confirm(`Definir ${client.name} ${client.surname || ''} como funcionário?`)) return;
+    button.disabled=true;
+    try {
+      await petApi(`/api/admin/customers/${button.dataset.promoteClient}/role`,{method:'PATCH',body:JSON.stringify({role:'staff'})});
+      await refresh();
+      toast('Cliente promovido a funcionário.');
+    } catch(error) { button.disabled=false; toast(error.message); }
+  });
   for(const id of ['closeStaffDialog','cancelStaffDialog']) $(id).addEventListener('click',()=>staffDialog.close());
   staffForm.addEventListener('submit',async event=>{
     event.preventDefault();if(!staffForm.reportValidity())return;

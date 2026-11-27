@@ -1599,6 +1599,15 @@ p { text-wrap: pretty; }
 }
 .brand::before { content: "\1F43E"; }
 
+.brand::before {
+  content: "";
+  width: 32px;
+  height: 24px;
+  flex: 0 0 32px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 32'%3E%3Cg fill='%2327105f'%3E%3Cellipse cx='16' cy='21' rx='7' ry='6'/%3E%3Cellipse cx='7' cy='11' rx='3.2' ry='4.2' transform='rotate(-28 7 11)'/%3E%3Cellipse cx='15' cy='7' rx='3.2' ry='4.2' transform='rotate(-8 15 7)'/%3E%3Cellipse cx='24' cy='8' rx='3.2' ry='4.2' transform='rotate(18 24 8)'/%3E%3Cellipse cx='29' cy='14' rx='3.1' ry='4' transform='rotate(35 29 14)'/%3E%3Cellipse cx='48' cy='21' rx='7' ry='6'/%3E%3Cellipse cx='39' cy='11' rx='3.2' ry='4.2' transform='rotate(-28 39 11)'/%3E%3Cellipse cx='47' cy='7' rx='3.2' ry='4.2' transform='rotate(-8 47 7)'/%3E%3Cellipse cx='56' cy='8' rx='3.2' ry='4.2' transform='rotate(18 56 8)'/%3E%3Cellipse cx='61' cy='14' rx='3.1' ry='4' transform='rotate(35 61 14)'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  font-size: 0;
+}
+
 .hero-actions .booking-cta {
   min-height: 54px;
   gap: 14px;
