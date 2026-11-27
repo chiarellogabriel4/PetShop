@@ -261,7 +261,7 @@ function createApp(pool, {setupToken='', production=false}={}) {
   app.get('/api/admin/staff-requests',owner,async(req,res)=>{res.json({requests:(await pool.query(`SELECT id,name,surname,email,phone,requested_position AS "requestedPosition",status,created_at AS "createdAt" FROM helppatas.staff_requests WHERE status <> 'Recusado' ORDER BY CASE WHEN status='Pendente' THEN 0 ELSE 1 END, created_at DESC`)).rows});});
   app.patch('/api/admin/customers/:id/role',owner,async(req,res)=>{
     if(!uuid.test(req.params.id)||req.body.role!=='staff') return res.status(400).json({error:'Cliente ou função inválida.'});
-    const {rows}=await pool.query(`UPDATE helppatas.users SET role='staff',updated_at=now() WHERE id=$1 AND role='customer' RETURNING id,name,surname,email,role,created_at AS "createdAt"`,[req.params.id]);
+    const {rows}=await pool.query(`UPDATE helppatas.users SET role='staff' WHERE id=$1 AND role='customer' RETURNING id,name,surname,email,role,created_at AS "createdAt"`,[req.params.id]);
     if(!rows.length) return res.status(404).json({error:'Cliente não encontrado ou já definido como funcionário.'});
     res.json({staff:rows[0],message:'Cliente promovido a funcionário.'});
   });
