@@ -304,7 +304,7 @@ function createApp(pool, {setupToken='', production=false}={}) {
   app.use('/api',(req,res)=>res.status(404).json({error:'Rota não encontrada.'}));
   const root=path.resolve(__dirname,'..');
   app.get(['/admin.html','/admin'],(req,res,next)=>{if(!req.user)return res.redirect('/login.html?next=admin');if(!['admin','staff'].includes(req.user.role))return res.status(403).send('Acesso exclusivo da administração.');next();});
-  const files=new Set(['index.html','login.html','criar-conta.html','agendamento.html','banho-e-tosa.html','loja.html','admin.html','staff-request.html','setup.html','admin.css','admin.js','staff-request.js','staff-requests-admin.js','style.css','visual.css','script.js','api.js','account.js','setup.js','grooming.js']);
+  const files=new Set(['index.html','login.html','criar-conta.html','dashboard-cliente.html','agendamento.html','banho-e-tosa.html','loja.html','admin.html','staff-request.html','setup.html','admin.css','admin.js','staff-request.js','staff-requests-admin.js','style.css','visual.css','script.js','api.js','account.js','setup.js','grooming.js']);
   app.use('/assets',express.static(path.join(root,'assets'),{dotfiles:'deny',index:false}));
   app.get('/',(req,res)=>res.sendFile(path.join(root,'index.html')));
   app.get('/:file',(req,res,next)=>files.has(req.params.file)?res.sendFile(path.join(root,req.params.file)):next());
