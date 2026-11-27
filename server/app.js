@@ -258,7 +258,7 @@ function createApp(pool, {setupToken='', production=false}={}) {
   app.get('/api/admin/bookings',async(req,res)=>{res.json({bookings:(await pool.query(`SELECT ${adminBookingColumns} FROM helppatas.bookings b ORDER BY date,time`)).rows});});
   app.get('/api/admin/customers',async(req,res)=>{res.json({customers:(await pool.query(`SELECT id,name,surname,email FROM helppatas.users WHERE role='customer' ORDER BY name`)).rows});});
   app.get('/api/admin/staff',panel,async(req,res)=>{res.json({staff:(await pool.query(`SELECT id,name,surname,email,role,created_at AS "createdAt" FROM helppatas.users WHERE role='staff' ORDER BY name`)).rows});});
-  app.get('/api/admin/staff-requests',owner,async(req,res)=>{res.json({requests:(await pool.query(`SELECT id,name,surname,email,phone,requested_position AS "requestedPosition",status,created_at AS "createdAt" FROM helppatas.staff_requests ORDER BY CASE WHEN status='Pendente' THEN 0 ELSE 1 END, created_at DESC`)).rows});});
+  app.get('/api/admin/staff-requests',owner,async(req,res)=>{res.json({requests:(await pool.query(`SELECT id,name,surname,email,phone,requested_position AS "requestedPosition",status,created_at AS "createdAt" FROM helppatas.staff_requests WHERE status <> 'Recusado' ORDER BY CASE WHEN status='Pendente' THEN 0 ELSE 1 END, created_at DESC`)).rows});});
   app.patch('/api/admin/staff-requests/:id',owner,async(req,res)=>{
     if(!uuid.test(req.params.id)||!['Aprovado','Recusado'].includes(req.body.status)) return res.status(400).json({error:'Solicitação ou status inválido.'});
     const client=await pool.connect();

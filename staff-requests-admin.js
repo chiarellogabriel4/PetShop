@@ -11,7 +11,10 @@
     }).join('') : '<div class="empty"><h3>Nenhuma solicitação</h3><p>Os pedidos enviados pela página de solicitação aparecerão aqui.</p></div>';
   }
   async function load() {
-    try { render((await petApi('/api/admin/staff-requests')).requests); }
+    try {
+      const { requests } = await petApi('/api/admin/staff-requests');
+      render(requests.filter(request => request.status !== 'Recusado'));
+    }
     catch (error) { list.innerHTML = `<div class="empty"><p>${esc(error.message)}</p></div>`; }
   }
   list.addEventListener('click', async event => {
